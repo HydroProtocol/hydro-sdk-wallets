@@ -1,0 +1,225 @@
+.HydroSDK-toggleButton {
+  background-color: #535ec3;
+  border-color: #4954ac;
+  color: #fff !important;
+}
+.HydroSDK-dialog {
+  min-width: 500px;
+  max-width: 900px;
+  height: 500px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  background: #fcfcfc;
+  color: #333;
+  z-index: 2;
+  border-radius: 2px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.HydroSDK-backdrop {
+  background: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1;
+}
+.HydroSDK-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+.HydroSDK-fieldGroup {
+  margin-bottom: 20px;
+}
+.HydroSDK-label {
+  font-size: 14px;
+  color: #666666;
+  margin-bottom: 8px;
+}
+.HydroSDK-footer {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.HydroSDK-closeButton {
+  font-size: 14px;
+  background: #fcfcfc;
+  color: #666666;
+  border: 1px solid #e0e0e0;
+}
+.HydroSDK-select {
+  position: relative;
+}
+.HydroSDK-unfolded .HydroSDK-dropdown {
+  height: auto;
+  border: 1px solid #e0e0e0;
+}
+.HydroSDK-selected {
+  border: 1px solid #e0e0e0;
+  border-radius: 2px;
+  padding: 0 12px;
+  height: 32px;
+  line-height: 32px;
+  background: #f7f7f7;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.HydroSDK-dropdown {
+  position: absolute;
+  border-radius: 2px;
+  height: 0;
+  z-index: 100;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #f7f7f7;
+}
+.HydroSDK-dropdown.up {
+  bottom: 110%;
+}
+.HydroSDK-dropdown.down {
+  top: 110%;
+}
+.HydroSDK-item {
+  padding: 0 12px;
+  height: 32px;
+  line-height: 32px;
+  cursor: pointer;
+  background: #f7f7f7;
+}
+.HydroSDK-item:hover {
+  background: #e0e0e0;
+}
+
+.HydroSDK-item:first-child {
+  border-top-width: 1px;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+}
+.HydroSDK-item:last-child {
+  border-bottom-width: 1px;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+
+.HydroSDK-item .disabled {
+  color: #666666;
+  cursor: not-allowed;
+}
+.HydroSDK-caret {
+  position: relative;
+  left: 12px;
+  width: 36px;
+  border-left: 1px solid #e0e0e0;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+}
+.HydroSDK-caret:before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid #666666;
+  border-radius: 2px;
+}
+button {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border-radius: 2px;
+  cursor: pointer;
+  outline: 0;
+}
+.HydroSDK-input {
+  display: block;
+  width: 100%;
+  padding: 0 12px;
+  height: 32px;
+  line-height: 32px;
+  background: #f7f7f7;
+  border: 1px solid #e0e0e0;
+}
+.HydroSDK-hydroWalletButtonGroup {
+  display: flex;
+}
+.HydroSDK-input:focus {
+  border: 1px solid #cfcfcf;
+  outline: none;
+}
+.HydroSDK-featureButton {
+  background: #738bd7;
+  color: #fff;
+  border-color: #738bd7;
+  margin-right: 12px;
+}
+.HydroSDK-featureButton:last-child {
+  margin-right: 0;
+}
+.HydroSDK-submitButton {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+.HydroSDK-fa {
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin-right: 4px;
+}
+.HydroSDK-loading {
+  -webkit-animation: fa-spin 2s infinite linear;
+  animation: fa-spin 2s infinite linear;
+}
+.HydroSDK-check:before {
+  color: #00d99f;
+  content: "\f00c";
+}
+.HydroSDK-lock:before {
+  content: "\f023";
+}
+.HydroSDK-loading:before {
+  content: "\f110";
+}
+
+@-webkit-keyframes fa-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+@keyframes fa-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
