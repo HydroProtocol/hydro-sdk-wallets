@@ -115,7 +115,7 @@ export default abstract class ExtensionWallet extends BaseWallet {
     });
   }
 
-  public static getAccounts(): Promise<string[]> {
+  public static getAddresses(): Promise<string[]> {
     return new Promise((resolve, reject) => {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);

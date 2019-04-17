@@ -6,6 +6,7 @@ export interface AccountProps {
   address: string | null;
   balance: BigNumber;
   isLocked: boolean;
+  timers: Map<string, number>;
 }
 
 export type AccountState = ImmutableMap<AccountProps>;
@@ -13,13 +14,14 @@ export type AccountState = ImmutableMap<AccountProps>;
 export const initializeAccount: ImmutableMap<AccountState> = Map({
   address: null,
   balance: new BigNumber("0"),
-  isLocked: true
+  isLocked: true,
+  timers: Map()
 });
 
 export interface WalletProps {
   accounts: Map<string, AccountState>;
   selectedType: string | null;
-  extensionWalletSuported: boolean;
+  supportedWallet: Map<string, boolean>;
   isShowDialog: boolean;
 }
 
@@ -28,12 +30,15 @@ export type WalletState = ImmutableMap<WalletProps>;
 const initialState: WalletState = fromJS({
   accounts: Map<string, AccountState>(),
   selectedType: null,
-  extensionWalletSuported: false,
+  supportedWallet: Map(),
   isShowDialog: false
 });
 
 export default (state = initialState, action: any) => {
   switch (action.type) {
+    case "HYDRO_WALLET_INIT_ACCOUNT":
+      state = state.setIn(["accounts", action.payload.type], initializeAccount);
+      return state;
     case "HYDRO_WALLET_SHOW_DIALOG":
       state = state.set("isShowDialog", true);
       return state;
@@ -47,13 +52,6 @@ export default (state = initialState, action: any) => {
       state = state.setIn(["accounts", action.payload.type, "isLocked"], false);
       return state;
     case "HYDRO_WALLET_LOAD_ACCOUNT":
-      let account = state.getIn(["accounts", action.payload.type]);
-      if (!account) {
-        state = state.setIn(
-          ["accounts", action.payload.type],
-          initializeAccount
-        );
-      }
       state = state.setIn(
         ["accounts", action.payload.type, "address"],
         action.payload.address

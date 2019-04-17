@@ -1,6 +1,15 @@
 import { BigNumber } from "ethers/utils";
+import {
+  HydroWallet,
+  ExtensionWallet,
+  NeedUnlockWalletError,
+  NotSupportedError
+} from "../wallets";
+import { Map } from "immutable";
 
-export const loadAccount = (type: string, address: string | null) => {
+const watchers = Map();
+
+export const loadAddress = (type: string, address: string | null) => {
   return {
     type: "HYDRO_WALLET_LOAD_ACCOUNT",
     payload: { type, address }
@@ -54,17 +63,90 @@ export const hideDialog = () => {
 };
 
 export const loadExtensitonWallet = () => {
-  // 检查有没有安装extension wallet
-  // if yes
-  //   dispatch(supportExtensionWallet)
+  return (dispatch: any) => {
+    dispatch(watchWallet(ExtensionWallet));
+  };
 };
 
 export const loadBrowserWallets = () => {
-  // load addresses from localStorage
-  // if not blank?
-  //   foreach dispatch(initAddress)
+  return (dispatch: any) => {
+    HydroWallet.list().map(wallet => {
+      dispatch(watchWallet(wallet));
+    });
+  };
 };
 
-export const removeAddress = () => {
-  // clear timer
+const watchWallet = (wallet: HydroWallet | typeof ExtensionWallet) => {
+  return (dispatch: any, getState: any) => {
+    const type = wallet.getType();
+    const account = getState().wallet.getIn(["accounts", type]);
+    const selectedType = getState().wallet.get("selectedType");
+    if (!account) {
+      dispatch({ type: "HYDRO_WALLET_INIT_ACCOUNT" });
+    }
+
+    const watchAddress = async (timer = 0) => {
+      const timerKey = `${type}-address`;
+      if (timer && watchers.get(timerKey) && timer !== watchers.get(timerKey)) {
+        return;
+      }
+
+      let address;
+
+      try {
+        const addresses: string[] = await wallet.getAddresses();
+        address = addresses.length > 0 ? addresses[0].toLowerCase() : null;
+      } catch (e) {
+        address = null;
+      }
+
+      dispatch(loadAddress(type, address));
+
+      const nextTimer = window.setTimeout(() => watchAddress(nextTimer), 3000);
+      watchers.set(timerKey, nextTimer);
+    };
+
+    const watchLockedStatus = async (timer = 0) => {
+      const timerKey = `${type}-lockedStatus`;
+      if (timer && watchers.get(timerKey) && timer !== watchers.get(timerKey)) {
+        return;
+      }
+
+      if (wallet.isLocked()) {
+        dispatch(lockAccount(type));
+      } else {
+        dispatch(unlockAccount(type));
+      }
+    };
+
+    const watchBalance = async (timer = 0) => {
+      const timerKey = `${type}-balance`;
+      if (timer && watchers.get(timerKey) && timer !== watchers.get(timerKey)) {
+        return;
+      }
+
+      try {
+        const balance = await wallet.loadBalance();
+        dispatch(loadBalance(type, balance));
+      } catch (e) {
+        if (e !== NeedUnlockWalletError && e !== NotSupportedError) {
+          throw e;
+        }
+      }
+      const watcherRate = getWatcherRate(selectedType, type);
+      const nextTimer = window.setTimeout(
+        () => watchBalance(nextTimer),
+        watcherRate
+      );
+      watchers.set(timerKey, nextTimer);
+    };
+
+    Promise.all([watchAddress(), watchLockedStatus(), watchBalance()]);
+  };
+};
+
+const getWatcherRate = (selectedType: string, type: string): number => {
+  return selectedType === type && window.document.visibilityState !== "hidden"
+    ? 3000
+    : 300000;
 };

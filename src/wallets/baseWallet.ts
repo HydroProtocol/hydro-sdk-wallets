@@ -22,7 +22,7 @@ export default abstract class baseWallet {
     txParams: txParams
   ): Promise<string | undefined>;
 
-  public abstract getAccounts(): Promise<string[]>;
+  public abstract getAddresses(): Promise<string[]>;
 
   public abstract isLocked(): boolean;
 

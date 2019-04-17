@@ -173,7 +173,7 @@ export default class HydroWallet extends BaseWallet {
     }
   }
 
-  public getAccounts(): Promise<string[]> {
+  public getAddresses(): Promise<string[]> {
     return new Promise(resolve => {
       if (this._address) {
         resolve([this._address]);

@@ -1,16 +1,13 @@
 import { Wallet, WalletButton } from "./components";
-import { connector, Connector } from "./connector";
 import { WalletReducer } from "./reducers";
 import "../index.css";
-import { WalletTypes } from "./wallets";
 
 export {
   Wallet,
   // connector,
   // Connector,
   WalletReducer,
-  WalletButton,
-  WalletTypes
+  WalletButton
 
   // actions
   // SelectAccount(accountID)
