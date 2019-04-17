@@ -44,11 +44,7 @@ export default class HydroWallet extends BaseWallet {
     if (!this._wallet || !this._address) {
       return false;
     }
-    const data = await this._wallet.encrypt(password, {
-      scrypt: {
-        N: 1 << 5
-      }
-    });
+    const data = await this._wallet.encrypt(password);
     const wallets = HydroWallet.getWalletData();
     const index = wallets.findIndex(
       json =>
