@@ -15,7 +15,8 @@ export const initializeAccount: ImmutableMap<AccountState> = Map({
   address: null,
   balance: new BigNumber("0"),
   isLocked: true,
-  timers: Map()
+  timers: Map(),
+  networkId: null
 });
 
 export interface WalletProps {
@@ -23,6 +24,7 @@ export interface WalletProps {
   selectedType: string | null;
   supportedWallet: Map<string, boolean>;
   isShowDialog: boolean;
+  networkId: number | null;
 }
 
 export type WalletState = ImmutableMap<WalletProps>;
@@ -68,6 +70,12 @@ export default (state = initialState, action: any) => {
       return state;
     case "HYDRO_WALLET_SUPPORT_EXTENSION_WALLET":
       state = state.set("extensionWalletSuported", true);
+      return state;
+    case "HYDRO_WALLET_LOAD_NETWORK_ID":
+      state = state.setIn(
+        ["accounts", action.payload.type, "networkId"],
+        action.payload.networkId
+      );
       return state;
     default:
       return state;

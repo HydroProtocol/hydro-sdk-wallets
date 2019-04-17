@@ -16,6 +16,7 @@ import {
 import { WalletProps, WalletState, AccountState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
 import { hideDialog, showDialog } from "../../actions/wallet";
+import { ImmutableMap } from "../../reducers";
 
 const STEPS = {
   SELETE: "SELETE",

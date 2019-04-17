@@ -28,8 +28,6 @@ export default abstract class baseWallet {
 
   public abstract loadBalance(): Promise<any>;
 
-  public abstract setAddress(address: string | null): void;
-
   public abstract getType(): string;
 
   public abstract getAddress(): string | null;
@@ -41,4 +39,8 @@ export default abstract class baseWallet {
   public abstract unlock(password: string): void;
 
   public abstract getTransactionReceipt(txId: string): Promise<any>;
+
+  public abstract loadNetworkId(): Promise<number | undefined>;
+
+  public abstract getNetworkId(): number | undefined;
 }

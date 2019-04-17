@@ -7,14 +7,7 @@ export default abstract class ExtensionWallet extends BaseWallet {
   public static TYPE = "EXTENSION";
   public static _address: string | null = null;
   public static _balance: BigNumber = new BigNumber("0");
-
-  public static setAddress(address: string | null): void {
-    this._address = address;
-  }
-
-  public static setBalance(balance: BigNumber): void {
-    this._balance = balance;
-  }
+  public static _networkId?: number;
 
   public static getType(): string {
     return this.TYPE;
@@ -26,6 +19,29 @@ export default abstract class ExtensionWallet extends BaseWallet {
 
   public static getBalance(): BigNumber {
     return this._balance;
+  }
+
+  public static getNetworkId(): number | undefined {
+    return this._networkId;
+  }
+
+  public static loadNetworkId(): Promise<number | undefined> {
+    return new Promise((resolve, reject) => {
+      if (!this.isSupported()) {
+        reject(BaseWallet.NotSupportedError);
+      }
+      if (!this._address) {
+        reject(BaseWallet.NeedUnlockWalletError);
+      }
+      window.web3.version.getNetwork((err: Error, networkId: number) => {
+        if (err) {
+          reject(err);
+        } else {
+          this._networkId = networkId;
+          resolve(networkId);
+        }
+      });
+    });
   }
 
   public static getContract(contractAddress: string, abi: any): Contract {
@@ -118,12 +134,15 @@ export default abstract class ExtensionWallet extends BaseWallet {
   public static getAddresses(): Promise<string[]> {
     return new Promise((resolve, reject) => {
       if (!this.isSupported()) {
+        this._address = null;
         reject(BaseWallet.NotSupportedError);
       }
       window.web3.eth.getAccounts((err: Error, accounts: string[]) => {
         if (err) {
+          this._address = null;
           reject(err);
         } else {
+          this._address = accounts[0];
           resolve(accounts);
         }
       });
@@ -144,6 +163,7 @@ export default abstract class ExtensionWallet extends BaseWallet {
           if (err) {
             reject(err);
           } else {
+            this._balance = res;
             resolve(res);
           }
         }

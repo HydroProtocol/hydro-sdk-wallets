@@ -11,7 +11,8 @@ import {
   supportExtensionWallet,
   unlockAccount,
   lockAccount,
-  loadBalance
+  loadBalance,
+  loadNetworkId
 } from "../actions/wallet";
 
 declare global {
@@ -121,7 +122,7 @@ export default class Connector {
     Promise.all(promises);
   }
 
-  private watchWallet(type: string): Promise<[void, void]> {
+  private watchWallet(type: string): Promise<[void, void, void]> {
     const watchAccount = async (timer = 0) => {
       const timerKey = `${type}-account`;
       if (
@@ -134,6 +135,21 @@ export default class Connector {
 
       await this.loadAccount(type);
       const nextTimer = window.setTimeout(() => watchAccount(nextTimer), 3000);
+      this.accountWatchers.set(timerKey, nextTimer);
+    };
+
+    const watchNetWork = async (timer = 0) => {
+      const timerKey = `${type}-account`;
+      if (
+        timer &&
+        this.accountWatchers.get(timerKey) &&
+        timer !== this.accountWatchers.get(timerKey)
+      ) {
+        return;
+      }
+
+      await this.loadAccount(type);
+      const nextTimer = window.setTimeout(() => watchNetWork(nextTimer), 3000);
       this.accountWatchers.set(timerKey, nextTimer);
     };
 
@@ -155,7 +171,7 @@ export default class Connector {
       this.accountWatchers.set(timerKey, nextTimer);
     };
 
-    return Promise.all([watchAccount(), watchBalance()]);
+    return Promise.all([watchAccount(), watchNetWork(), watchBalance()]);
   }
 
   private async loadAccount(type: string): Promise<void> {
@@ -166,19 +182,36 @@ export default class Connector {
     let account;
 
     try {
-      const accounts: string[] = await connection.getAccounts();
+      const accounts: string[] = await connection.loadAccounts();
       account = accounts.length > 0 ? accounts[0].toLowerCase() : null;
     } catch (e) {
       account = null;
     }
 
-    connection.setAddress(account);
     if (this.dispatch) {
       this.dispatch(loadAccount(type, account));
       if (connection.isLocked()) {
         this.dispatch(lockAccount(type));
       } else {
         this.dispatch(unlockAccount(type));
+      }
+    }
+  }
+
+  private async loadNetwork(type: string): Promise<void> {
+    const connection = this.connections.get(type);
+    if (!connection) {
+      return;
+    }
+
+    try {
+      const networkId: number | undefined = await connection.loadNetworkId();
+      if (this.dispatch && networkId) {
+        this.dispatch(loadNetworkId(type, networkId));
+      }
+    } catch (e) {
+      if (e !== NeedUnlockWalletError && e !== NotSupportedError) {
+        throw e;
       }
     }
   }
@@ -191,7 +224,6 @@ export default class Connector {
 
     try {
       const balance = await connection.loadBalance();
-      connection.setBalance(balance);
       if (this.dispatch) {
         this.dispatch(loadBalance(type, balance));
       }
