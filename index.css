@@ -36,6 +36,9 @@
   margin-bottom: 20px;
 }
 .HydroSDK-fieldGroup {
+  display: flex;
+  flex-flow: column;
+  margin: 0;
   margin-bottom: 20px;
 }
 .HydroSDK-label {
@@ -151,7 +154,7 @@ button {
 }
 .HydroSDK-input {
   display: block;
-  width: 100%;
+  flex: 1;
   padding: 0 12px;
   height: 32px;
   line-height: 32px;
