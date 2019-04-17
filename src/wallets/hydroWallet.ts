@@ -8,15 +8,13 @@ export default class HydroWallet extends BaseWallet {
   private static TIMEOUT = 15 * 60 * 1000; // 15 minutes
   private static WALLETS_KEY = "Hydro-Wallets";
   private static _cache: Map<string, any> = new Map();
-  public nodeUrl?: string;
   public static TYPE_PREFIX = "Hydro-Wallet:";
   public static WALLET_NAME = "Hydro Wallet";
+  private static nodeUrl?: string;
   public _address: string | null = null;
   public _wallet: Wallet | null = null;
-  public _balance: BigNumber = new BigNumber("0");
   private _timer?: number;
   private _provider?: Provider;
-  public _networkId?: number;
 
   private constructor(address: string, wallet?: any) {
     super();
@@ -63,28 +61,20 @@ export default class HydroWallet extends BaseWallet {
 
   public delete(): boolean {
     this._wallet = null;
-    HydroWallet._cache.delete(this.getAddress()!);
+    HydroWallet._cache.delete(this._address!);
     const wallets = HydroWallet.getWalletData().filter(
-      json => HydroWallet.parseWalletAddress(json) !== this.getAddress()
+      json => HydroWallet.parseWalletAddress(json) !== this._address
     );
     HydroWallet.setWalletData(wallets);
     return true;
   }
 
-  public getBalance(): BigNumber {
-    return this._balance;
-  }
-
-  public getNetworkId(): number | undefined {
-    return this._networkId;
+  public static setNodeUrl(nodeUrl: string) {
+    this.nodeUrl = nodeUrl;
   }
 
   public getType(): string {
     return HydroWallet.TYPE_PREFIX + this._address;
-  }
-
-  public getAddress(): string | null {
-    return this._address;
   }
 
   public getContract(contractAddress: string, abi: any): Contract {
@@ -97,10 +87,6 @@ export default class HydroWallet extends BaseWallet {
     ...args: any
   ): Promise<any> {
     return contract[method](...args);
-  }
-
-  public setNodeUrl(nodeUrl: string): void {
-    this.nodeUrl = nodeUrl;
   }
 
   public static list(): HydroWallet[] {
@@ -181,12 +167,11 @@ export default class HydroWallet extends BaseWallet {
   }
 
   public loadBalance(): Promise<BigNumber> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       if (!this._wallet) {
         reject(BaseWallet.NeedUnlockWalletError);
       } else {
-        this._balance = await this._wallet.getBalance();
-        resolve(this._balance);
+        resolve(this._wallet.getBalance());
       }
     });
   }
@@ -196,8 +181,7 @@ export default class HydroWallet extends BaseWallet {
       return;
     }
     const network = await this._wallet.provider.getNetwork();
-    this._networkId = network.chainId;
-    return this._networkId;
+    return network.chainId;
   }
 
   public async lock() {
@@ -227,8 +211,8 @@ export default class HydroWallet extends BaseWallet {
       return this._provider;
     }
 
-    if (this.nodeUrl) {
-      this._provider = new providers.JsonRpcProvider(this.nodeUrl);
+    if (HydroWallet.nodeUrl) {
+      this._provider = new providers.JsonRpcProvider(HydroWallet.nodeUrl);
     } else {
       this._provider = getDefaultProvider("ropsten");
     }

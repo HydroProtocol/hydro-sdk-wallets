@@ -10,9 +10,9 @@ export {
   NotSupportedError
 };
 
-export const getWalletName = (type: string | null): string => {
+export const getWalletName = (type: string | null): string | null => {
   if (!type) {
-    return "Unknown Wallet";
+    return null;
   } else if (type === ExtensionWallet.getType()) {
     return ExtensionWallet.WALLET_NAME;
   } else if (type.indexOf(HydroWallet.TYPE_PREFIX) > -1) {

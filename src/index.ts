@@ -2,24 +2,11 @@ import { Wallet, WalletButton } from "./components";
 import { WalletReducer } from "./reducers";
 import "../index.css";
 
-export {
-  Wallet,
-  // connector,
-  // Connector,
-  WalletReducer,
-  WalletButton
+declare global {
+  interface Window {
+    web3: any;
+    ethereum: any;
+  }
+}
 
-  // actions
-  // SelectAccount(accountID)
-  // UnlockAccount(accountID, password)
-
-  // selector
-  // GetAccounts()
-  // GetSelectAccount()
-
-  // account.connection
-  // connection.PersonalSign(accountID, msg)
-  // connection.SendTransaction(account, transaction)
-  // connection.GetTransactionReceipt(transactionHash)
-  // connection.GetAccountInfo(accountID)
-};
+export { Wallet, WalletReducer, WalletButton };

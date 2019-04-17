@@ -1,17 +1,45 @@
 import { BigNumber } from "ethers/utils";
+import { getAccount } from "../selector/wallet";
+
 import {
   HydroWallet,
   ExtensionWallet,
   NeedUnlockWalletError,
   NotSupportedError
 } from "../wallets";
-import { Map } from "immutable";
 
-const watchers = Map();
+const TIMER_KEYS = {
+  ADDRESS: "ADDRESS",
+  STATUS: "STATUS",
+  BALANCE: "BALANCE",
+  NETWORK: "NETWORK"
+};
+
+export const initAccount = (
+  type: string,
+  wallet: HydroWallet | typeof ExtensionWallet
+) => {
+  return {
+    type: "HYDRO_WALLET_INIT_ACCOUNT",
+    payload: {
+      type,
+      wallet
+    }
+  };
+};
+
+export const updateWallet = (wallet: HydroWallet | typeof ExtensionWallet) => {
+  return {
+    type: "HYDRO_WALLET_UPDATE_WALLET",
+    payload: {
+      wallet
+    }
+  };
+};
 
 export const loadAddress = (type: string, address: string | null) => {
   return {
-    type: "HYDRO_WALLET_LOAD_ACCOUNT",
+    type: "HYDRO_WALLET_LOAD_ADDRESS",
     payload: { type, address }
   };
 };
@@ -20,6 +48,27 @@ export const loadBalance = (type: string, balance: BigNumber) => {
   return {
     type: "HYDRO_WALLET_LOAD_BALANCE",
     payload: { type, balance }
+  };
+};
+
+export const loadNetwork = (type: string, networkId: number | undefined) => {
+  return {
+    type: "HYDRO_WALLET_LOAD_NETWORK",
+    payload: {
+      type,
+      networkId
+    }
+  };
+};
+
+export const setTimer = (type: string, timerKey: string, timer: number) => {
+  return {
+    type: "HYDRO_WALLET_SET_TIMER",
+    payload: {
+      type,
+      timerKey,
+      timer
+    }
   };
 };
 
@@ -50,6 +99,18 @@ export const unlockAccount = (type: string) => {
   };
 };
 
+export const unlockHydroWallet = (type: string, password: string) => {
+  return async (dispatch: any, getState: any) => {
+    const hydroWallet: HydroWallet = getState().WalletReducer.getIn([
+      "accounts",
+      type,
+      "wallet"
+    ]);
+    await hydroWallet.unlock(password);
+    dispatch(updateWallet(hydroWallet));
+  };
+};
+
 export const showDialog = () => {
   return {
     type: "HYDRO_WALLET_SHOW_DIALOG"
@@ -62,91 +123,134 @@ export const hideDialog = () => {
   };
 };
 
-export const loadExtensitonWallet = () => {
-  return (dispatch: any) => {
-    dispatch(watchWallet(ExtensionWallet));
+export const stopWatchers = (type: string) => {
+  return (dispatch: any, getState: any) => {
+    const account = getAccount(getState().WalletReducer, type);
+    if (account) {
+      const timers = account.get("timers");
+      timers.forEach(timer => {
+        if (timer) {
+          window.clearTimeout(timer);
+        }
+      });
+    }
   };
 };
 
-export const loadBrowserWallets = () => {
+export const loadExtensitonWallet = () => {
+  return (dispatch: any) => {
+    if (ExtensionWallet.isSupported()) {
+      dispatch(supportExtensionWallet());
+      dispatch(watchWallet(ExtensionWallet));
+    }
+  };
+};
+
+export const loadHydroWallets = () => {
   return (dispatch: any) => {
     HydroWallet.list().map(wallet => {
-      dispatch(watchWallet(wallet));
+      dispatch(loadHydroWallet(wallet));
     });
+  };
+};
+
+export const loadHydroWallet = (wallet: HydroWallet) => {
+  return (dispatch: any) => {
+    dispatch(watchWallet(wallet));
   };
 };
 
 const watchWallet = (wallet: HydroWallet | typeof ExtensionWallet) => {
   return (dispatch: any, getState: any) => {
     const type = wallet.getType();
-    const account = getState().wallet.getIn(["accounts", type]);
-    const selectedType = getState().wallet.get("selectedType");
-    if (!account) {
-      dispatch({ type: "HYDRO_WALLET_INIT_ACCOUNT" });
+    if (!getAccount(getState().WalletReducer, type)) {
+      dispatch(initAccount(type, wallet));
     }
 
+    const isInvalidTimer = (timerKey: string, timer: number) => {
+      const timers = getState().WalletReducer.getIn([
+        "accounts",
+        type,
+        "timers"
+      ]);
+      if (timer && timers.get(timerKey) && timer !== timers.get(timerKey)) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+
     const watchAddress = async (timer = 0) => {
-      const timerKey = `${type}-address`;
-      if (timer && watchers.get(timerKey) && timer !== watchers.get(timerKey)) {
+      const timerKey = TIMER_KEYS.ADDRESS;
+      if (isInvalidTimer(timerKey, timer)) {
         return;
       }
 
       let address;
-
       try {
         const addresses: string[] = await wallet.getAddresses();
         address = addresses.length > 0 ? addresses[0].toLowerCase() : null;
       } catch (e) {
+        if (e !== NeedUnlockWalletError && e !== NotSupportedError) {
+          throw e;
+        }
         address = null;
       }
 
-      dispatch(loadAddress(type, address));
-
-      const nextTimer = window.setTimeout(() => watchAddress(nextTimer), 3000);
-      watchers.set(timerKey, nextTimer);
-    };
-
-    const watchLockedStatus = async (timer = 0) => {
-      const timerKey = `${type}-lockedStatus`;
-      if (timer && watchers.get(timerKey) && timer !== watchers.get(timerKey)) {
-        return;
-      }
-
-      if (wallet.isLocked()) {
+      if (wallet.isLocked(address)) {
         dispatch(lockAccount(type));
       } else {
         dispatch(unlockAccount(type));
       }
+
+      dispatch(loadAddress(type, address));
+      const nextTimer = window.setTimeout(() => watchAddress(nextTimer), 3000);
+      dispatch(setTimer(type, timerKey, nextTimer));
     };
 
     const watchBalance = async (timer = 0) => {
-      const timerKey = `${type}-balance`;
-      if (timer && watchers.get(timerKey) && timer !== watchers.get(timerKey)) {
+      const timerKey = TIMER_KEYS.BALANCE;
+      if (isInvalidTimer(timerKey, timer)) {
+        return;
+      }
+
+      const address = getState().WalletReducer.getIn([
+        "accounts",
+        type,
+        "address"
+      ]);
+      if (address) {
+        try {
+          const balance = await wallet.loadBalance(address);
+          dispatch(loadBalance(type, balance));
+        } catch (e) {
+          if (e !== NeedUnlockWalletError && e !== NotSupportedError) {
+            throw e;
+          }
+        }
+      }
+      const nextTimer = window.setTimeout(() => watchBalance(nextTimer), 3000);
+      dispatch(setTimer(type, timerKey, nextTimer));
+    };
+
+    const watchNetwork = async (timer = 0) => {
+      const timerKey = TIMER_KEYS.NETWORK;
+      if (isInvalidTimer(timerKey, timer)) {
         return;
       }
 
       try {
-        const balance = await wallet.loadBalance();
-        dispatch(loadBalance(type, balance));
+        const networkId = await wallet.loadNetworkId();
+        dispatch(loadNetwork(type, networkId));
       } catch (e) {
         if (e !== NeedUnlockWalletError && e !== NotSupportedError) {
           throw e;
         }
       }
-      const watcherRate = getWatcherRate(selectedType, type);
-      const nextTimer = window.setTimeout(
-        () => watchBalance(nextTimer),
-        watcherRate
-      );
-      watchers.set(timerKey, nextTimer);
+      const nextTimer = window.setTimeout(() => watchNetwork(nextTimer), 3000);
+      dispatch(setTimer(type, timerKey, nextTimer));
     };
 
-    Promise.all([watchAddress(), watchLockedStatus(), watchBalance()]);
+    Promise.all([watchAddress(), watchBalance(), watchNetwork()]);
   };
-};
-
-const getWatcherRate = (selectedType: string, type: string): number => {
-  return selectedType === type && window.document.visibilityState !== "hidden"
-    ? 3000
-    : 300000;
 };

@@ -1,10 +1,12 @@
 import * as React from "react";
 import { HydroWallet } from "../../wallets";
-import { connector } from "../../connector";
+import { connect } from "react-redux";
 import Input from "./Input";
+import { loadHydroWallet } from "../../actions/wallet";
 
 interface Props {
   callback: () => any;
+  dispatch: any;
 }
 
 interface State {
@@ -23,13 +25,13 @@ class Create extends React.PureComponent<Props, State> {
 
   private async submit(e: React.FormEvent) {
     const { password } = this.state;
-    const { callback } = this.props;
+    const { callback, dispatch } = this.props;
 
     e.preventDefault();
 
     this.setState({ processing: true });
-    await HydroWallet.createRandom(password);
-    await connector.refreshWatchers();
+    const wallet = await HydroWallet.createRandom(password);
+    await dispatch(loadHydroWallet(wallet));
     callback();
   }
 
@@ -47,11 +49,12 @@ class Create extends React.PureComponent<Props, State> {
           type="submit"
           disabled={processing}
         >
-          {processing ? <i className="HydroSDK-loading" /> : null} Create
+          {processing ? <i className="HydroSDK-fa HydroSDK-loading" /> : null}{" "}
+          Create
         </button>
       </form>
     );
   }
 }
 
-export default Create;
+export default connect()(Create);

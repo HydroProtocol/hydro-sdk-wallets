@@ -1,17 +1,27 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-import { createStore, combineReducers } from "redux";
+import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import { Wallet, WalletReducer, WalletButton } from "hydro-sdk-wallet";
+import thunk from "redux-thunk";
 
 const dest = document.getElementById("content");
 const reducer = combineReducers({
   WalletReducer
 });
 
-const store = (window.devToolsExtension
-  ? window.devToolsExtension()(createStore)
-  : createStore)(reducer);
+const enhancers = [];
+if (window.devToolsExtension) {
+  enhancers.push(window.devToolsExtension());
+}
+
+const store = createStore(
+  reducer,
+  compose(
+    applyMiddleware(thunk),
+    ...enhancers
+  )
+);
 
 let render = () => {
   // const SimpleForm = require("./SimpleForm").default;

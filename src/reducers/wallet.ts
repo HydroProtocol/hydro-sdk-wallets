@@ -1,12 +1,15 @@
 import { Map, fromJS } from "immutable";
 import { BigNumber } from "ethers/utils";
 import { ImmutableMap } from ".";
+import { HydroWallet, ExtensionWallet } from "../wallets";
 
 export interface AccountProps {
   address: string | null;
   balance: BigNumber;
   isLocked: boolean;
+  networkId: number | null;
   timers: Map<string, number>;
+  wallet: HydroWallet | typeof ExtensionWallet;
 }
 
 export type AccountState = ImmutableMap<AccountProps>;
@@ -15,16 +18,16 @@ export const initializeAccount: ImmutableMap<AccountState> = Map({
   address: null,
   balance: new BigNumber("0"),
   isLocked: true,
+  networkId: null,
   timers: Map(),
-  networkId: null
+  wallet: null
 });
 
 export interface WalletProps {
   accounts: Map<string, AccountState>;
   selectedType: string | null;
-  supportedWallet: Map<string, boolean>;
+  extensionWalletSupported: boolean;
   isShowDialog: boolean;
-  networkId: number | null;
 }
 
 export type WalletState = ImmutableMap<WalletProps>;
@@ -32,7 +35,7 @@ export type WalletState = ImmutableMap<WalletProps>;
 const initialState: WalletState = fromJS({
   accounts: Map<string, AccountState>(),
   selectedType: null,
-  supportedWallet: Map(),
+  extensionWalletSupported: false,
   isShowDialog: false
 });
 
@@ -40,6 +43,16 @@ export default (state = initialState, action: any) => {
   switch (action.type) {
     case "HYDRO_WALLET_INIT_ACCOUNT":
       state = state.setIn(["accounts", action.payload.type], initializeAccount);
+      state = state.setIn(
+        ["accounts", action.payload.type, "wallet"],
+        action.payload.wallet
+      );
+      return state;
+    case "HYDRO_WALLET_UPDATE_WALLET":
+      state = state.setIn(
+        ["accounts", action.payload.type, "wallet"],
+        action.payload.wallet
+      );
       return state;
     case "HYDRO_WALLET_SHOW_DIALOG":
       state = state.set("isShowDialog", true);
@@ -53,7 +66,7 @@ export default (state = initialState, action: any) => {
     case "HYDRO_WALLET_UNLOCK_ACCOUNT":
       state = state.setIn(["accounts", action.payload.type, "isLocked"], false);
       return state;
-    case "HYDRO_WALLET_LOAD_ACCOUNT":
+    case "HYDRO_WALLET_LOAD_ADDRESS":
       state = state.setIn(
         ["accounts", action.payload.type, "address"],
         action.payload.address
@@ -69,12 +82,18 @@ export default (state = initialState, action: any) => {
       state = state.set("selectedType", action.payload.type);
       return state;
     case "HYDRO_WALLET_SUPPORT_EXTENSION_WALLET":
-      state = state.set("extensionWalletSuported", true);
+      state = state.set("extensionWalletSupported", true);
       return state;
-    case "HYDRO_WALLET_LOAD_NETWORK_ID":
+    case "HYDRO_WALLET_LOAD_NETWORK":
       state = state.setIn(
         ["accounts", action.payload.type, "networkId"],
         action.payload.networkId
+      );
+      return state;
+    case "HYDRO_WALLET_SET_TIMER":
+      state = state.setIn(
+        ["accounts", action.payload.type, "timers", action.payload.timerKey],
+        action.payload.timer
       );
       return state;
     default:

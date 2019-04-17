@@ -9,5 +9,12 @@ export const getSelectedAccount = (
     return undefined;
   }
 
-  return state.get("accounts").get(selectedType);
+  return state.getIn(["accounts", selectedType]);
+};
+
+export const getAccount = (
+  state: WalletState,
+  type: string
+): AccountState | undefined => {
+  return state.getIn(["accounts", type]);
 };

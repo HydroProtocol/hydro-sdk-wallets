@@ -1,20 +1,17 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { connector } from "../../connector";
 import { WalletState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
 import { hideDialog, showDialog } from "../../actions/wallet";
 
 class WalletButton extends React.PureComponent<any, any> {
   public render() {
-    const { isShowDialog } = this.props;
+    const { isShowDialog, dispatch } = this.props;
 
     return (
       <button
         className="HydroSDK-toggleButton"
-        onClick={() =>
-          connector.dispatch(isShowDialog ? hideDialog() : showDialog())
-        }
+        onClick={() => dispatch(isShowDialog ? hideDialog() : showDialog())}
       >
         {this.toggleText()}
       </button>

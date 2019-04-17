@@ -1,14 +1,16 @@
 import * as React from "react";
 import Select, { Option } from "./Select";
 import { getWalletName } from "../../wallets";
-import { connector } from "../../connector";
 import { AccountState } from "../../reducers/wallet";
+import { connect } from "react-redux";
+import { selectAccount } from "../../actions/wallet";
 
 interface Props {
   walletIsSupported: boolean;
   walletName: string;
   selectedType: string | null;
   accounts: AccountState;
+  dispatch: any;
 }
 
 interface State {}
@@ -46,15 +48,16 @@ class SelectWallet extends React.PureComponent<Props, State> {
   }
 
   private getTypesOptions(): Option[] {
+    const { walletName, dispatch } = this.props;
     const options: Option[] = [];
-    this.getWalletTypes(this.props.walletName).forEach((account, type) => {
+    this.getWalletTypes(walletName).forEach((account, type) => {
       let text = account.get("address");
       if (text) {
         options.push({
           value: type,
           text,
           onSelect: (option: Option) => {
-            connector.selectConnection(option.value);
+            dispatch(selectAccount(option.value));
           }
         });
       }
@@ -70,4 +73,4 @@ class SelectWallet extends React.PureComponent<Props, State> {
   }
 }
 
-export default SelectWallet;
+export default connect()(SelectWallet);

@@ -5,24 +5,9 @@ import { Contract } from "ethers";
 export default abstract class ExtensionWallet extends BaseWallet {
   public static WALLET_NAME = "Extension Wallet";
   public static TYPE = "EXTENSION";
-  public static _address: string | null = null;
-  public static _balance: BigNumber = new BigNumber("0");
-  public static _networkId?: number;
 
   public static getType(): string {
     return this.TYPE;
-  }
-
-  public static getAddress(): string | null {
-    return this._address;
-  }
-
-  public static getBalance(): BigNumber {
-    return this._balance;
-  }
-
-  public static getNetworkId(): number | undefined {
-    return this._networkId;
   }
 
   public static loadNetworkId(): Promise<number | undefined> {
@@ -30,14 +15,10 @@ export default abstract class ExtensionWallet extends BaseWallet {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      if (!this._address) {
-        reject(BaseWallet.NeedUnlockWalletError);
-      }
       window.web3.version.getNetwork((err: Error, networkId: number) => {
         if (err) {
           reject(err);
         } else {
-          this._networkId = networkId;
           resolve(networkId);
         }
       });
@@ -67,29 +48,28 @@ export default abstract class ExtensionWallet extends BaseWallet {
     });
   }
 
-  public static signMessage(message: string): Promise<string> | null {
-    return this.personalSignMessage(message);
+  public static signMessage(
+    message: string,
+    address: string
+  ): Promise<string> | null {
+    return this.personalSignMessage(message, address);
   }
 
-  public static personalSignMessage(message: string): Promise<string> {
+  public static personalSignMessage(
+    message: string,
+    address: string
+  ): Promise<string> {
     return new Promise((resolve, reject) => {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      if (!this._address) {
-        reject(BaseWallet.NeedUnlockWalletError);
-      }
-      window.web3.personal.sign(
-        message,
-        this._address,
-        (err: Error, res: string) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(res);
-          }
+      window.web3.personal.sign(message, address, (err: Error, res: string) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res);
         }
-      );
+      });
     });
   }
 
@@ -99,9 +79,6 @@ export default abstract class ExtensionWallet extends BaseWallet {
     return new Promise((resolve, reject) => {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
-      }
-      if (!this._address) {
-        reject(BaseWallet.NeedUnlockWalletError);
       }
       window.web3.eth.sendTransaction(txParams, (err: Error, res: string) => {
         if (err) {
@@ -118,9 +95,6 @@ export default abstract class ExtensionWallet extends BaseWallet {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      if (!this._address) {
-        reject(BaseWallet.NeedUnlockWalletError);
-      }
       window.web3.eth.getTransactionReceipt(txId, (err: Error, res: any) => {
         if (err) {
           reject(err);
@@ -134,40 +108,30 @@ export default abstract class ExtensionWallet extends BaseWallet {
   public static getAddresses(): Promise<string[]> {
     return new Promise((resolve, reject) => {
       if (!this.isSupported()) {
-        this._address = null;
         reject(BaseWallet.NotSupportedError);
       }
       window.web3.eth.getAccounts((err: Error, accounts: string[]) => {
         if (err) {
-          this._address = null;
           reject(err);
         } else {
-          this._address = accounts[0];
           resolve(accounts);
         }
       });
     });
   }
 
-  public static loadBalance(): Promise<BigNumber> {
+  public static loadBalance(address: string): Promise<BigNumber> {
     return new Promise((resolve, reject) => {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      if (!this._address) {
-        reject(BaseWallet.NeedUnlockWalletError);
-      }
-      window.web3.eth.getBalance(
-        this._address,
-        (err: Error, res: BigNumber) => {
-          if (err) {
-            reject(err);
-          } else {
-            this._balance = res;
-            resolve(res);
-          }
+      window.web3.eth.getBalance(address, (err: Error, res: BigNumber) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res);
         }
-      );
+      });
     });
   }
 
@@ -180,17 +144,13 @@ export default abstract class ExtensionWallet extends BaseWallet {
       return;
     }
 
-    window.ethereum.enable().then((accounts: string[]) => {
-      if (accounts[0]) {
-        this._address = accounts[0];
-      }
-    });
+    window.ethereum.enable();
   }
 
   public static unlock(): void {}
 
-  public static isLocked(): boolean {
-    return !this._address;
+  public static isLocked(address: string | null): boolean {
+    return !address;
   }
 
   public static isSupported(): boolean {

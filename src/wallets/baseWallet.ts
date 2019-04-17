@@ -14,9 +14,15 @@ export default abstract class baseWallet {
 
   public static NotSupportedError = new Error("Current Wallet Not Supported");
 
-  public abstract signMessage(message: string): Promise<string> | null;
+  public abstract signMessage(
+    message: string,
+    address: string
+  ): Promise<string> | null;
 
-  public abstract personalSignMessage(message: string): Promise<string>;
+  public abstract personalSignMessage(
+    message: string,
+    address: string
+  ): Promise<string>;
 
   public abstract sendTransaction(
     txParams: txParams
@@ -24,23 +30,17 @@ export default abstract class baseWallet {
 
   public abstract getAddresses(): Promise<string[]>;
 
-  public abstract isLocked(): boolean;
-
-  public abstract loadBalance(): Promise<any>;
+  public abstract loadBalance(address: string): Promise<any>;
 
   public abstract getType(): string;
-
-  public abstract getAddress(): string | null;
-
-  public abstract getBalance(): BigNumber;
 
   public abstract isSupported(): boolean;
 
   public abstract unlock(password: string): void;
 
+  public abstract isLocked(address: string | null): boolean;
+
   public abstract getTransactionReceipt(txId: string): Promise<any>;
 
   public abstract loadNetworkId(): Promise<number | undefined>;
-
-  public abstract getNetworkId(): number | undefined;
 }

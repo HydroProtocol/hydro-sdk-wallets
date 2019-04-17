@@ -27,6 +27,7 @@
     "eslint-plugin-react": "^7.12.4",
     "eventsource-polyfill": "^0.9.6",
     "express": "^4.16.4",
+    "redux-thunk": "^2.3.0",
     "style-loader": "^0.23.1",
     "webpack": "^4.30.0",
     "webpack-dev-middleware": "^3.6.2",
