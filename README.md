@@ -52,21 +52,22 @@ const store = createStore(rootReducer);
 
 To make the wallet logic work. We need to mount the `Wallet` and `WalletButton` components into your app. They should be mount into `Provider`(see more details about Provider in [react-redux](https://github.com/reduxjs/react-redux)). When the components is initialized, some monitors will start to work as well. They are monitoring the web3 wallet status(not installed, locking, account changed), ledger status(locked or not), and balances of all available addresses. You can config wallet through props. See more datials are in the api section below.
 
-```
-import React from 'react'
+```javascript
+import React from "react";
 import { Provider } from "react-redux";
-import { Wallet, WalletButton } from '@hydroprotocol/hydro-sdk-wallet'
+import { Wallet, WalletButton } from "@hydroprotocol/hydro-sdk-wallet";
 import { store } from "./store";
 
 class App extends React.Component {
-	render() {
-		return <Provider store={store}>
-			// ... your components
-
-			<Wallet nodeURL="https://mainnet.infura.io" />
-			<WalletButton />
-		</Provider>
-	}
+  render() {
+    return (
+      <Provider store={store}>
+        // ... your components
+        <Wallet nodeURL="https://mainnet.infura.io" />
+        <WalletButton />
+      </Provider>
+    );
+  }
 }
 ```
 
@@ -74,28 +75,30 @@ class App extends React.Component {
 
 We can get the current selected account by using selector functions.
 
-```
-import React from 'react'
+```javascript
+import React from "react";
 import { connect } from "react-redux";
 
 class App extends React.Component {
-    signMessage = async () => {
-        const { currentAccount } = this.props;
-        const signature = currentAccount.wallet.personalSign("test message")
-        console.log(signature)
-    }
+  signMessage = async () => {
+    const { currentAccount } = this.props;
+    const signature = currentAccount.wallet.personalSign("test message");
+    console.log(signature);
+  };
 
-    render() {
-        return <div>
-	         <button onClick={this.signMessage} />
-        </div>;
-	}
+  render() {
+    return (
+      <div>
+        <button onClick={this.signMessage} />
+      </div>
+    );
+  }
 }
-export default connect((state) => {
-	return {
-		currentAccount: GetSelectAccount(state)
-	}
-})(App)
+export default connect(state => {
+  return {
+    currentAccount: GetSelectAccount(state)
+  };
+})(App);
 ```
 
 ## API
