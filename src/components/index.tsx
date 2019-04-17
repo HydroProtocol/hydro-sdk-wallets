@@ -5,7 +5,8 @@ export const formatProps = (state: WalletState): WalletProps => {
     accounts: state.get("accounts"),
     selectedType: state.get("selectedType"),
     extensionWalletSuported: state.get("extensionWalletSuported"),
-    isShowDialog: state.get("isShowDialog")
+    isShowDialog: state.get("isShowDialog"),
+    networkId: state.get("networkId")
   };
 };
 

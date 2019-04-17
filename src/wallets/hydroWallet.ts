@@ -16,6 +16,7 @@ export default class HydroWallet extends BaseWallet {
   public _balance: BigNumber = new BigNumber("0");
   private _timer?: number;
   private _provider?: Provider;
+  public _networkId?: number;
 
   private constructor(address: string, wallet?: any) {
     super();
@@ -70,16 +71,12 @@ export default class HydroWallet extends BaseWallet {
     return true;
   }
 
-  public setAddress(address: string | null): void {
-    this._address = address;
-  }
-
-  public setBalance(balance: BigNumber): void {
-    this._balance = balance;
-  }
-
   public getBalance(): BigNumber {
     return this._balance;
+  }
+
+  public getNetworkId(): number | undefined {
+    return this._networkId;
   }
 
   public getType(): string {
@@ -173,7 +170,7 @@ export default class HydroWallet extends BaseWallet {
     }
   }
 
-  public getAccounts(): Promise<string[]> {
+  public loadAccounts(): Promise<string[]> {
     return new Promise(resolve => {
       if (this._address) {
         resolve([this._address]);
@@ -184,13 +181,23 @@ export default class HydroWallet extends BaseWallet {
   }
 
   public loadBalance(): Promise<BigNumber> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       if (!this._wallet) {
         reject(BaseWallet.NeedUnlockWalletError);
       } else {
-        resolve(this._wallet.getBalance());
+        this._balance = await this._wallet.getBalance();
+        resolve(this._balance);
       }
     });
+  }
+
+  public async loadNetworkId(): Promise<number | undefined> {
+    if (!this._wallet || !this._wallet.provider) {
+      return;
+    }
+    const network = await this._wallet.provider.getNetwork();
+    this._networkId = network.chainId;
+    return this._networkId;
   }
 
   public async lock() {
