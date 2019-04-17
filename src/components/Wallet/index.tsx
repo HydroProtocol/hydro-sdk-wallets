@@ -1,5 +1,5 @@
 import * as React from "react";
-import { connect, DispatchProp } from "react-redux";
+import { connect } from "react-redux";
 import WalletSelector from "./WalletSelector";
 import Create from "./Create";
 import Import from "./Import";

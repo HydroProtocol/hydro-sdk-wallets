@@ -1,22 +1,11 @@
 {
   "name": "hydro-sdk-wallet",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "main": "./build/index.js",
   "files": [
     "build",
     "index.css"
   ],
-  "dependencies": {
-    "@types/ethereumjs-util": "^5.2.0",
-    "@types/node": "11.13.2",
-    "@types/react": "16.8.3",
-    "ethereumjs-util": "5.2.0",
-    "ethers": "^4.0.27",
-    "immutable": "^4.0.0-rc.12",
-    "react": "^16.8.3",
-    "react-redux": "^7.0.2",
-    "typescript": "3.4.2"
-  },
   "scripts": {
     "build": "rm -rf build && tsc",
     "example": "npm --prefix ./examples/$example install && npm --prefix ./examples/$example start",
@@ -31,7 +20,25 @@
     "not ie <= 11",
     "not op_mini all"
   ],
+  "dependencies": {
+    "ethereumjs-util": "5.2.0",
+    "ethers": "^4.0.27",
+    "immutable": "^4.0.0-rc.12",
+    "react": "^16.8.3",
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.0.2"
+  },
   "devDependencies": {
+    "@types/ethereumjs-util": "^5.2.0",
+    "@types/node": "11.13.2",
+    "@types/react": "16.8.3",
+    "typescript": "3.4.2",
     "@types/react-redux": "^7.0.6"
+  },
+  "peerDependencies": {
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
+    "react-redux": "^6.0.0 || ^7.0.0",
+    "immutable": "^3.8.0"
   }
 }

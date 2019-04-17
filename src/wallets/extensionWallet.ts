@@ -1,6 +1,12 @@
 import BaseWallet, { txParams } from "./baseWallet";
 import { BigNumber } from "ethers/utils";
 import { Contract } from "ethers";
+declare global {
+  interface Window {
+    web3: any;
+    ethereum: any;
+  }
+}
 
 export default abstract class ExtensionWallet extends BaseWallet {
   public static WALLET_NAME = "Extension Wallet";
