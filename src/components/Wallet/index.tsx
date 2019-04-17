@@ -61,7 +61,16 @@ class Wallet extends React.PureComponent<Props, State> {
     const { dispatch, nodeUrl } = this.props;
     HydroWallet.setNodeUrl(nodeUrl);
     dispatch(loadHydroWallets());
-    dispatch(loadExtensitonWallet());
+
+    if (document.readyState === "complete") {
+      this.loadExtensitonWallet();
+    } else {
+      window.addEventListener("load", this.loadExtensitonWallet.bind(this));
+    }
+  }
+
+  private loadExtensitonWallet() {
+    this.props.dispatch(loadExtensitonWallet());
   }
 
   public render() {
@@ -200,19 +209,27 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private getWalletsOptions(): Option[] {
-    const onSelect = (option: Option) => {
-      this.setState({ selectedWalletName: option.value, step: STEPS.SELETE });
-    };
     return [
       {
         value: HydroWallet.WALLET_NAME,
         text: HydroWallet.WALLET_NAME,
-        onSelect
+        onSelect: (option: Option) => {
+          this.setState({
+            selectedWalletName: option.value,
+            step: STEPS.SELETE
+          });
+        }
       },
       {
         value: ExtensionWallet.WALLET_NAME,
         text: ExtensionWallet.WALLET_NAME,
-        onSelect
+        onSelect: (option: Option) => {
+          window.ethereum.enable();
+          this.setState({
+            selectedWalletName: option.value,
+            step: STEPS.SELETE
+          });
+        }
       }
     ];
   }

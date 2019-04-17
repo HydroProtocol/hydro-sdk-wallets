@@ -1,5 +1,6 @@
 import { Wallet, WalletButton } from "./components";
 import { WalletReducer } from "./reducers";
+import { getSelectedAccount, getAccount } from "./selector/wallet";
 import "../index.css";
 
 declare global {
@@ -9,4 +10,4 @@ declare global {
   }
 }
 
-export { Wallet, WalletReducer, WalletButton };
+export { Wallet, WalletReducer, WalletButton, getSelectedAccount, getAccount };
