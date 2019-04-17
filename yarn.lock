@@ -326,6 +326,15 @@ prop-types@^15.7.2:
     object-assign "^4.1.1"
     react-is "^16.8.1"
 
+react-dom@^16.8.6:
+  version "16.8.6"
+  resolved "http://registry.npm.taobao.org/react-dom/download/react-dom-16.8.6.tgz?cache=0&other_urls=http%3A%2F%2Fregistry.npm.taobao.org%2Freact-dom%2Fdownload%2Freact-dom-16.8.6.tgz#71d6303f631e8b0097f56165ef608f051ff6e10f"
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
+    scheduler "^0.13.6"
+
 react-is@^16.7.0, react-is@^16.8.6:
   version "16.8.6"
   resolved "http://registry.npm.taobao.org/react-is/download/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
