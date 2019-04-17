@@ -38,18 +38,20 @@ interface Props extends WalletProps {
   nodeUrl: string;
   title?: string;
   hideBanner?: boolean;
-  defaultWallet?: string;
+  defaultWalletType?: string;
   selectedAccount: AccountState | undefined;
 }
 
 class Wallet extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props);
-    const { defaultWallet, selectedType } = this.props;
+    const { defaultWalletType, selectedType } = this.props;
     this.state = {
       step: STEPS.SELETE,
       selectedWalletName:
-        getWalletName(selectedType) || defaultWallet || HydroWallet.WALLET_NAME,
+        getWalletName(selectedType) ||
+        defaultWalletType ||
+        HydroWallet.WALLET_NAME,
       password: "",
       processing: false
     };
