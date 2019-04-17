@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
-import { Wallet, WalletReducer, WalletButton } from "hydro-sdk-wallet";
+import { WalletReducer } from "hydro-sdk-wallet";
 import thunk from "redux-thunk";
 
 const dest = document.getElementById("content");
@@ -24,14 +24,12 @@ const store = createStore(
 );
 
 let render = () => {
-  // const SimpleForm = require("./SimpleForm").default;
+  const Example = require("./example").default;
   // const readme = require("./Simple.md");
-  //   const raw = require("!!raw-loader!./SimpleForm");
+  // const raw = require("!!raw-loader!./SimpleForm");
   ReactDOM.render(
     <Provider store={store}>
-      <h2>Basic</h2>
-      <Wallet title="Basic Wallet Demo" nodeUrl="http://localhost:8545" />
-      <WalletButton />
+      <Example />{" "}
     </Provider>,
     dest
   );
