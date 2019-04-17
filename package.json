@@ -18,7 +18,9 @@
     "typescript": "3.4.2"
   },
   "scripts": {
-    "build": "rm -rf build && tsc"
+    "build": "rm -rf build && tsc",
+    "example": "npm --prefix ./examples/$example install && npm --prefix ./examples/$example start",
+    "example:basic": "example=basic npm run example"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -28,7 +30,6 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
   ],
   "devDependencies": {
     "@types/react-redux": "^7.0.6"
