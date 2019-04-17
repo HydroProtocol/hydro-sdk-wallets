@@ -141,6 +141,6 @@ When we get an account from redux store, we can call some functions of `account.
 
 There are some examples projects. You can find commands to start these examples in package.json and source code in examples dir.
 
-## Licence
+## License
 
-MIT
+This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details
