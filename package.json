@@ -14,6 +14,7 @@
     "ethers": "^4.0.27",
     "immutable": "^4.0.0-rc.12",
     "react": "^16.8.3",
+    "react-redux": "^7.0.2",
     "typescript": "3.4.2"
   },
   "scripts": {
@@ -28,4 +29,8 @@
     "not ie <= 11",
     "not op_mini all"
   ]
+  ],
+  "devDependencies": {
+    "@types/react-redux": "^7.0.6"
+  }
 }

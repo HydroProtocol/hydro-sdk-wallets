@@ -1,4 +1,5 @@
 import * as React from "react";
+import { connect } from "react-redux";
 import { connector } from "../../connector";
 import WalletSelector from "./WalletSelector";
 import Create from "./Create";
@@ -11,9 +12,10 @@ import {
   ExtensionWallet,
   isHydroWallet
 } from "../../wallets";
-import { WalletProps } from "../../reducers/wallet";
+import { WalletProps, WalletState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
 import { hideDialog, showDialog } from "../../actions/wallet";
+import { ImmutableMap } from "../../reducers";
 
 const STEPS = {
   SELETE: "SELETE",
@@ -220,4 +222,21 @@ class Wallet extends React.PureComponent<Props, State> {
     ];
   }
 }
-export default Wallet;
+
+export default connect(
+  (state: any) => {
+    const walletState: WalletState = state.WalletReducer;
+
+    return {
+      accounts: walletState.get("accounts"),
+      selectedType: walletState.get("selectedType"),
+      extensionWalletSuported: walletState.get("extensionWalletSuported"),
+      isShowDialog: walletState.get("isShowDialog")
+    };
+  },
+  dispatch => {
+    // hack
+    connector.setDispatch(dispatch);
+    return {};
+  }
+)(Wallet);
