@@ -112,32 +112,29 @@ export default connect((state) => {
 |browserWalletAutoSign|boolean |`false`|Local wallet only. When asking for a signature for a tx or a message, whether popup a dialog to confirm or not.|
 
 
-### selectors
+### Selectors
 
 Methods to get data from redux store.
 
-```
-function GetAccounts(state): account[];
-function GetSelectAccount(state): account;
-```
+- `GetAccounts(state)` Return all available accounts
+- `GetSelectAccount(state)` Return the selected account
 
-### action creators
+### Action creators
 
 These functions are redux action creators. You need to dispatch the result to store.
 
-```
-function SelectAccount(accountID);
-function UnlockBrowserLocalAccount(accountID, password);
-```
+- `SelectAccount(accountID)` Change Selected Account
+- `UnlockBrowserLocalAccount(accountID, password)` Unlock a browser local wallet
+- `ShowWalletModal()` Show the wallets modal
+- `HideWalletModal()` Hide the wallets modal
 
-### account functions
+### Account functions
 
-We can call the following functions of `account.wallet` object.
+When we get an account from redux store, we can call some functions of `account.wallet` object.
 
-```
-function personalSign(message): Promise<string>;
-function sendTransaction({ to: "", value: "", data: ""}): Promise<string>;
-```
+- `personalSign(message: string | Uint8Array)` Sign message 
+- `sendTransaction({ to: "0x0123..3410", value: "0x123", data: "", gasPrice: "0x312", gasLimit: 190000, nonde: "0x3"})` Sign and send the transaction, return value is the transaction hash.
+- `GetTransactionReceipt(transactionHash: string)` Get the receipt of a transaction.
 
 ## Try the examples
 
