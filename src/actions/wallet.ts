@@ -52,3 +52,19 @@ export const hideDialog = () => {
     type: "HYDRO_WALLET_HIDE_DIALOG"
   };
 };
+
+export const loadExtensitonWallet = () => {
+  // 检查有没有安装extension wallet
+  // if yes
+  //   dispatch(supportExtensionWallet)
+};
+
+export const loadBrowserWallets = () => {
+  // load addresses from localStorage
+  // if not blank?
+  //   foreach dispatch(initAddress)
+};
+
+export const removeAddress = () => {
+  // clear timer
+};

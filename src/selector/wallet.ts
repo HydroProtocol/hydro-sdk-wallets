@@ -1,8 +1,13 @@
-import { WalletProps, AccountState } from "../reducers/wallet";
-export const getSelectedAccount = (state: WalletProps): AccountState | null => {
-  const selectedType = state.selectedType;
+import { AccountState, WalletState } from "../reducers/wallet";
+
+export const getSelectedAccount = (
+  state: WalletState
+): AccountState | undefined => {
+  const selectedType = state.get("selectedType");
+
   if (!selectedType) {
-    return null;
+    return undefined;
   }
-  return state.accounts.get(selectedType)!;
+
+  return state.get("accounts").get(selectedType);
 };

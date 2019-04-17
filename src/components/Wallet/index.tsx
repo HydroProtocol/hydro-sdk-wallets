@@ -1,5 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { Dispatch } from "redux";
 import { connector } from "../../connector";
 import WalletSelector from "./WalletSelector";
 import Create from "./Create";
@@ -12,10 +13,9 @@ import {
   ExtensionWallet,
   isHydroWallet
 } from "../../wallets";
-import { WalletProps, WalletState } from "../../reducers/wallet";
+import { WalletProps, WalletState, AccountState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
 import { hideDialog, showDialog } from "../../actions/wallet";
-import { ImmutableMap } from "../../reducers";
 
 const STEPS = {
   SELETE: "SELETE",
@@ -30,7 +30,16 @@ interface State {
   processing: boolean;
 }
 
-interface Props extends WalletProps {}
+interface Props extends WalletProps {
+  dispatch: Dispatch;
+  nodeUrl: string;
+
+  title?: string;
+  hideBanner?: boolean;
+  defaultWallet?: string;
+
+  selectedAccount: AccountState | undefined;
+}
 
 class Wallet extends React.PureComponent<Props, State> {
   constructor(props: Props) {
@@ -43,24 +52,28 @@ class Wallet extends React.PureComponent<Props, State> {
     };
   }
 
+  public componentDidMount() {
+    const { dispatch, nodeUrl } = this.props;
+    connector.setDispatch(dispatch);
+    connector.setNodeUrl(nodeUrl);
+  }
+
   public render() {
     const { selectedWalletName } = this.state;
-    const { isShowDialog } = this.props;
+    const { isShowDialog, title, hideBanner } = this.props;
 
     return (
       <div className="HydroSDK-wallet">
-        <button
-          className="HydroSDK-toggleButton"
-          onClick={() =>
-            connector.dispatch(isShowDialog ? hideDialog() : showDialog())
-          }
-        >
-          {this.toggleText()}
-        </button>
         <div className="HydroSDK-container" hidden={!isShowDialog}>
           <div className="HydroSDK-backdrop" />
           <div className="HydroSDK-dialog">
-            <div className="HydroSDK-title">Hydro SDK Wallet</div>
+            <div className="HydroSDK-title">
+              {title || "Hydro SDK Wallet"}
+              {hideBanner ? null : (
+                <span className="HydroSDK-banner">Powered by Hydro</span>
+              )}
+            </div>
+
             <div className="HydroSDK-fieldGroup">
               <div className="HydroSDK-label">Select Wallet</div>
               <Select
@@ -83,27 +96,6 @@ class Wallet extends React.PureComponent<Props, State> {
         </div>
       </div>
     );
-  }
-
-  private toggleText() {
-    const selectedAccount = getSelectedAccount(this.props);
-    if (selectedAccount) {
-      const isLocked = selectedAccount.get("isLocked");
-      return (
-        <span>
-          {isLocked ? (
-            <i className="HydroSDK-fa HydroSDK-lock" />
-          ) : (
-            <i className="HydroSDK-fa HydroSDK-check" />
-          )}
-          {selectedAccount.get("address")
-            ? selectedAccount.get("address")
-            : "Please Click to Select A Wallet"}
-        </span>
-      );
-    } else {
-      return <span>Please Click to Select A Wallet</span>;
-    }
   }
 
   private renderStepContent() {
@@ -139,7 +131,7 @@ class Wallet extends React.PureComponent<Props, State> {
   private renderUnlockForm() {
     const { password, selectedWalletName } = this.state;
     const { selectedType } = this.props;
-    const selectedAccount = getSelectedAccount(this.props);
+    const { selectedAccount } = this.props;
     if (
       selectedWalletName !== HydroWallet.WALLET_NAME ||
       !isHydroWallet(selectedType) ||
@@ -161,7 +153,8 @@ class Wallet extends React.PureComponent<Props, State> {
   private renderHydroWalletButtons(): JSX.Element | null {
     const { step, processing, selectedWalletName } = this.state;
     const { selectedType } = this.props;
-    const selectedAccount = getSelectedAccount(this.props);
+    const { selectedAccount } = this.props;
+
     if (
       !selectedType ||
       selectedWalletName !== HydroWallet.WALLET_NAME ||
@@ -224,10 +217,12 @@ class Wallet extends React.PureComponent<Props, State> {
 }
 
 export default connect(
-  (state: any) => {
+  (state: any, ownedProps) => {
+    console.log(ownedProps);
     const walletState: WalletState = state.WalletReducer;
 
     return {
+      selectedAccount: getSelectedAccount(walletState),
       accounts: walletState.get("accounts"),
       selectedType: walletState.get("selectedType"),
       extensionWalletSuported: walletState.get("extensionWalletSuported"),
@@ -235,8 +230,6 @@ export default connect(
     };
   },
   dispatch => {
-    // hack
-    connector.setDispatch(dispatch);
-    return {};
+    return { dispatch };
   }
 )(Wallet);

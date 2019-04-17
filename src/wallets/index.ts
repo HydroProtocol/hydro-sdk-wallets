@@ -30,12 +30,7 @@ export const isHydroWallet = (type: string | null): boolean => {
   }
 };
 
-export const get64BytesString = (str: string) => {
-  str = str.replace("0x", "");
-  let prefix = "";
-  const prefixLength = 64 - str.length;
-  for (let i = 0; i < prefixLength; i++) {
-    prefix += "0";
-  }
-  return `${prefix}${str}`;
+export const WalletTypes = {
+  HydroWallet: HydroWallet.WALLET_NAME,
+  ExtensionWallet: ExtensionWallet.WALLET_NAME
 };

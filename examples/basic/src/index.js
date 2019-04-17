@@ -2,7 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { createStore, combineReducers } from "redux";
-import { Wallet, WalletReducer } from "hydro-sdk-wallet";
+import {
+  Wallet,
+  WalletReducer,
+  WalletButton,
+  WalletTypes
+} from "hydro-sdk-wallet";
 
 const dest = document.getElementById("content");
 const reducer = combineReducers({
@@ -20,7 +25,12 @@ let render = () => {
   ReactDOM.render(
     <Provider store={store}>
       <h2>Basic</h2>
-      <Wallet />
+      <Wallet
+        title="Basic Wallet Demo"
+        nodeUrl="http://localhost:8545"
+        defaultWallet={WalletTypes.HydroWallet}
+      />
+      <WalletButton />
     </Provider>,
     dest
   );

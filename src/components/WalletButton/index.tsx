@@ -1,0 +1,54 @@
+import * as React from "react";
+import { connect } from "react-redux";
+import { connector } from "../../connector";
+import { WalletState } from "../../reducers/wallet";
+import { getSelectedAccount } from "../../selector/wallet";
+import { hideDialog, showDialog } from "../../actions/wallet";
+
+class WalletButton extends React.PureComponent<any, any> {
+  public render() {
+    const { isShowDialog } = this.props;
+
+    return (
+      <button
+        className="HydroSDK-toggleButton"
+        onClick={() =>
+          connector.dispatch(isShowDialog ? hideDialog() : showDialog())
+        }
+      >
+        {this.toggleText()}
+      </button>
+    );
+  }
+
+  private toggleText() {
+    const { selectedAccount } = this.props;
+
+    if (selectedAccount) {
+      const isLocked = selectedAccount.get("isLocked");
+      return (
+        <span>
+          {isLocked ? (
+            <i className="HydroSDK-fa HydroSDK-lock" />
+          ) : (
+            <i className="HydroSDK-fa HydroSDK-check" />
+          )}
+          {selectedAccount.get("address")
+            ? selectedAccount.get("address")
+            : "Please Click to Select A Wallet"}
+        </span>
+      );
+    } else {
+      return <span>Please Click to Select A Wallet</span>;
+    }
+  }
+}
+
+export default connect((state: any) => {
+  const walletState: WalletState = state.WalletReducer;
+
+  return {
+    selectedAccount: getSelectedAccount(walletState),
+    isShowDialog: walletState.get("isShowDialog")
+  };
+})(WalletButton);

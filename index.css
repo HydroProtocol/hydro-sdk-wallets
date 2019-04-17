@@ -223,3 +223,8 @@ button {
     transform: rotate(359deg);
   }
 }
+
+.HydroSDK-banner {
+  float: right;
+  font-size: 12px;
+}
