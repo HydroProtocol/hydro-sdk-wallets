@@ -193,13 +193,27 @@ const watchWallet = (wallet: Wallet) => {
         address = null;
       }
 
-      if (wallet.isLocked(address)) {
-        dispatch(lockAccount(type));
-      } else {
-        dispatch(unlockAccount(type));
+      const walletIsLocked = wallet.isLocked(address);
+      const walletStoreLocked = getState().WalletReducer.getIn([
+        "accounts",
+        type,
+        "isLocked"
+      ]);
+
+      if (walletIsLocked !== walletStoreLocked) {
+        dispatch(walletIsLocked ? lockAccount(type) : unlockAccount(type));
       }
 
-      dispatch(loadAddress(type, address));
+      const currentAddressInStore = getState().WalletReducer.getIn([
+        "accounts",
+        type,
+        "address"
+      ]);
+
+      if (currentAddressInStore !== address) {
+        dispatch(loadAddress(type, address));
+      }
+
       const nextTimer = window.setTimeout(() => watchAddress(nextTimer), 3000);
       dispatch(setTimer(type, timerKey, nextTimer));
     };
@@ -237,7 +251,13 @@ const watchWallet = (wallet: Wallet) => {
 
       try {
         const networkId = await wallet.loadNetworkId();
-        dispatch(loadNetwork(type, networkId));
+        if (
+          networkId &&
+          networkId !==
+            getState().WalletReducer.getIn(["accounts", type, "networkId"])
+        ) {
+          dispatch(loadNetwork(type, networkId));
+        }
       } catch (e) {
         if (e !== NeedUnlockWalletError && e !== NotSupportedError) {
           throw e;
