@@ -108,7 +108,7 @@ export default connect(state => {
 | Name                                     | Type    | Default                   | Desc                                                                                                            |
 | ---------------------------------------- | ------- | ------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | nodeURL                                  | string  | `https://mainnet.ddex.io` | Ethereum JSON RPC Endpoint                                                                                      |
-| defaultWalletType                        | string  | `Extension`               | default selected wallet type. Options are `Extension`, `Local`, `Ledger`, `WalletConnect`.                      |
+| defaultWalletType                        | string  | `Extension`               | Default selected wallet type. Options are `Extension`, `Local`, `Ledger`, `WalletConnect`.                      |
 | refreshWhenExtensionWalletAddressChanged | boolean | `true`                    | Reload the app when the address loaded from extension wallet is changed.                                        |
 | browserWalletAutoSign                    | boolean | `false`                   | Local wallet only. When asking for a signature for a tx or a message, whether popup a dialog to confirm or not. |
 
@@ -133,9 +133,9 @@ These functions are redux action creators. You need to dispatch the result to st
 
 When we get an account from redux store, we can call some functions of `account.wallet` object.
 
-- `personalSign(message: string | Uint8Array)` Sign message
-- `sendTransaction({ to: "0x0123..3410", value: "0x123", data: "", gasPrice: "0x312", gasLimit: 190000, nonce: "0x3"})` Sign and send the transaction, return value is the transaction hash.
-- `getTransactionReceipt(transactionHash: string)` Get the receipt of a transaction.
+- `personalSign(message: string | Uint8Array): Promise<string>` Sign message`.
+- `sendTransaction({ to: "0x0123..3410", value: "0x123", data: "", gasPrice: "0x312", gasLimit: 190000, nonce: "0x3"}): Promise<string>` Sign and send the transaction, return value is the transaction hash.
+- `getTransactionReceipt(transactionHash: string): Promise<object>` Get the receipt of a transaction.
 
 ## Try the examples
 
