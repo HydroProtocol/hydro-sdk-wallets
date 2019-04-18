@@ -202,10 +202,15 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private async handleUnlock(selectedType: string): Promise<void> {
-    const { password } = this.state;
-    this.setState({ processing: true });
-    await this.props.dispatch(unlockHydroWallet(selectedType, password));
-    this.setState({ processing: false });
+    try {
+      const { password } = this.state;
+      this.setState({ processing: true });
+      await this.props.dispatch(unlockHydroWallet(selectedType, password));
+    } catch (e) {
+      console.log(e);
+    } finally {
+      this.setState({ processing: false });
+    }
   }
 
   private getWalletsOptions(): Option[] {
