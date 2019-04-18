@@ -109,6 +109,7 @@ export const unlockHydroWallet = (type: string, password: string) => {
     if (hydroWallet) {
       await hydroWallet.unlock(password);
       dispatch(updateWallet(hydroWallet));
+      dispatch(unlockAccount(type));
     }
   };
 };
