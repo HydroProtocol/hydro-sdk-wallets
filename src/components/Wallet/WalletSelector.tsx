@@ -34,7 +34,7 @@ class SelectWallet extends React.PureComponent<Props, State> {
     return (
       <>
         <div className="HydroSDK-fieldGroup">
-          <div className="HydroSDK-label">Select Type</div>
+          <div className="HydroSDK-label">Select Address</div>
           <Select
             blank={blankText}
             noCaret={typesOptions.length === 0}
