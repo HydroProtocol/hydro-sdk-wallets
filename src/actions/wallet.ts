@@ -99,7 +99,7 @@ export const unlockAccount = (type: string) => {
 
 export const unlockHydroWallet = (type: string, password: string) => {
   return async (dispatch: any, getState: any) => {
-    const hydroWallet = getWallet(getState().WalletReducer, type);
+    const hydroWallet = getWallet(getState(), type);
     if (hydroWallet) {
       await hydroWallet.unlock(password);
       dispatch(updateWallet(hydroWallet));
@@ -121,7 +121,7 @@ export const hideDialog = () => {
 
 export const stopWatchers = (type: string) => {
   return (dispatch: any, getState: any) => {
-    const account = getAccount(getState().WalletReducer, type);
+    const account = getAccount(getState(), type);
     if (account) {
       const timers = account.get("timers");
       timers.forEach(timer => {
@@ -159,7 +159,7 @@ export const loadHydroWallet = (wallet: HydroWallet) => {
 const watchWallet = (wallet: Wallet) => {
   return (dispatch: any, getState: any) => {
     const type = wallet.getType();
-    if (!getAccount(getState().WalletReducer, type)) {
+    if (!getAccount(getState(), type)) {
       dispatch(initAccount(type, wallet));
     }
 

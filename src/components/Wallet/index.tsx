@@ -237,8 +237,9 @@ class Wallet extends React.PureComponent<Props, State> {
 
 export default connect((state: any) => {
   const walletState: WalletState = state.WalletReducer;
+
   return {
-    selectedAccount: getSelectedAccount(walletState),
+    selectedAccount: getSelectedAccount(state),
     accounts: walletState.get("accounts"),
     selectedType: walletState.get("selectedType"),
     extensionWalletSupported: walletState.get("extensionWalletSupported"),
