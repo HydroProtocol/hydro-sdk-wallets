@@ -176,12 +176,12 @@ class Wallet extends React.PureComponent<Props, State> {
     }
     return (
       <div className="HydroSDK-hydroWalletButtonGroup">
-        <button
+        {/* <button
           className="HydroSDK-featureButton"
           onClick={() => this.setState({ step: STEPS.CREATE })}
         >
           Create Wallet
-        </button>
+        </button> */}
         <button
           className="HydroSDK-featureButton"
           onClick={() => this.setState({ step: STEPS.IMPORT })}
@@ -208,7 +208,7 @@ class Wallet extends React.PureComponent<Props, State> {
       this.setState({ processing: true });
       await this.props.dispatch(unlockHydroWallet(selectedType, password));
     } catch (e) {
-      console.log(e);
+      alert(e);
     } finally {
       this.setState({ processing: false });
     }
