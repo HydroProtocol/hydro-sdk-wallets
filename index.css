@@ -190,51 +190,20 @@ button {
   right: 20px;
 }
 .HydroSDK-fa {
-  display: inline-block;
-  font: normal normal normal 14px/1 FontAwesome;
-  font-size: inherit;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   margin-right: 4px;
 }
-.HydroSDK-loading {
-  -webkit-animation: fa-spin 2s infinite linear;
-  animation: fa-spin 2s infinite linear;
+.fa-check {
+  color: #3da1a5;
 }
-.HydroSDK-check:before {
-  color: #00d99f;
-  content: "\f00c";
+.HydroSDK-optionItem svg {
+  margin-right: 6px;
 }
-.HydroSDK-lock:before {
-  content: "\f023";
+.HydroSDK-optionItem {
+  display: flex;
+  align-items: center;
 }
-.HydroSDK-loading:before {
-  content: "\f110";
-}
-.HydroSDK-error {
-  border: 1px solid #ff6f75;
-}
-
-@-webkit-keyframes fa-spin {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(359deg);
-    transform: rotate(359deg);
-  }
-}
-@keyframes fa-spin {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(359deg);
-    transform: rotate(359deg);
-  }
+.HydroSDK-walletFeature {
+  padding-left: 20px;
 }
 .HydroSDK-banner {
   float: right;

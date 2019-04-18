@@ -26,9 +26,9 @@ class WalletButton extends React.PureComponent<any, any> {
       return (
         <span>
           {isLocked ? (
-            <i className="HydroSDK-fa HydroSDK-lock" />
+            <i className="HydroSDK-fa fa fa-lock" />
           ) : (
-            <i className="HydroSDK-fa HydroSDK-check" />
+            <i className="HydroSDK-fa fa fa-check" />
           )}
           {selectedAccount.get("address")
             ? selectedAccount.get("address")

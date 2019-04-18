@@ -63,9 +63,9 @@ class SelectWallet extends React.PureComponent<Props, State> {
               <span>
                 {" "}
                 {isLocked ? (
-                  <i className="HydroSDK-fa HydroSDK-lock" />
+                  <i className="HydroSDK-fa fa fa-lock" />
                 ) : (
-                  <i className="HydroSDK-fa HydroSDK-check" />
+                  <i className="HydroSDK-fa fa fa-check" />
                 )}
                 {text}
               </span>
