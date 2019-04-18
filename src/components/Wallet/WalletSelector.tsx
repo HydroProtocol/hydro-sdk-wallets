@@ -52,10 +52,21 @@ class SelectWallet extends React.PureComponent<Props, State> {
     const options: Option[] = [];
     this.getWalletTypes(walletName).forEach((account, type) => {
       let text = account.get("address");
+      const isLocked = account.get("isLocked");
       if (text) {
         options.push({
           value: type,
-          text,
+          component: (
+            <span>
+              {" "}
+              {isLocked ? (
+                <i className="HydroSDK-fa HydroSDK-lock" />
+              ) : (
+                <i className="HydroSDK-fa HydroSDK-check" />
+              )}
+              {text}
+            </span>
+          ),
           onSelect: (option: Option) => {
             dispatch(selectAccount(option.value));
           }

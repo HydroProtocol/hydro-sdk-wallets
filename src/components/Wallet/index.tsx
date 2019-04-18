@@ -31,7 +31,6 @@ interface State {
   step: string;
   password: string;
   processing: boolean;
-  passwordError: boolean;
 }
 
 interface Props extends WalletProps {
@@ -54,8 +53,7 @@ class Wallet extends React.PureComponent<Props, State> {
         defaultWalletType ||
         HydroWallet.WALLET_NAME,
       password: "",
-      processing: false,
-      passwordError: false
+      processing: false
     };
   }
 
@@ -82,13 +80,19 @@ class Wallet extends React.PureComponent<Props, State> {
     return (
       <div className="HydroSDK-wallet">
         <div className="HydroSDK-container" hidden={!isShowDialog}>
-          <div className="HydroSDK-backdrop" />
+          <div
+            className="HydroSDK-backdrop"
+            onClick={() => dispatch(hideDialog())}
+          />
           <div className="HydroSDK-dialog">
             <div className="HydroSDK-title">
               {title || "Hydro SDK Wallet"}
-              {hideBanner ? null : (
-                <span className="HydroSDK-banner">Powered by Hydro</span>
-              )}
+              <button
+                className="HydroSDK-closeButton"
+                onClick={() => dispatch(hideDialog())}
+              >
+                X
+              </button>
             </div>
             <div className="HydroSDK-fieldGroup">
               <div className="HydroSDK-label">Select Wallet Type</div>
@@ -100,12 +104,9 @@ class Wallet extends React.PureComponent<Props, State> {
             {this.renderStepContent()}
             {this.renderUnlockForm()}
             <div className="HydroSDK-footer">
-              <button
-                className="HydroSDK-closeButton"
-                onClick={() => dispatch(hideDialog())}
-              >
-                Close
-              </button>
+              {hideBanner ? null : (
+                <span className="HydroSDK-banner">Powered by Hydro</span>
+              )}
               {this.renderHydroWalletButtons()}
             </div>
           </div>
@@ -145,9 +146,10 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private renderUnlockForm() {
-    const { password, selectedWalletName, passwordError } = this.state;
+    const { password, selectedWalletName, step } = this.state;
     const { selectedType, selectedAccount } = this.props;
     if (
+      step !== STEPS.SELETE ||
       selectedWalletName !== HydroWallet.WALLET_NAME ||
       !isHydroWallet(selectedType) ||
       !selectedAccount ||
@@ -160,7 +162,6 @@ class Wallet extends React.PureComponent<Props, State> {
       <Input
         label="Password"
         text={password}
-        error={passwordError}
         handleChange={(password: string) => this.setState({ password })}
       />
     );
@@ -178,12 +179,12 @@ class Wallet extends React.PureComponent<Props, State> {
     }
     return (
       <div className="HydroSDK-hydroWalletButtonGroup">
-        <button
+        {/* <button
           className="HydroSDK-featureButton"
           onClick={() => this.setState({ step: STEPS.CREATE })}
         >
           Create Wallet
-        </button>
+        </button> */}
         <button
           className="HydroSDK-featureButton"
           onClick={() => this.setState({ step: STEPS.IMPORT })}
@@ -210,10 +211,7 @@ class Wallet extends React.PureComponent<Props, State> {
       this.setState({ processing: true });
       await this.props.dispatch(unlockHydroWallet(selectedType, password));
     } catch (e) {
-      if (e.message === "invalid passowrd") {
-        this.setState({ passwordError: true });
-      }
-      this.setState({ passwordError: false });
+      alert(e);
     } finally {
       this.setState({ processing: false });
     }

@@ -34,6 +34,9 @@
 .HydroSDK-title {
   font-size: 24px;
   margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .HydroSDK-fieldGroup {
   display: flex;
@@ -56,7 +59,11 @@
   font-size: 14px;
   background: #fcfcfc;
   color: #666666;
-  border: 1px solid #e0e0e0;
+  border: 0;
+  display: inline-block;
+  height: auto;
+  padding: 12px;
+  margin: -12px;
 }
 .HydroSDK-select {
   position: relative;
