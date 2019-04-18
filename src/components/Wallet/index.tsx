@@ -80,13 +80,19 @@ class Wallet extends React.PureComponent<Props, State> {
     return (
       <div className="HydroSDK-wallet">
         <div className="HydroSDK-container" hidden={!isShowDialog}>
-          <div className="HydroSDK-backdrop" />
+          <div
+            className="HydroSDK-backdrop"
+            onClick={() => dispatch(hideDialog())}
+          />
           <div className="HydroSDK-dialog">
             <div className="HydroSDK-title">
               {title || "Hydro SDK Wallet"}
-              {hideBanner ? null : (
-                <span className="HydroSDK-banner">Powered by Hydro</span>
-              )}
+              <button
+                className="HydroSDK-closeButton"
+                onClick={() => dispatch(hideDialog())}
+              >
+                X
+              </button>
             </div>
             <div className="HydroSDK-fieldGroup">
               <div className="HydroSDK-label">Select Wallet Type</div>
@@ -98,12 +104,9 @@ class Wallet extends React.PureComponent<Props, State> {
             {this.renderStepContent()}
             {this.renderUnlockForm()}
             <div className="HydroSDK-footer">
-              <button
-                className="HydroSDK-closeButton"
-                onClick={() => dispatch(hideDialog())}
-              >
-                Close
-              </button>
+              {hideBanner ? null : (
+                <span className="HydroSDK-banner">Powered by Hydro</span>
+              )}
               {this.renderHydroWalletButtons()}
             </div>
           </div>
