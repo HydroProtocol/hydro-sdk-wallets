@@ -79,7 +79,8 @@ class Import extends React.PureComponent<Props, State> {
           type="submit"
           disabled={processing}
         >
-          {processing ? <i className="HydroSDK-loading" /> : null} Import
+          {processing ? <i className="HydroSDK-fa HydroSDK-loading" /> : null}{" "}
+          Import
         </button>
       </form>
     );
