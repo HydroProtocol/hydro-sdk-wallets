@@ -31,6 +31,7 @@ interface State {
   step: string;
   password: string;
   processing: boolean;
+  passwordError: boolean;
 }
 
 interface Props extends WalletProps {
@@ -53,7 +54,8 @@ class Wallet extends React.PureComponent<Props, State> {
         defaultWalletType ||
         HydroWallet.WALLET_NAME,
       password: "",
-      processing: false
+      processing: false,
+      passwordError: false
     };
   }
 
@@ -143,7 +145,7 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private renderUnlockForm() {
-    const { password, selectedWalletName } = this.state;
+    const { password, selectedWalletName, passwordError } = this.state;
     const { selectedType, selectedAccount } = this.props;
     if (
       selectedWalletName !== HydroWallet.WALLET_NAME ||
@@ -158,6 +160,7 @@ class Wallet extends React.PureComponent<Props, State> {
       <Input
         label="Password"
         text={password}
+        error={passwordError}
         handleChange={(password: string) => this.setState({ password })}
       />
     );
@@ -207,7 +210,10 @@ class Wallet extends React.PureComponent<Props, State> {
       this.setState({ processing: true });
       await this.props.dispatch(unlockHydroWallet(selectedType, password));
     } catch (e) {
-      console.log(e);
+      if (e.message === "invalid passowrd") {
+        this.setState({ passwordError: true });
+      }
+      this.setState({ passwordError: false });
     } finally {
       this.setState({ processing: false });
     }

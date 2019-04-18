@@ -205,6 +205,9 @@ button {
 .HydroSDK-loading:before {
   content: "\f110";
 }
+.HydroSDK-error {
+  border: 1px solid #ff6f75;
+}
 
 @-webkit-keyframes fa-spin {
   0% {
