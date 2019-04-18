@@ -19,7 +19,9 @@ export default class HydroWallet extends BaseWallet {
   private constructor(address: string, wallet?: any) {
     super();
     this._address = address;
-    this._wallet = wallet;
+    if (wallet) {
+      this._wallet = wallet.connect(this.getProvider());
+    }
   }
 
   public static async createRandom(password: string): Promise<HydroWallet> {
