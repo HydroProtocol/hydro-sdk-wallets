@@ -224,7 +224,7 @@ class Wallet extends React.PureComponent<Props, State> {
         value: ExtensionWallet.WALLET_NAME,
         text: ExtensionWallet.WALLET_NAME,
         onSelect: (option: Option) => {
-          window.ethereum.enable();
+          ExtensionWallet.enableBrowserExtensionWallet();
           this.setState({
             selectedWalletName: option.value,
             step: STEPS.SELETE

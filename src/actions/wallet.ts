@@ -136,7 +136,6 @@ export const stopWatchers = (type: string) => {
 export const loadExtensitonWallet = () => {
   return (dispatch: any) => {
     if (ExtensionWallet.isSupported()) {
-      ExtensionWallet.enableBrowserExtensionWallet();
       dispatch(supportExtensionWallet());
       dispatch(watchWallet(ExtensionWallet));
     }
