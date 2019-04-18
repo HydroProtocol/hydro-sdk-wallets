@@ -2,6 +2,7 @@ import HydroWallet from "./hydroWallet";
 import ExtensionWallet from "./extensionWallet";
 import BaseWallet from "./baseWallet";
 
+export type Wallet = HydroWallet | typeof ExtensionWallet;
 const { NeedUnlockWalletError, NotSupportedError } = BaseWallet;
 export {
   HydroWallet,

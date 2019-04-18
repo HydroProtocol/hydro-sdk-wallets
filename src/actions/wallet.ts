@@ -1,5 +1,6 @@
 import { BigNumber } from "ethers/utils";
-import { getAccount } from "../selector/wallet";
+import { getAccount, getWallet } from "../selector/wallet";
+import { Wallet } from "../wallets";
 
 import {
   HydroWallet,
@@ -15,10 +16,7 @@ const TIMER_KEYS = {
   NETWORK: "NETWORK"
 };
 
-export const initAccount = (
-  type: string,
-  wallet: HydroWallet | typeof ExtensionWallet
-) => {
+export const initAccount = (type: string, wallet: Wallet) => {
   return {
     type: "HYDRO_WALLET_INIT_ACCOUNT",
     payload: {
@@ -28,7 +26,7 @@ export const initAccount = (
   };
 };
 
-export const updateWallet = (wallet: HydroWallet | typeof ExtensionWallet) => {
+export const updateWallet = (wallet: Wallet) => {
   return {
     type: "HYDRO_WALLET_UPDATE_WALLET",
     payload: {
@@ -101,13 +99,11 @@ export const unlockAccount = (type: string) => {
 
 export const unlockHydroWallet = (type: string, password: string) => {
   return async (dispatch: any, getState: any) => {
-    const hydroWallet: HydroWallet = getState().WalletReducer.getIn([
-      "accounts",
-      type,
-      "wallet"
-    ]);
-    await hydroWallet.unlock(password);
-    dispatch(updateWallet(hydroWallet));
+    const hydroWallet = getWallet(getState().WalletReducer, type);
+    if (hydroWallet) {
+      await hydroWallet.unlock(password);
+      dispatch(updateWallet(hydroWallet));
+    }
   };
 };
 
@@ -161,7 +157,7 @@ export const loadHydroWallet = (wallet: HydroWallet) => {
   };
 };
 
-const watchWallet = (wallet: HydroWallet | typeof ExtensionWallet) => {
+const watchWallet = (wallet: Wallet) => {
   return (dispatch: any, getState: any) => {
     const type = wallet.getType();
     if (!getAccount(getState().WalletReducer, type)) {

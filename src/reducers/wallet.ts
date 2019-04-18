@@ -1,7 +1,7 @@
 import { Map, fromJS } from "immutable";
 import { BigNumber } from "ethers/utils";
 import { ImmutableMap } from ".";
-import { HydroWallet, ExtensionWallet } from "../wallets";
+import { Wallet } from "../wallets";
 
 export interface AccountProps {
   address: string | null;
@@ -9,7 +9,7 @@ export interface AccountProps {
   isLocked: boolean;
   networkId: number | null;
   timers: Map<string, number>;
-  wallet: HydroWallet | typeof ExtensionWallet;
+  wallet: Wallet;
 }
 
 export type AccountState = ImmutableMap<AccountProps>;
