@@ -143,9 +143,10 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private renderUnlockForm() {
-    const { password, selectedWalletName } = this.state;
+    const { password, selectedWalletName, step } = this.state;
     const { selectedType, selectedAccount } = this.props;
     if (
+      step !== STEPS.SELETE ||
       selectedWalletName !== HydroWallet.WALLET_NAME ||
       !isHydroWallet(selectedType) ||
       !selectedAccount ||
