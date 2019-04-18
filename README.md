@@ -37,7 +37,7 @@ The store should know how to handle actions coming from the wallet components. T
 
 ```javascript
 import { createStore, combineReducers } from "redux";
-import { walletReducer } from "@hydroprotocol/hydor-sdk-wallet";
+import { walletReducer } from "@hydroprotocol/hydro-sdk-wallet";
 
 const rootReducer = combineReducers({
   // ...your other reducers here
