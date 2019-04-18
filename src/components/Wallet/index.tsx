@@ -91,7 +91,7 @@ class Wallet extends React.PureComponent<Props, State> {
               )}
             </div>
             <div className="HydroSDK-fieldGroup">
-              <div className="HydroSDK-label">Select Wallet</div>
+              <div className="HydroSDK-label">Select Wallet Type</div>
               <Select
                 options={this.getWalletsOptions()}
                 selected={selectedWalletName}

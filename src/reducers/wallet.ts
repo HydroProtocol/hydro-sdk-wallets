@@ -8,7 +8,6 @@ export interface AccountProps {
   balance: BigNumber;
   isLocked: boolean;
   networkId: number | null;
-  timers: Map<string, number>;
   wallet: Wallet;
 }
 
@@ -19,7 +18,6 @@ export const initializeAccount: ImmutableMap<AccountState> = Map({
   balance: new BigNumber("0"),
   isLocked: true,
   networkId: null,
-  timers: Map(),
   wallet: null
 });
 
@@ -88,12 +86,6 @@ export default (state = initialState, action: any) => {
       state = state.setIn(
         ["accounts", action.payload.type, "networkId"],
         action.payload.networkId
-      );
-      return state;
-    case "HYDRO_WALLET_SET_TIMER":
-      state = state.setIn(
-        ["accounts", action.payload.type, "timers", action.payload.timerKey],
-        action.payload.timer
       );
       return state;
     default:

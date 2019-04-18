@@ -15,9 +15,9 @@ interface Props {
 
 interface State {}
 
-const NOT_SUPPORTED_TEXT = "Current Wallet Type Is Not Supported";
-const NOT_FOUND_ANY_ADDRESSES_TEXT = "Not Found Any Addresses";
-const PLEASE_SELECT_A_ADDRESS_TEXT = "Please Select A Address";
+const NOT_SUPPORTED_TEXT = "Current wallet type is not supported";
+const NOT_FOUND_ANY_ADDRESSES_TEXT = "No available address";
+const PLEASE_SELECT_A_ADDRESS_TEXT = "Please select an address";
 
 class SelectWallet extends React.PureComponent<Props, State> {
   public render() {
@@ -34,7 +34,7 @@ class SelectWallet extends React.PureComponent<Props, State> {
     return (
       <>
         <div className="HydroSDK-fieldGroup">
-          <div className="HydroSDK-label">Select Type</div>
+          <div className="HydroSDK-label">Select Address</div>
           <Select
             blank={blankText}
             noCaret={typesOptions.length === 0}
