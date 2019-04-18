@@ -99,7 +99,7 @@ export const unlockAccount = (type: string) => {
 
 export const unlockHydroWallet = (type: string, password: string) => {
   return async (dispatch: any, getState: any) => {
-    const hydroWallet = getWallet(getState().WalletReducer, type);
+    const hydroWallet = getWallet(getState(), type);
     if (hydroWallet) {
       await hydroWallet.unlock(password);
       dispatch(updateWallet(hydroWallet));
@@ -121,7 +121,7 @@ export const hideDialog = () => {
 
 export const stopWatchers = (type: string) => {
   return (dispatch: any, getState: any) => {
-    const account = getAccount(getState().WalletReducer, type);
+    const account = getAccount(getState(), type);
     if (account) {
       const timers = account.get("timers");
       timers.forEach(timer => {
@@ -159,7 +159,7 @@ export const loadHydroWallet = (wallet: HydroWallet) => {
 const watchWallet = (wallet: Wallet) => {
   return (dispatch: any, getState: any) => {
     const type = wallet.getType();
-    if (!getAccount(getState().WalletReducer, type)) {
+    if (!getAccount(getState(), type)) {
       dispatch(initAccount(type, wallet));
     }
 
@@ -193,13 +193,27 @@ const watchWallet = (wallet: Wallet) => {
         address = null;
       }
 
-      if (wallet.isLocked(address)) {
-        dispatch(lockAccount(type));
-      } else {
-        dispatch(unlockAccount(type));
+      const walletIsLocked = wallet.isLocked(address);
+      const walletStoreLocked = getState().WalletReducer.getIn([
+        "accounts",
+        type,
+        "isLocked"
+      ]);
+
+      if (walletIsLocked !== walletStoreLocked) {
+        dispatch(walletIsLocked ? lockAccount(type) : unlockAccount(type));
       }
 
-      dispatch(loadAddress(type, address));
+      const currentAddressInStore = getState().WalletReducer.getIn([
+        "accounts",
+        type,
+        "address"
+      ]);
+
+      if (currentAddressInStore !== address) {
+        dispatch(loadAddress(type, address));
+      }
+
       const nextTimer = window.setTimeout(() => watchAddress(nextTimer), 3000);
       dispatch(setTimer(type, timerKey, nextTimer));
     };
@@ -237,7 +251,13 @@ const watchWallet = (wallet: Wallet) => {
 
       try {
         const networkId = await wallet.loadNetworkId();
-        dispatch(loadNetwork(type, networkId));
+        if (
+          networkId &&
+          networkId !==
+            getState().WalletReducer.getIn(["accounts", type, "networkId"])
+        ) {
+          dispatch(loadNetwork(type, networkId));
+        }
       } catch (e) {
         if (e !== NeedUnlockWalletError && e !== NotSupportedError) {
           throw e;

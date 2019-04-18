@@ -1,35 +1,39 @@
 import { AccountState, WalletState } from "../reducers/wallet";
 import { Wallet } from "../wallets";
 
-export const getSelectedAccount = (
-  state: WalletState
-): AccountState | undefined => {
-  const selectedType = state.get("selectedType");
+export const getSelectedAccount = (state: {
+  WalletReducer: WalletState;
+}): AccountState | undefined => {
+  const selectedType = state.WalletReducer.get("selectedType");
 
   if (!selectedType) {
     return undefined;
   }
 
-  return state.getIn(["accounts", selectedType]);
+  return state.WalletReducer.getIn(["accounts", selectedType]);
 };
 
 export const getAccount = (
-  state: WalletState,
+  state: {
+    WalletReducer: WalletState;
+  },
   type: string
 ): AccountState | undefined => {
-  return state.getIn(["accounts", type]);
+  return state.WalletReducer.getIn(["accounts", type]);
 };
 
-export const getSelectedAccountWallet = (
-  state: WalletState
-): Wallet | undefined => {
+export const getSelectedAccountWallet = (state: {
+  WalletReducer: WalletState;
+}): Wallet | undefined => {
   const selectedAccount = getSelectedAccount(state);
   return selectedAccount && selectedAccount.get("wallet");
 };
 
 export const getWallet = (
-  state: WalletState,
+  state: {
+    WalletReducer: WalletState;
+  },
   type: string
 ): Wallet | undefined => {
-  return state.getIn(["accounts", type, "wallet"]);
+  return state.WalletReducer.getIn(["accounts", type, "wallet"]);
 };

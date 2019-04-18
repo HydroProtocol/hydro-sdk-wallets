@@ -50,6 +50,6 @@ class Example extends React.Component {
 
 export default connect(state => {
   return {
-    selectedAccount: getSelectedAccount(state.WalletReducer)
+    selectedAccount: getSelectedAccount(state)
   };
 })(Example);

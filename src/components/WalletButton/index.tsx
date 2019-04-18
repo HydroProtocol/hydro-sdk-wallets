@@ -45,7 +45,7 @@ export default connect((state: any) => {
   const walletState: WalletState = state.WalletReducer;
 
   return {
-    selectedAccount: getSelectedAccount(walletState),
+    selectedAccount: getSelectedAccount(state),
     isShowDialog: walletState.get("isShowDialog")
   };
 })(WalletButton);
