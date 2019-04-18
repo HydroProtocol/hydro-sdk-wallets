@@ -26,15 +26,38 @@ class Import extends React.PureComponent<Props, State> {
   }
 
   private async submit(e: React.FormEvent) {
-    const { password, privateKey } = this.state;
+    let { password, privateKey } = this.state;
     const { callback, dispatch } = this.props;
 
     e.preventDefault();
 
     this.setState({ processing: true });
-    const wallet = await HydroWallet.import(privateKey, password);
-    await dispatch(loadHydroWallet(wallet));
-    callback();
+
+    if (privateKey && privateKey.slice(0, 2).toLocaleLowerCase() !== "0x") {
+      privateKey = "0x" + privateKey;
+    }
+
+    try {
+      if (!privateKey) {
+        throw "private key is empty";
+      }
+
+      if (privateKey.length != 66) {
+        throw "private key format is wrong. ";
+      }
+
+      if (!password) {
+        throw "password is empty";
+      }
+
+      const wallet = await HydroWallet.import(privateKey, password);
+      await dispatch(loadHydroWallet(wallet));
+      callback();
+    } catch (e) {
+      alert(e);
+    } finally {
+      this.setState({ processing: false });
+    }
   }
 
   public render() {
