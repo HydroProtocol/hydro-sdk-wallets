@@ -107,19 +107,10 @@ export default connect(state => {
 
 ### Wallet Component Props
 
-<<<<<<< HEAD
-| Name                                     | Type    | Default                   | Desc                                                                                                            |
-| ---------------------------------------- | ------- | ------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| nodeURL                                  | string  | `https://mainnet.ddex.io` | Ethereum JSON RPC Endpoint                                                                                      |
-| defaultWalletType                        | string  | `Extension`               | Default selected wallet type. Options are `Extension`, `Local`, `Ledger`, `WalletConnect`.                      |
-| refreshWhenExtensionWalletAddressChanged | boolean | `true`                    | Reload the app when the address loaded from extension wallet is changed.                                        |
-| browserWalletAutoSign                    | boolean | `false`                   | Local wallet only. When asking for a signature for a tx or a message, whether popup a dialog to confirm or not. |
-=======
 | Name              | Type   | Default                   | Desc                                                                           |
 | ----------------- | ------ | ------------------------- | ------------------------------------------------------------------------------ |
 | nodeURL           | string | `https://mainnet.ddex.io` | Ethereum JSON RPC Endpoint                                                     |
 | defaultWalletType | string | `Extension Wallet`        | default selected wallet type. Options are `Extension Wallet`, `Browser Wallet` |
->>>>>>> a9e3c131150ffc3ce21968522067c0984473b263
 
 ### Selectors
 
@@ -144,15 +135,9 @@ These functions are redux action creators. You need to dispatch the result to st
 
 When we get an account from redux store, we can call some functions of `account.wallet` object.
 
-<<<<<<< HEAD
-- `personalSign(message: string | Uint8Array): Promise<string>` Sign message`.
-- `sendTransaction({ to: "0x0123..3410", value: "0x123", data: "", gasPrice: "0x312", gasLimit: 190000, nonce: "0x3"}): Promise<string>` Sign and send the transaction, return value is the transaction hash.
-- `getTransactionReceipt(transactionHash: string): Promise<object>` Get the receipt of a transaction.
-=======
 - `personalSignMessage(message: string | Uint8Array, address: string)` Sign message
 - `sendTransaction({ to: "0x0123..3410", value: "0x123", data: "", gasPrice: "0x312", gasLimit: 190000, nonce: "0x3"})` Sign and send the transaction, return value is the transaction hash.
 - `getTransactionReceipt(transactionHash: string)` Get the receipt of a transaction.
->>>>>>> a9e3c131150ffc3ce21968522067c0984473b263
 
 ## Try the examples
 
