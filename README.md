@@ -10,6 +10,8 @@ Hydro SDK wallet also support browser local wallets. Secrets are saved in browse
 
 There is a default ui in this package. You can also implement another ui as you wish.
 
+![web-screen-shot](./assets/example.png)
+
 ### Support wallets:
 
 - Metamask
