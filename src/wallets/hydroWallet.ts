@@ -18,7 +18,7 @@ export default class HydroWallet extends BaseWallet {
 
   private constructor(address: string, wallet?: any) {
     super();
-    this._address = address;
+    this._address = address.toLowerCase();
     if (wallet) {
       this._wallet = wallet.connect(this.getProvider());
     }
@@ -48,8 +48,7 @@ export default class HydroWallet extends BaseWallet {
     const data = await this._wallet.encrypt(password);
     const wallets = HydroWallet.getWalletData();
     const index = wallets.findIndex(
-      json =>
-        HydroWallet.parseWalletAddress(json) === this._address!.toLowerCase()
+      json => HydroWallet.parseWalletAddress(json) === this._address
     );
     if (index !== -1) {
       wallets.splice(index, 1, data);
@@ -115,7 +114,7 @@ export default class HydroWallet extends BaseWallet {
   private static getWallet(address: string, _wallet?: any): HydroWallet {
     let wallet = this._cache.get(address);
     if (!wallet || wallet._address !== address) {
-      wallet = new this(address, _wallet);
+      wallet = new HydroWallet(address, _wallet);
       this._cache.set(address, wallet);
     }
     return wallet;

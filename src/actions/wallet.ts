@@ -32,6 +32,10 @@ const clearTimer = (accountID: string) => {
   }
 };
 
+const isTimerExist = (accountID: string) => {
+  return !!timers[accountID];
+};
+
 export const initAccount = (accountID: string, wallet: Wallet) => {
   return {
     type: "HYDRO_WALLET_INIT_ACCOUNT",
@@ -79,6 +83,7 @@ export const loadNetwork = (
 };
 
 export const selectAccount = (accountID: string) => {
+  window.localStorage.setItem("HydroWallet:lastSelectedAccountID", accountID);
   return {
     type: "HYDRO_WALLET_SELECT_ACCOUNT",
     payload: { accountID }
@@ -167,8 +172,23 @@ export const loadHydroWallet = (wallet: HydroWallet) => {
 const watchWallet = (wallet: Wallet) => {
   return (dispatch: any, getState: any) => {
     const accountID = wallet.getAccountID();
+
+    if (isTimerExist(accountID)) {
+      clearTimer(accountID);
+    }
+
     if (!getAccount(getState(), accountID)) {
       dispatch(initAccount(accountID, wallet));
+    }
+
+    const lastSelectedAccountID = window.localStorage.getItem(
+      "HydroWallet:lastSelectedAccountID"
+    );
+    const currentSelectedAccountID = getState().WalletReducer.get(
+      "selectedAccountID"
+    );
+    if (!currentSelectedAccountID && lastSelectedAccountID === accountID) {
+      dispatch(selectAccount(accountID));
     }
 
     const watchAddress = async () => {
