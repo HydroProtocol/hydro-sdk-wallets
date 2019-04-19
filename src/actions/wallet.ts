@@ -170,7 +170,7 @@ export const loadHydroWallet = (wallet: HydroWallet) => {
 };
 
 const watchWallet = (wallet: Wallet) => {
-  return (dispatch: any, getState: any) => {
+  return async (dispatch: any, getState: any) => {
     const accountID = wallet.getAccountID();
 
     if (isTimerExist(accountID)) {
@@ -178,9 +178,9 @@ const watchWallet = (wallet: Wallet) => {
     }
 
     if (!getAccount(getState(), accountID)) {
-      dispatch(initAccount(accountID, wallet));
+      await dispatch(initAccount(accountID, wallet));
     }
-
+    dispatch(updateWallet(wallet));
     const lastSelectedAccountID = window.localStorage.getItem(
       "HydroWallet:lastSelectedAccountID"
     );

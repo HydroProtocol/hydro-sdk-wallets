@@ -44,15 +44,12 @@ export default (state = initialState, action: any) => {
         ["accounts", action.payload.accountID],
         initializeAccount
       );
-      state = state.setIn(
-        ["accounts", action.payload.accountID, "wallet"],
-        action.payload.wallet
-      );
       return state;
     case "HYDRO_WALLET_UPDATE_WALLET":
+      const wallet = action.payload.wallet;
       state = state.setIn(
-        ["accounts", action.payload.accountID, "wallet"],
-        action.payload.wallet
+        ["accounts", wallet.getAccountID(), "wallet"],
+        wallet
       );
       return state;
     case "HYDRO_WALLET_SHOW_DIALOG":
