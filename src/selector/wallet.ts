@@ -10,22 +10,22 @@ export const getAccounts = (state: {
 export const getSelectedAccount = (state: {
   WalletReducer: WalletState;
 }): AccountState | null => {
-  const selectedType = state.WalletReducer.get("selectedType");
+  const selectedAccountID = state.WalletReducer.get("selectedAccountID");
 
-  if (!selectedType) {
+  if (!selectedAccountID) {
     return null;
   }
 
-  return state.WalletReducer.getIn(["accounts", selectedType], null);
+  return state.WalletReducer.getIn(["accounts", selectedAccountID], null);
 };
 
 export const getAccount = (
   state: {
     WalletReducer: WalletState;
   },
-  type: string
+  accountID: string
 ): AccountState | null => {
-  return state.WalletReducer.getIn(["accounts", type], null);
+  return state.WalletReducer.getIn(["accounts", accountID], null);
 };
 
 export const getSelectedAccountWallet = (state: {
@@ -39,7 +39,7 @@ export const getWallet = (
   state: {
     WalletReducer: WalletState;
   },
-  type: string
+  accountID: string
 ): Wallet | null => {
-  return state.WalletReducer.getIn(["accounts", type, "wallet"], null);
+  return state.WalletReducer.getIn(["accounts", accountID, "wallet"], null);
 };

@@ -32,7 +32,7 @@ export default abstract class baseWallet {
 
   public abstract loadBalance(address: string): Promise<any>;
 
-  public abstract getType(): string;
+  public abstract getAccountID(): string;
 
   public abstract isSupported(): boolean;
 

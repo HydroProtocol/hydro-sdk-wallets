@@ -9,11 +9,11 @@ declare global {
 }
 
 export default abstract class ExtensionWallet extends BaseWallet {
-  public static WALLET_NAME = "Extension Wallet";
-  public static TYPE = "EXTENSION";
+  public static WALLET_TYPE = "Extension Wallet";
+  public static accountID = "EXTENSION";
 
-  public static getType(): string {
-    return this.TYPE;
+  public static getAccountID(): string {
+    return this.accountID;
   }
 
   public static loadNetworkId(): Promise<number | undefined> {

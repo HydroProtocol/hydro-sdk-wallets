@@ -8,8 +8,8 @@ export default class HydroWallet extends BaseWallet {
   private static TIMEOUT = 15 * 60 * 1000; // 15 minutes
   private static WALLETS_KEY = "Hydro-Wallets";
   private static _cache: Map<string, any> = new Map();
-  public static TYPE_PREFIX = "Hydro-Wallet:";
-  public static WALLET_NAME = "Browser Wallet";
+  public static ACCOUNT_ID_PREFIX = "Hydro-Wallet:";
+  public static WALLET_TYPE = "Browser Wallet";
   private static nodeUrl?: string;
   public _address: string | null = null;
   public _wallet: Wallet | null = null;
@@ -75,8 +75,8 @@ export default class HydroWallet extends BaseWallet {
     this.nodeUrl = nodeUrl;
   }
 
-  public getType(): string {
-    return HydroWallet.TYPE_PREFIX + this._address;
+  public getAccountID(): string {
+    return HydroWallet.ACCOUNT_ID_PREFIX + this._address;
   }
 
   public getContract(contractAddress: string, abi: any): Contract {

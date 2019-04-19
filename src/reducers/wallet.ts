@@ -23,7 +23,7 @@ export const initializeAccount: ImmutableMap<AccountState> = Map({
 
 export interface WalletProps {
   accounts: Map<string, AccountState>;
-  selectedType: string | null;
+  selectedAccountID: string | null;
   extensionWalletSupported: boolean;
   isShowWalletModal: boolean;
 }
@@ -32,7 +32,7 @@ export type WalletState = ImmutableMap<WalletProps>;
 
 const initialState: WalletState = fromJS({
   accounts: Map<string, AccountState>(),
-  selectedType: null,
+  selectedAccountID: null,
   extensionWalletSupported: false,
   isShowWalletModal: false
 });
@@ -40,15 +40,18 @@ const initialState: WalletState = fromJS({
 export default (state = initialState, action: any) => {
   switch (action.type) {
     case "HYDRO_WALLET_INIT_ACCOUNT":
-      state = state.setIn(["accounts", action.payload.type], initializeAccount);
       state = state.setIn(
-        ["accounts", action.payload.type, "wallet"],
+        ["accounts", action.payload.accountID],
+        initializeAccount
+      );
+      state = state.setIn(
+        ["accounts", action.payload.accountID, "wallet"],
         action.payload.wallet
       );
       return state;
     case "HYDRO_WALLET_UPDATE_WALLET":
       state = state.setIn(
-        ["accounts", action.payload.type, "wallet"],
+        ["accounts", action.payload.accountID, "wallet"],
         action.payload.wallet
       );
       return state;
@@ -59,32 +62,38 @@ export default (state = initialState, action: any) => {
       state = state.set("isShowWalletModal", false);
       return state;
     case "HYDRO_WALLET_LOCK_ACCOUNT":
-      state = state.setIn(["accounts", action.payload.type, "isLocked"], true);
+      state = state.setIn(
+        ["accounts", action.payload.accountID, "isLocked"],
+        true
+      );
       return state;
     case "HYDRO_WALLET_UNLOCK_ACCOUNT":
-      state = state.setIn(["accounts", action.payload.type, "isLocked"], false);
+      state = state.setIn(
+        ["accounts", action.payload.accountID, "isLocked"],
+        false
+      );
       return state;
     case "HYDRO_WALLET_LOAD_ADDRESS":
       state = state.setIn(
-        ["accounts", action.payload.type, "address"],
+        ["accounts", action.payload.accountID, "address"],
         action.payload.address
       );
       return state;
     case "HYDRO_WALLET_LOAD_BALANCE":
       state = state.setIn(
-        ["accounts", action.payload.type, "balance"],
+        ["accounts", action.payload.accountID, "balance"],
         action.payload.balance
       );
       return state;
     case "HYDRO_WALLET_SELECT_ACCOUNT":
-      state = state.set("selectedType", action.payload.type);
+      state = state.set("selectedAccountID", action.payload.accountID);
       return state;
     case "HYDRO_WALLET_SUPPORT_EXTENSION_WALLET":
       state = state.set("extensionWalletSupported", true);
       return state;
     case "HYDRO_WALLET_LOAD_NETWORK":
       state = state.setIn(
-        ["accounts", action.payload.type, "networkId"],
+        ["accounts", action.payload.accountID, "networkId"],
         action.payload.networkId
       );
       return state;

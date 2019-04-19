@@ -120,7 +120,7 @@ Methods to get data from redux store.
 - `getSelectedAccount(state)` Return the selected account
 - `getAccounts(state)` Return all available accounts
 - `getSelectedAccountWallet(state)` Return the wallet of selected account
-- `getWallet(state, type)` Return the wallet of corresponding account
+- `getWallet(state, accountID)` Return the wallet of corresponding account
 
 ### Action creators
 

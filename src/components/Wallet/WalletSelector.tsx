@@ -1,14 +1,14 @@
 import * as React from "react";
 import Select, { Option } from "./Select";
-import { getWalletName } from "../../wallets";
+import { getWalletType } from "../../wallets";
 import { AccountState } from "../../reducers/wallet";
 import { connect } from "react-redux";
 import { selectAccount } from "../../actions/wallet";
 
 interface Props {
   walletIsSupported: boolean;
-  walletName: string;
-  selectedType: string | null;
+  walletType: string;
+  selectedAccountID: string | null;
   accounts: AccountState;
   dispatch: any;
 }
@@ -21,12 +21,12 @@ const PLEASE_SELECT_A_ADDRESS_TEXT = "Please select an address";
 
 class SelectWallet extends React.PureComponent<Props, State> {
   public render() {
-    const { selectedType, walletIsSupported } = this.props;
-    const typesOptions = this.getTypesOptions();
+    const { selectedAccountID, walletIsSupported } = this.props;
+    const acountIDOptions = this.getAccountIDOptions();
     let blankText;
     if (!walletIsSupported) {
       blankText = NOT_SUPPORTED_TEXT;
-    } else if (typesOptions.length === 0) {
+    } else if (acountIDOptions.length === 0) {
       blankText = NOT_FOUND_ANY_ADDRESSES_TEXT;
     } else {
       blankText = PLEASE_SELECT_A_ADDRESS_TEXT;
@@ -37,27 +37,27 @@ class SelectWallet extends React.PureComponent<Props, State> {
           <div className="HydroSDK-label">Select Address</div>
           <Select
             blank={blankText}
-            noCaret={typesOptions.length === 0}
-            disabled={typesOptions.length === 0}
-            options={typesOptions}
-            selected={selectedType}
+            noCaret={acountIDOptions.length === 0}
+            disabled={acountIDOptions.length === 0}
+            options={acountIDOptions}
+            selected={selectedAccountID}
           />
         </div>
       </>
     );
   }
 
-  private getTypesOptions(): Option[] {
-    const { walletName, dispatch } = this.props;
+  private getAccountIDOptions(): Option[] {
+    const { walletType, dispatch } = this.props;
     const options: Option[] = [];
-    this.getWalletTypes(walletName).forEach((account, type) => {
+    this.getWalletAccountsID(walletType).forEach((account, accountID) => {
       const text = account.get("address");
       const isLocked = account.get("isLocked");
       const balance = account.get("balance");
 
       if (text) {
         options.push({
-          value: type,
+          value: accountID,
           component: (
             <div className="HydroSDK-address-option">
               <span>
@@ -81,10 +81,10 @@ class SelectWallet extends React.PureComponent<Props, State> {
     return options;
   }
 
-  private getWalletTypes(walletName: string): AccountState {
+  private getWalletAccountsID(walletType: string): AccountState {
     const { accounts } = this.props;
-    return accounts.filter((account, type) => {
-      return getWalletName(type) === walletName;
+    return accounts.filter((account, accountID) => {
+      return getWalletType(accountID) === walletType;
     });
   }
 }
