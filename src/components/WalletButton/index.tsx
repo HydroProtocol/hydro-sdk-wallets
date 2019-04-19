@@ -2,16 +2,18 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { WalletState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
-import { hideDialog, showDialog } from "../../actions/wallet";
+import { hideWalletModal, showWalletModal } from "../../actions/wallet";
 
 class WalletButton extends React.PureComponent<any, any> {
   public render() {
-    const { isShowDialog, dispatch } = this.props;
+    const { isShowWalletModal, dispatch } = this.props;
 
     return (
       <button
         className="HydroSDK-toggleButton"
-        onClick={() => dispatch(isShowDialog ? hideDialog() : showDialog())}
+        onClick={() =>
+          dispatch(isShowWalletModal ? hideWalletModal() : showWalletModal())
+        }
       >
         {this.toggleText()}
       </button>
@@ -46,6 +48,6 @@ export default connect((state: any) => {
 
   return {
     selectedAccount: getSelectedAccount(state),
-    isShowDialog: walletState.get("isShowDialog")
+    isShowWalletModal: walletState.get("isShowWalletModal")
   };
 })(WalletButton);

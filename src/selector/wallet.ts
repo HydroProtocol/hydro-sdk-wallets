@@ -1,16 +1,22 @@
 import { AccountState, WalletState } from "../reducers/wallet";
 import { Wallet } from "../wallets";
 
+export const getAccounts = (state: {
+  WalletReducer: WalletState;
+}): Map<string, AccountState> | null => {
+  return state.WalletReducer.getIn(["accounts"], null);
+};
+
 export const getSelectedAccount = (state: {
   WalletReducer: WalletState;
-}): AccountState | undefined => {
+}): AccountState | null => {
   const selectedType = state.WalletReducer.get("selectedType");
 
   if (!selectedType) {
-    return undefined;
+    return null;
   }
 
-  return state.WalletReducer.getIn(["accounts", selectedType]);
+  return state.WalletReducer.getIn(["accounts", selectedType], null);
 };
 
 export const getAccount = (
@@ -18,15 +24,15 @@ export const getAccount = (
     WalletReducer: WalletState;
   },
   type: string
-): AccountState | undefined => {
-  return state.WalletReducer.getIn(["accounts", type]);
+): AccountState | null => {
+  return state.WalletReducer.getIn(["accounts", type], null);
 };
 
 export const getSelectedAccountWallet = (state: {
   WalletReducer: WalletState;
-}): Wallet | undefined => {
+}): Wallet | null => {
   const selectedAccount = getSelectedAccount(state);
-  return selectedAccount && selectedAccount.get("wallet");
+  return selectedAccount && selectedAccount.get("wallet", null);
 };
 
 export const getWallet = (
@@ -34,6 +40,6 @@ export const getWallet = (
     WalletReducer: WalletState;
   },
   type: string
-): Wallet | undefined => {
-  return state.WalletReducer.getIn(["accounts", type, "wallet"]);
+): Wallet | null => {
+  return state.WalletReducer.getIn(["accounts", type, "wallet"], null);
 };

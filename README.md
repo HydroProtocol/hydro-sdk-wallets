@@ -13,15 +13,15 @@ There is a default ui in this package. You can also implement another ui as you 
 ### Support wallets:
 
 - Metamask
-- Trust Wallet
-- Coinbase Wallet
 - Browser Local Wallet
-- ImtokenWallet
 
 ### Will support:
 
 - Ledger Wallet
 - Wallet Connect Protocol
+- Trust Wallet
+- Coinbase Wallet
+- Imtoken Wallet
 
 ## Basic Usage Guide
 
@@ -82,7 +82,7 @@ import { connect } from "react-redux";
 class App extends React.Component {
   signMessage = async () => {
     const { currentAccount } = this.props;
-    const signature = currentAccount.wallet.personalSign("test message");
+    const signature = await currentAccount.wallet.personalSign("test message");
     console.log(signature);
   };
 
@@ -96,7 +96,7 @@ class App extends React.Component {
 }
 export default connect(state => {
   return {
-    currentAccount: GetSelectAccount(state)
+    currentAccount: getSelectedAccount(state)
   };
 })(App);
 ```
@@ -105,12 +105,10 @@ export default connect(state => {
 
 ### Wallet Component Props
 
-| Name                                     | Type    | Default                   | Desc                                                                                                            |
-| ---------------------------------------- | ------- | ------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| nodeURL                                  | string  | `https://mainnet.ddex.io` | Ethereum JSON RPC Endpoint                                                                                      |
-| defaultWalletType                        | string  | `Extension`               | default selected wallet type. Options are `Extension`, `Local`, `Ledger`, `WalletConnect`.                      |
-| refreshWhenExtensionWalletAddressChanged | boolean | `true`                    | Reload the app when the address loaded from extension wallet is changed.                                        |
-| browserWalletAutoSign                    | boolean | `false`                   | Local wallet only. When asking for a signature for a tx or a message, whether popup a dialog to confirm or not. |
+| Name              | Type   | Default                   | Desc                                                                                       |
+| ----------------- | ------ | ------------------------- | ------------------------------------------------------------------------------------------ |
+| nodeURL           | string | `https://mainnet.ddex.io` | Ethereum JSON RPC Endpoint                                                                 |
+| defaultWalletType | string | `Extension`               | default selected wallet type. Options are `Extension`, `Local`, `Ledger`, `WalletConnect`. |
 
 ### Selectors
 
@@ -119,13 +117,15 @@ Methods to get data from redux store.
 - `getAccount(state, accountID)` Return the corresponding account
 - `getSelectedAccount(state)` Return the selected account
 - `getAccounts(state)` Return all available accounts
+- `getSelectedAccountWallet(state)` Return the wallet of selected account
+- `getWallet(state, type)` Return the wallet of corresponding account
 
 ### Action creators
 
 These functions are redux action creators. You need to dispatch the result to store.
 
 - `selectAccount(accountID)` Change Selected Account
-- `unlockBrowserLocalAccount(accountID, password)` Unlock a browser local wallet
+- `unlockBrowserWalletAccount(accountID, password)` Unlock a browser local wallet
 - `showWalletModal()` Show the wallets modal
 - `hideWalletModal()` Hide the wallets modal
 
@@ -133,7 +133,7 @@ These functions are redux action creators. You need to dispatch the result to st
 
 When we get an account from redux store, we can call some functions of `account.wallet` object.
 
-- `personalSign(message: string | Uint8Array)` Sign message
+- `personalSignMessage(message: string | Uint8Array, address: string)` Sign message
 - `sendTransaction({ to: "0x0123..3410", value: "0x123", data: "", gasPrice: "0x312", gasLimit: 190000, nonce: "0x3"})` Sign and send the transaction, return value is the transaction hash.
 - `getTransactionReceipt(transactionHash: string)` Get the receipt of a transaction.
 

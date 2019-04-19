@@ -103,7 +103,7 @@ export const unlockAccount = (type: string) => {
   };
 };
 
-export const unlockHydroWallet = (type: string, password: string) => {
+export const unlockBrowserWalletAccount = (type: string, password: string) => {
   return async (dispatch: any, getState: any) => {
     const hydroWallet = getWallet(getState(), type);
     if (hydroWallet) {
@@ -114,13 +114,13 @@ export const unlockHydroWallet = (type: string, password: string) => {
   };
 };
 
-export const showDialog = () => {
+export const showWalletModal = () => {
   return {
     type: "HYDRO_WALLET_SHOW_DIALOG"
   };
 };
 
-export const hideDialog = () => {
+export const hideWalletModal = () => {
   return {
     type: "HYDRO_WALLET_HIDE_DIALOG"
   };

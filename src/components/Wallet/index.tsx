@@ -14,10 +14,10 @@ import {
 import { WalletProps, WalletState, AccountState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
 import {
-  hideDialog,
+  hideWalletModal,
   loadExtensitonWallet,
   loadHydroWallets,
-  unlockHydroWallet
+  unlockBrowserWalletAccount
 } from "../../actions/wallet";
 import Svg from "../Svg";
 
@@ -40,7 +40,7 @@ interface Props extends WalletProps {
   title?: string;
   hideBanner?: boolean;
   defaultWalletType?: string;
-  selectedAccount: AccountState | undefined;
+  selectedAccount: AccountState | null;
 }
 
 class Wallet extends React.PureComponent<Props, State> {
@@ -52,7 +52,7 @@ class Wallet extends React.PureComponent<Props, State> {
       selectedWalletName:
         getWalletName(selectedType) ||
         defaultWalletType ||
-        HydroWallet.WALLET_NAME,
+        ExtensionWallet.WALLET_NAME,
       password: "",
       processing: false
     };
@@ -76,21 +76,21 @@ class Wallet extends React.PureComponent<Props, State> {
 
   public render() {
     const { selectedWalletName } = this.state;
-    const { isShowDialog, title, hideBanner, dispatch } = this.props;
+    const { isShowWalletModal, title, hideBanner, dispatch } = this.props;
 
     return (
       <div className="HydroSDK-wallet">
-        <div className="HydroSDK-container" hidden={!isShowDialog}>
+        <div className="HydroSDK-container" hidden={!isShowWalletModal}>
           <div
             className="HydroSDK-backdrop"
-            onClick={() => dispatch(hideDialog())}
+            onClick={() => dispatch(hideWalletModal())}
           />
           <div className="HydroSDK-dialog">
             <div className="HydroSDK-title">
               {title || "Hydro SDK Wallet"}
               <button
                 className="HydroSDK-closeButton"
-                onClick={() => dispatch(hideDialog())}
+                onClick={() => dispatch(hideWalletModal())}
               >
                 X
               </button>
@@ -201,7 +201,9 @@ class Wallet extends React.PureComponent<Props, State> {
     try {
       const { password } = this.state;
       this.setState({ processing: true });
-      await this.props.dispatch(unlockHydroWallet(selectedType, password));
+      await this.props.dispatch(
+        unlockBrowserWalletAccount(selectedType, password)
+      );
     } catch (e) {
       alert(e);
     } finally {
@@ -269,6 +271,6 @@ export default connect((state: any) => {
     accounts: walletState.get("accounts"),
     selectedType: walletState.get("selectedType"),
     extensionWalletSupported: walletState.get("extensionWalletSupported"),
-    isShowDialog: walletState.get("isShowDialog")
+    isShowWalletModal: walletState.get("isShowWalletModal")
   };
 })(Wallet);

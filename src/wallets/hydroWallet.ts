@@ -119,7 +119,7 @@ export default class HydroWallet extends BaseWallet {
     return wallet;
   }
 
-  public signMessage(message: string | Buffer | Uint8Array): Promise<string> {
+  public signMessage(message: string | Uint8Array): Promise<string> {
     return new Promise((resolve, reject) => {
       if (!this._wallet) {
         reject(BaseWallet.NeedUnlockWalletError);
@@ -129,9 +129,7 @@ export default class HydroWallet extends BaseWallet {
     });
   }
 
-  public personalSignMessage(
-    message: string | Buffer | Uint8Array
-  ): Promise<string> {
+  public personalSignMessage(message: string | Uint8Array): Promise<string> {
     return this.signMessage(ethUtil.toBuffer(message));
   }
 
