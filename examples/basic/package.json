@@ -11,7 +11,7 @@
   "author": "david@ddex.io",
   "license": "Apache v2.0",
   "devDependencies": {
-    "@gongddex/hydro-sdk-wallet": "0.0.1",
+    "@gongddex/hydro-sdk-wallet": "0.0.2",
     "babel-core": "^6.26.3",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^7.1.5",
