@@ -1,6 +1,6 @@
 {
-  "name": "hydro-sdk-wallet",
-  "version": "1.0.8",
+  "name": "@gongddex/hydro-sdk-wallet",
+  "version": "0.0.1",
   "main": "./build/index.js",
   "files": [
     "build",
@@ -41,5 +41,13 @@
     "react-redux": "^6.0.0 || ^7.0.0",
     "redux": "^3.0.0 || ^4.0.0",
     "react-dom": "^16.4.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HydroProtocol/hydro-sdk-wallets.git"
+  },
+  "bugs": {
+    "url": "https://github.com/HydroProtocol/hydro-sdk-wallets/issues"
+  },
+  "homepage": "https://github.com/HydroProtocol/hydro-sdk-wallets#readme"
 }

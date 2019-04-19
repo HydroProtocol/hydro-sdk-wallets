@@ -9,7 +9,8 @@ import {
   HydroWallet,
   getWalletName,
   ExtensionWallet,
-  isHydroWallet
+  isHydroWallet,
+  WalletTypes
 } from "../../wallets";
 import { WalletProps, WalletState, AccountState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
@@ -47,12 +48,23 @@ class Wallet extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props);
     const { defaultWalletType, selectedType } = this.props;
+    let selectedWalletName: string;
+    const selectedTypeWalletName = getWalletName(selectedType);
+
+    if (selectedTypeWalletName) {
+      selectedWalletName = selectedTypeWalletName;
+    } else if (
+      defaultWalletType &&
+      WalletTypes.indexOf(defaultWalletType) > -1
+    ) {
+      selectedWalletName = defaultWalletType;
+    } else {
+      selectedWalletName = ExtensionWallet.WALLET_NAME;
+    }
+
     this.state = {
       step: STEPS.SELETE,
-      selectedWalletName:
-        getWalletName(selectedType) ||
-        defaultWalletType ||
-        ExtensionWallet.WALLET_NAME,
+      selectedWalletName,
       password: "",
       processing: false
     };

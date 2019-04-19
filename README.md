@@ -29,7 +29,7 @@ This package requires `React` and `Redux`.
 
 ### Step1: install npm package
 
-`npm i @hydroprotocol/hydro-sdk-wallet`
+`npm i @gongddex/hydro-sdk-wallet`
 
 ### Step2: Wallet Reducer
 
@@ -37,7 +37,7 @@ The store should know how to handle actions coming from the wallet components. T
 
 ```javascript
 import { createStore, combineReducers } from "redux";
-import { walletReducer } from "@hydroprotocol/hydro-sdk-wallet";
+import { walletReducer } from "@gongddex/hydro-sdk-wallet";
 
 const rootReducer = combineReducers({
   // ...your other reducers here
@@ -55,7 +55,7 @@ To make the wallet logic work. We need to mount the `Wallet` and `WalletButton` 
 ```javascript
 import React from "react";
 import { Provider } from "react-redux";
-import { Wallet, WalletButton } from "@hydroprotocol/hydro-sdk-wallet";
+import { Wallet, WalletButton } from "@gongddex/hydro-sdk-wallet";
 import { store } from "./store";
 
 class App extends React.Component {
@@ -105,10 +105,10 @@ export default connect(state => {
 
 ### Wallet Component Props
 
-| Name              | Type   | Default                   | Desc                                                                                       |
-| ----------------- | ------ | ------------------------- | ------------------------------------------------------------------------------------------ |
-| nodeURL           | string | `https://mainnet.ddex.io` | Ethereum JSON RPC Endpoint                                                                 |
-| defaultWalletType | string | `Extension`               | default selected wallet type. Options are `Extension`, `Local`, `Ledger`, `WalletConnect`. |
+| Name              | Type   | Default                   | Desc                                                                           |
+| ----------------- | ------ | ------------------------- | ------------------------------------------------------------------------------ |
+| nodeURL           | string | `https://mainnet.ddex.io` | Ethereum JSON RPC Endpoint                                                     |
+| defaultWalletType | string | `Extension Wallet`        | default selected wallet type. Options are `Extension Wallet`, `Browser Wallet` |
 
 ### Selectors
 

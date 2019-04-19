@@ -31,7 +31,7 @@ export const isHydroWallet = (type: string | null): boolean => {
   }
 };
 
-export const WalletTypes = {
-  HydroWallet: HydroWallet.WALLET_NAME,
-  ExtensionWallet: ExtensionWallet.WALLET_NAME
-};
+export const WalletTypes = [
+  HydroWallet.WALLET_NAME,
+  ExtensionWallet.WALLET_NAME
+];
