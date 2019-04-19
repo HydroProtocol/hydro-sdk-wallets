@@ -1,4 +1,4 @@
-import { Wallet, utils, getDefaultProvider, providers, Contract } from "ethers";
+import { Wallet, utils, providers, Contract } from "ethers";
 import { Provider } from "ethers/providers";
 import BaseWallet, { txParams } from "./baseWallet";
 import { BigNumber } from "ethers/utils";
@@ -10,7 +10,7 @@ export default class HydroWallet extends BaseWallet {
   private static _cache: Map<string, any> = new Map();
   public static ACCOUNT_ID_PREFIX = "Hydro-Wallet:";
   public static WALLET_TYPE = "Browser Wallet";
-  private static nodeUrl?: string;
+  private static nodeUrl: string = "https://ropsten.infura.io";
   public _address: string | null = null;
   public _wallet: Wallet | null = null;
   private _timer?: number;
@@ -72,7 +72,9 @@ export default class HydroWallet extends BaseWallet {
   }
 
   public static setNodeUrl(nodeUrl: string) {
-    this.nodeUrl = nodeUrl;
+    if (nodeUrl) {
+      this.nodeUrl = nodeUrl;
+    }
   }
 
   public getAccountID(): string {
@@ -210,12 +212,7 @@ export default class HydroWallet extends BaseWallet {
     if (this._provider) {
       return this._provider;
     }
-
-    if (HydroWallet.nodeUrl) {
-      this._provider = new providers.JsonRpcProvider(HydroWallet.nodeUrl);
-    } else {
-      this._provider = getDefaultProvider("ropsten");
-    }
+    this._provider = new providers.JsonRpcProvider(HydroWallet.nodeUrl);
     return this._provider;
   }
 
