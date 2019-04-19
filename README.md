@@ -52,7 +52,7 @@ const store = createStore(rootReducer);
 
 ### Step3: Wallet Component
 
-To make the wallet logic work. We need to mount the `Wallet` and `WalletButton` components into your app. They should be mount into `Provider`(see more details about Provider in [react-redux](https://github.com/reduxjs/react-redux)). When the components is initialized, some monitors will start to work as well. They are monitoring the web3 wallet status(not installed, locking, account changed), ledger status(locked or not), and balances of all available addresses. You can config wallet through props. See more datials are in the api section below.
+To make the wallet logic work. We need to mount the `Wallet` and `WalletButton` components into your app. They should be mounted into `Provider`(see more details about Provider in [react-redux](https://github.com/reduxjs/react-redux)). When the components is initialized, some monitors will start to work as well. They are monitoring the web3 wallet status(not installed, locking, account changed), ledger status(locked or not), and balances of all available addresses. You can config wallet through props. See more datials in the [api section](#wallet-component-props) below.
 
 ```javascript
 import React from "react";
