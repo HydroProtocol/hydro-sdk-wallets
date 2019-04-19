@@ -65,7 +65,7 @@ class App extends React.Component {
     return (
       <Provider store={store}>
         // ... your components
-        <Wallet nodeURL="https://ropsten.infura.io" />
+        <Wallet nodeUrl="https://ropsten.infura.io" />
         <WalletButton />
       </Provider>
     );
@@ -109,7 +109,7 @@ export default connect(state => {
 
 | Name              | Type   | Default                     | Desc                                                                           |
 | ----------------- | ------ | --------------------------- | ------------------------------------------------------------------------------ |
-| nodeURL           | string | `https://ropsten.infura.io` | Ethereum JSON RPC Endpoint                                                     |
+| nodeUrl           | string | `https://ropsten.infura.io` | Ethereum JSON RPC Endpoint                                                     |
 | defaultWalletType | string | `Extension Wallet`          | default selected wallet type. Options are `Extension Wallet`, `Browser Wallet` |
 
 ### Selectors
