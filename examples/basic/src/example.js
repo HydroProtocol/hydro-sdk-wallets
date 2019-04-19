@@ -1,6 +1,10 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Wallet, getSelectedAccount, WalletButton } from "hydro-sdk-wallet";
+import {
+  Wallet,
+  getSelectedAccount,
+  WalletButton
+} from "@gongddex/hydro-sdk-wallet";
 
 class Example extends React.Component {
   renderAccount(account) {

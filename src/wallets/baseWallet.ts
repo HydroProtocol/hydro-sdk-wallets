@@ -20,7 +20,7 @@ export default abstract class baseWallet {
   ): Promise<string> | null;
 
   public abstract personalSignMessage(
-    message: string,
+    message: string | Uint8Array,
     address: string
   ): Promise<string>;
 

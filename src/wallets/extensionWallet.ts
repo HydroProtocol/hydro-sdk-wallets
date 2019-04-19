@@ -55,14 +55,14 @@ export default abstract class ExtensionWallet extends BaseWallet {
   }
 
   public static signMessage(
-    message: string,
+    message: string | Uint8Array,
     address: string
   ): Promise<string> | null {
     return this.personalSignMessage(message, address);
   }
 
   public static personalSignMessage(
-    message: string,
+    message: string | Uint8Array,
     address: string
   ): Promise<string> {
     return new Promise((resolve, reject) => {

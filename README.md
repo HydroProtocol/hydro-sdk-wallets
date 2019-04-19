@@ -10,18 +10,20 @@ Hydro SDK wallet also support browser local wallets. Secrets are saved in browse
 
 There is a default ui in this package. You can also implement another ui as you wish.
 
+![web-screen-shot](./assets/example.png)
+
 ### Support wallets:
 
 - Metamask
-- Trust Wallet
-- Coinbase Wallet
 - Browser Local Wallet
-- ImtokenWallet
 
 ### Will support:
 
 - Ledger Wallet
 - Wallet Connect Protocol
+- Trust Wallet
+- Coinbase Wallet
+- Imtoken Wallet
 
 ## Basic Usage Guide
 
@@ -29,7 +31,7 @@ This package requires `React` and `Redux`.
 
 ### Step1: install npm package
 
-`npm i @hydroprotocol/hydro-sdk-wallet`
+`npm i @gongddex/hydro-sdk-wallet`
 
 ### Step2: Wallet Reducer
 
@@ -37,7 +39,7 @@ The store should know how to handle actions coming from the wallet components. T
 
 ```javascript
 import { createStore, combineReducers } from "redux";
-import { walletReducer } from "@hydroprotocol/hydro-sdk-wallet";
+import { walletReducer } from "@gongddex/hydro-sdk-wallet";
 
 const rootReducer = combineReducers({
   // ...your other reducers here
@@ -55,7 +57,7 @@ To make the wallet logic work. We need to mount the `Wallet` and `WalletButton` 
 ```javascript
 import React from "react";
 import { Provider } from "react-redux";
-import { Wallet, WalletButton } from "@hydroprotocol/hydro-sdk-wallet";
+import { Wallet, WalletButton } from "@gongddex/hydro-sdk-wallet";
 import { store } from "./store";
 
 class App extends React.Component {
@@ -82,7 +84,7 @@ import { connect } from "react-redux";
 class App extends React.Component {
   signMessage = async () => {
     const { currentAccount } = this.props;
-    const signature = currentAccount.wallet.personalSign("test message");
+    const signature = await currentAccount.wallet.personalSign("test message");
     console.log(signature);
   };
 
@@ -96,7 +98,7 @@ class App extends React.Component {
 }
 export default connect(state => {
   return {
-    currentAccount: GetSelectAccount(state)
+    currentAccount: getSelectedAccount(state)
   };
 })(App);
 ```
@@ -105,12 +107,19 @@ export default connect(state => {
 
 ### Wallet Component Props
 
+<<<<<<< HEAD
 | Name                                     | Type    | Default                   | Desc                                                                                                            |
 | ---------------------------------------- | ------- | ------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | nodeURL                                  | string  | `https://mainnet.ddex.io` | Ethereum JSON RPC Endpoint                                                                                      |
 | defaultWalletType                        | string  | `Extension`               | Default selected wallet type. Options are `Extension`, `Local`, `Ledger`, `WalletConnect`.                      |
 | refreshWhenExtensionWalletAddressChanged | boolean | `true`                    | Reload the app when the address loaded from extension wallet is changed.                                        |
 | browserWalletAutoSign                    | boolean | `false`                   | Local wallet only. When asking for a signature for a tx or a message, whether popup a dialog to confirm or not. |
+=======
+| Name              | Type   | Default                   | Desc                                                                           |
+| ----------------- | ------ | ------------------------- | ------------------------------------------------------------------------------ |
+| nodeURL           | string | `https://mainnet.ddex.io` | Ethereum JSON RPC Endpoint                                                     |
+| defaultWalletType | string | `Extension Wallet`        | default selected wallet type. Options are `Extension Wallet`, `Browser Wallet` |
+>>>>>>> a9e3c131150ffc3ce21968522067c0984473b263
 
 ### Selectors
 
@@ -119,13 +128,15 @@ Methods to get data from redux store.
 - `getAccount(state, accountID)` Return the corresponding account
 - `getSelectedAccount(state)` Return the selected account
 - `getAccounts(state)` Return all available accounts
+- `getSelectedAccountWallet(state)` Return the wallet of selected account
+- `getWallet(state, type)` Return the wallet of corresponding account
 
 ### Action creators
 
 These functions are redux action creators. You need to dispatch the result to store.
 
 - `selectAccount(accountID)` Change Selected Account
-- `unlockBrowserLocalAccount(accountID, password)` Unlock a browser local wallet
+- `unlockBrowserWalletAccount(accountID, password)` Unlock a browser local wallet
 - `showWalletModal()` Show the wallets modal
 - `hideWalletModal()` Hide the wallets modal
 
@@ -133,9 +144,15 @@ These functions are redux action creators. You need to dispatch the result to st
 
 When we get an account from redux store, we can call some functions of `account.wallet` object.
 
+<<<<<<< HEAD
 - `personalSign(message: string | Uint8Array): Promise<string>` Sign message`.
 - `sendTransaction({ to: "0x0123..3410", value: "0x123", data: "", gasPrice: "0x312", gasLimit: 190000, nonce: "0x3"}): Promise<string>` Sign and send the transaction, return value is the transaction hash.
 - `getTransactionReceipt(transactionHash: string): Promise<object>` Get the receipt of a transaction.
+=======
+- `personalSignMessage(message: string | Uint8Array, address: string)` Sign message
+- `sendTransaction({ to: "0x0123..3410", value: "0x123", data: "", gasPrice: "0x312", gasLimit: 190000, nonce: "0x3"})` Sign and send the transaction, return value is the transaction hash.
+- `getTransactionReceipt(transactionHash: string)` Get the receipt of a transaction.
+>>>>>>> a9e3c131150ffc3ce21968522067c0984473b263
 
 ## Try the examples
 

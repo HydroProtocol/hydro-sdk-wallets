@@ -25,7 +25,7 @@ export interface WalletProps {
   accounts: Map<string, AccountState>;
   selectedType: string | null;
   extensionWalletSupported: boolean;
-  isShowDialog: boolean;
+  isShowWalletModal: boolean;
 }
 
 export type WalletState = ImmutableMap<WalletProps>;
@@ -34,7 +34,7 @@ const initialState: WalletState = fromJS({
   accounts: Map<string, AccountState>(),
   selectedType: null,
   extensionWalletSupported: false,
-  isShowDialog: false
+  isShowWalletModal: false
 });
 
 export default (state = initialState, action: any) => {
@@ -53,10 +53,10 @@ export default (state = initialState, action: any) => {
       );
       return state;
     case "HYDRO_WALLET_SHOW_DIALOG":
-      state = state.set("isShowDialog", true);
+      state = state.set("isShowWalletModal", true);
       return state;
     case "HYDRO_WALLET_HIDE_DIALOG":
-      state = state.set("isShowDialog", false);
+      state = state.set("isShowWalletModal", false);
       return state;
     case "HYDRO_WALLET_LOCK_ACCOUNT":
       state = state.setIn(["accounts", action.payload.type, "isLocked"], true);

@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
-import { WalletReducer } from "hydro-sdk-wallet";
+import { WalletReducer } from "@gongddex/hydro-sdk-wallet";
 import thunk from "redux-thunk";
 
 const dest = document.getElementById("content");
