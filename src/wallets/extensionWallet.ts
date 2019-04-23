@@ -58,10 +58,10 @@ export default abstract class ExtensionWallet extends BaseWallet {
     message: string | Uint8Array,
     address: string
   ): Promise<string> | null {
-    return this.personalSignMessage(message, address);
+    return this.signPersonalMessage(message, address);
   }
 
-  public static personalSignMessage(
+  public static signPersonalMessage(
     message: string | Uint8Array,
     address: string
   ): Promise<string> {
@@ -108,6 +108,25 @@ export default abstract class ExtensionWallet extends BaseWallet {
           resolve(res);
         }
       });
+    });
+  }
+
+  public static sendCustomRequest(method: string, params: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (!this.isSupported()) {
+        reject(BaseWallet.NotSupportedError);
+      }
+
+      window.web3.currentProvider.sendAsync(
+        { method, params },
+        (err: Error, res: any) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(res.result);
+          }
+        }
+      );
     });
   }
 

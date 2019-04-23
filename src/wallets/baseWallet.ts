@@ -19,7 +19,7 @@ export default abstract class baseWallet {
     address: string
   ): Promise<string> | null;
 
-  public abstract personalSignMessage(
+  public abstract signPersonalMessage(
     message: string | Uint8Array,
     address: string
   ): Promise<string>;
@@ -43,4 +43,6 @@ export default abstract class baseWallet {
   public abstract getTransactionReceipt(txId: string): Promise<any>;
 
   public abstract loadNetworkId(): Promise<number | undefined>;
+
+  public abstract sendCustomRequest(method: string, params: any): Promise<any>;
 }

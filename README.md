@@ -84,7 +84,9 @@ import { connect } from "react-redux";
 class App extends React.Component {
   signMessage = async () => {
     const { currentAccount } = this.props;
-    const signature = await currentAccount.wallet.personalSign("test message");
+    const signature = await currentAccount.wallet.signPersonalMessage(
+      "test message"
+    );
     console.log(signature);
   };
 
@@ -135,9 +137,60 @@ These functions are redux action creators. You need to dispatch the result to st
 
 When we get an account from redux store, we can call some functions of `account.wallet` object.
 
-- `personalSignMessage(message: string | Uint8Array, address: string)` Sign message
-- `sendTransaction({ to: "0x0123..3410", value: "0x123", data: "", gasPrice: "0x312", gasLimit: 190000, nonce: "0x3"})` Sign and send the transaction, return value is the transaction hash.
-- `getTransactionReceipt(transactionHash: string)` Get the receipt of a transaction.
+#### Send Transaction \(eth_sendTransaction\)
+
+```javascript
+/**
+ *  Draft transaction
+ */
+const tx = {
+  from: "0xbc28ea04101f03ea7a94c1379bc3ab32e65e62d3",
+  to: "0x0000000000000000000000000000000000000000",
+  nonce: 1,
+  gas: 100000,
+  value: 0,
+  data: "0x0"
+};
+
+/**
+ *  Send transaction
+ */
+const txId = await wallet.sendTransaction(tx);
+```
+
+#### Sign Personal Message \(personal_sign\)
+
+```javascript
+/**
+ *  Draft Message Parameters
+ */
+const msgParams = [
+  "HYDRO-AUTHENTICATION", //message
+  "0x31Ebd457b999Bf99759602f5Ece5AA5033CB56B3" //address
+];
+
+/**
+ *  Sign personal message
+ */
+const signature = await wallet.signPersonalMessage(msgParams);
+```
+
+#### Send Custom Request
+
+```javascript
+/**
+ *  Draft Custom Request
+ */
+const customRequest = [
+  "eth_getTransactionReceipt", //method
+  "0x452817c981809fb7fab716dc84114b97c9ad2542c72fb9ed2c64d79e1bddb937" //txHash
+];
+
+/**
+ *  Send Custom Request
+ */
+const customResponse = await wallet.sendCustomRequest(customRequest);
+```
 
 ## Try the examples
 

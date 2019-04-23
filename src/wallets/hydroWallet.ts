@@ -1,5 +1,5 @@
 import { Wallet, utils, providers, Contract } from "ethers";
-import { Provider } from "ethers/providers";
+import { JsonRpcProvider } from "ethers/providers";
 import BaseWallet, { txParams } from "./baseWallet";
 import { BigNumber } from "ethers/utils";
 import * as ethUtil from "ethereumjs-util";
@@ -14,7 +14,7 @@ export default class HydroWallet extends BaseWallet {
   public _address: string | null = null;
   public _wallet: Wallet | null = null;
   private _timer?: number;
-  private _provider?: Provider;
+  private _provider?: JsonRpcProvider;
 
   private constructor(address: string, wallet?: any) {
     super();
@@ -130,7 +130,7 @@ export default class HydroWallet extends BaseWallet {
     });
   }
 
-  public personalSignMessage(message: string | Uint8Array): Promise<string> {
+  public signPersonalMessage(message: string | Uint8Array): Promise<string> {
     return this.signMessage(ethUtil.toBuffer(message));
   }
 
@@ -153,6 +153,15 @@ export default class HydroWallet extends BaseWallet {
       return Promise.reject(BaseWallet.NeedUnlockWalletError);
     } else {
       const tx = await this._wallet.provider.getTransactionReceipt(txId);
+      return tx;
+    }
+  }
+
+  public async sendCustomRequest(method: string, params: any): Promise<any> {
+    if (!this._provider) {
+      return Promise.reject(BaseWallet.NeedUnlockWalletError);
+    } else {
+      const tx = await this._provider.send(method, params);
       return tx;
     }
   }
@@ -207,7 +216,7 @@ export default class HydroWallet extends BaseWallet {
     return true;
   }
 
-  private getProvider(): Provider {
+  private getProvider(): JsonRpcProvider {
     if (this._provider) {
       return this._provider;
     }
