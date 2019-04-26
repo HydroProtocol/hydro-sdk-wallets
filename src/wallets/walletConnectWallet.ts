@@ -45,7 +45,7 @@ export default class WalletConnectWallet {
     });
   }
 
-  public personalSignMessage(
+  public signPersonalMessage(
     message: string | Uint8Array,
     address: string
   ): Promise<string> {
@@ -95,6 +95,22 @@ export default class WalletConnectWallet {
           value: new BigNumber(`${txParams.value}`).toString() || "",
           gasPrice: new BigNumber(`${txParams.gasPrice}`).toString() || "",
           gasLimit: new BigNumber(`${txParams.gasLimit}`).toString() || ""
+        })
+        .then((txHash: string) => resolve(txHash))
+        .catch((error: Error) => reject(error));
+    });
+  }
+
+  public sendCustomRequest(method: string, params: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      if (!this._connector && !this._connector.connected) {
+        reject(this.NeedUnlockWalletError);
+        return;
+      }
+      this._connector
+        .sendCustomRequest({
+          method: method,
+          params: params
         })
         .then((txHash: string) => resolve(txHash))
         .catch((error: Error) => reject(error));
