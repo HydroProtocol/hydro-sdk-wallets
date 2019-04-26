@@ -4,7 +4,6 @@
   color: #fff !important;
 }
 .HydroSDK-dialog {
-  min-width: 500px;
   max-width: 900px;
   height: 500px;
   position: fixed;
@@ -212,5 +211,5 @@ button {
 .HydroSDK-address-option {
   display: flex;
   justify-content: space-between;
-  width: 100%;
+  flex: 1;
 }
