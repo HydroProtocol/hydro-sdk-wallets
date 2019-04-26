@@ -66,6 +66,37 @@
     "@types/prop-types" "*"
     csstype "^2.2.0"
 
+"@walletconnect/browser@^1.0.0-beta.18":
+  version "1.0.0-beta.18"
+  resolved "https://registry.yarnpkg.com/@walletconnect/browser/-/browser-1.0.0-beta.18.tgz#97af55422c3d0943ba512c91d2cb541bd8403bc2"
+  integrity sha512-2dXIGQxUL0LCAIwIOIpZ8Hemkx4V6qdmRrgtDuaaAgmbMoh45N90e+38jH4wY5T0psITT7BP9Y5ceGLgAz8c+Q==
+  dependencies:
+    "@walletconnect/core" "^1.0.0-beta.18"
+    "@walletconnect/types" "^1.0.0-beta.17"
+    "@walletconnect/utils" "^1.0.0-beta.18"
+
+"@walletconnect/core@^1.0.0-beta.18":
+  version "1.0.0-beta.18"
+  resolved "https://registry.yarnpkg.com/@walletconnect/core/-/core-1.0.0-beta.18.tgz#b43d5d79bb6b7beaca1bf42b0d2500f04fcd3815"
+  integrity sha512-xWs9WkXFlTwSCkUzqXVF49BtCHwtzyAQL9x1MCFWTSGlqK8xapSH+2PEq4k2CHw/Zjh22oK/qBvuYgCdo+RFuw==
+  dependencies:
+    "@walletconnect/types" "^1.0.0-beta.17"
+    "@walletconnect/utils" "^1.0.0-beta.18"
+
+"@walletconnect/types@^1.0.0-beta.17":
+  version "1.0.0-beta.18"
+  resolved "https://registry.yarnpkg.com/@walletconnect/types/-/types-1.0.0-beta.18.tgz#c258413d41e4c557b68cef5d22ff463c3b1cd0d6"
+  integrity sha512-cqhVcyNdXEDvnUUD8r7cWI6ZHeIsIOriJMIkOuxslWbaHadnJ0SGStJ9sSINibAMD/ZUEabQZRWA18BxL4jRvQ==
+
+"@walletconnect/utils@^1.0.0-beta.18":
+  version "1.0.0-beta.18"
+  resolved "https://registry.yarnpkg.com/@walletconnect/utils/-/utils-1.0.0-beta.18.tgz#077569c9c7e525ec8a50f4014eb662ca33694cec"
+  integrity sha512-IgpJyHmtgRmset5gZZ9gTGziZQ5fKWtTud41vosKtQhgvh8+HQkPVWPqj/KxQupLFWK3/ACo1CqlxoKAjctpOQ==
+  dependencies:
+    "@walletconnect/types" "^1.0.0-beta.17"
+    js-sha3 "^0.8.0"
+    lodash.isnumber "^3.0.3"
+
 aes-js@3.0.0:
   version "3.0.0"
   resolved "http://registry.npm.taobao.org/aes-js/download/aes-js-3.0.0.tgz#e21df10ad6c2053295bcbb8dab40b09dbea87e4d"
@@ -268,6 +299,11 @@ js-sha3@0.5.7:
   version "0.5.7"
   resolved "http://registry.npm.taobao.org/js-sha3/download/js-sha3-0.5.7.tgz#0d4ffd8002d5333aabaf4a23eed2f6374c9f28e7"
 
+js-sha3@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/js-sha3/-/js-sha3-0.8.0.tgz#b9b7a5da73afad7dedd0f8c463954cbde6818840"
+  integrity sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==
+
 "js-tokens@^3.0.0 || ^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -280,6 +316,11 @@ keccak@^1.0.2:
     inherits "^2.0.3"
     nan "^2.2.1"
     safe-buffer "^5.1.0"
+
+lodash.isnumber@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/lodash.isnumber/-/lodash.isnumber-3.0.3.tgz#3ce76810c5928d03352301ac287317f11c0b1ffc"
+  integrity sha1-POdoEMWSjQM1IwGsKHMX8RwLH/w=
 
 loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.4.0:
   version "1.4.0"

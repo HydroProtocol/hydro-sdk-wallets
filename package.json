@@ -21,6 +21,7 @@
     "not op_mini all"
   ],
   "dependencies": {
+    "@walletconnect/browser": "^1.0.0-beta.18",
     "ethereumjs-util": "5.2.0",
     "ethers": "^4.0.27"
   },
@@ -29,18 +30,18 @@
     "@types/node": "11.13.2",
     "@types/react": "16.8.6",
     "@types/react-redux": "^7.0.2",
-    "typescript": "3.4.2",
     "immutable": "^4.0.0-rc.12",
     "react": "^16.8.6",
-    "react-redux": "^7.0.2",
     "react-dom": "^16.8.6",
-    "redux": "^4.0.1"
+    "react-redux": "^7.0.2",
+    "redux": "^4.0.1",
+    "typescript": "3.4.2"
   },
   "peerDependencies": {
     "react": "^16.4.0",
+    "react-dom": "^16.4.0",
     "react-redux": "^6.0.0 || ^7.0.0",
-    "redux": "^3.0.0 || ^4.0.0",
-    "react-dom": "^16.4.0"
+    "redux": "^3.0.0 || ^4.0.0"
   },
   "repository": {
     "type": "git",
