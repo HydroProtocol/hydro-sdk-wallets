@@ -69,13 +69,17 @@ export default abstract class ExtensionWallet extends BaseWallet {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      window.web3.personal.sign(message, address, (err: Error, res: string) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
+      window.web3.personal.sign(
+        window.web3.toHex(message),
+        address,
+        (err: Error, res: string) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(res);
+          }
         }
-      });
+      );
     });
   }
 

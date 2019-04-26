@@ -21,7 +21,7 @@ class Example extends React.Component {
           onClick={() =>
             account
               .get("wallet")
-              .signPersonalMessage("Test Message")
+              .signPersonalMessage("Test Message", account.get("address"))
               .then(alert, alert)
           }
         >
