@@ -1,5 +1,5 @@
 import { Map, fromJS } from "immutable";
-import { BigNumber } from "ethers/utils";
+import { BigNumber } from "bignumber.js";
 import { ImmutableMap } from ".";
 import { Wallet } from "../wallets";
 
@@ -79,7 +79,7 @@ export default (state = initialState, action: any) => {
     case "HYDRO_WALLET_LOAD_BALANCE":
       state = state.setIn(
         ["accounts", action.payload.accountID, "balance"],
-        action.payload.balance
+        new BigNumber(action.payload.balance)
       );
       return state;
     case "HYDRO_WALLET_SELECT_ACCOUNT":

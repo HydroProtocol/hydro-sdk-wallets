@@ -31,6 +31,10 @@ export const isHydroWallet = (accountID: string | null): boolean => {
   }
 };
 
+export const truncateAddress = (address: string): string => {
+  return address.slice(0, 6) + "..." + address.slice(-4);
+};
+
 export const WalletTypes = [
   HydroWallet.WALLET_TYPE,
   ExtensionWallet.WALLET_TYPE
