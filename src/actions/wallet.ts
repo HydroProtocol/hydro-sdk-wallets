@@ -190,6 +190,9 @@ const watchWallet = (wallet: Wallet) => {
     if (!currentSelectedAccountID && lastSelectedAccountID === accountID) {
       dispatch(selectAccount(accountID));
     }
+    if (accountID === ExtensionWallet.accountID) {
+      ExtensionWallet.enableBrowserExtensionWallet();
+    }
 
     const watchAddress = async () => {
       const timerKey = TIMER_KEYS.ADDRESS;

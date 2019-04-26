@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { WalletState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
 import { hideWalletModal, showWalletModal } from "../../actions/wallet";
+import { truncateAddress } from "../../wallets";
 
 class WalletButton extends React.PureComponent<any, any> {
   public render() {
@@ -33,7 +34,7 @@ class WalletButton extends React.PureComponent<any, any> {
             <i className="HydroSDK-fa fa fa-check" />
           )}
           {selectedAccount.get("address")
-            ? selectedAccount.get("address")
+            ? truncateAddress(selectedAccount.get("address"))
             : "Please Click to Select A Wallet"}
         </span>
       );

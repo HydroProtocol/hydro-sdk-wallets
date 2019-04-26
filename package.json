@@ -1,6 +1,6 @@
 {
   "name": "@gongddex/hydro-sdk-wallet",
-  "version": "0.0.6",
+  "version": "0.0.11",
   "main": "./build/index.js",
   "files": [
     "build",
@@ -31,6 +31,7 @@
     "@types/node": "11.13.2",
     "@types/react": "16.8.6",
     "@types/react-redux": "^7.0.2",
+    "bignumber.js": "^8.1.1",
     "immutable": "^4.0.0-rc.12",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",

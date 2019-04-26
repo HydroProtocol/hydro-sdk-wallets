@@ -1,6 +1,6 @@
 import * as React from "react";
 import Select, { Option } from "./Select";
-import { getWalletType } from "../../wallets";
+import { getWalletType, truncateAddress } from "../../wallets";
 import { AccountState } from "../../reducers/wallet";
 import { connect } from "react-redux";
 import { selectAccount } from "../../actions/wallet";
@@ -50,38 +50,40 @@ class SelectWallet extends React.PureComponent<Props, State> {
   private getAccountIDOptions(): Option[] {
     const { walletType, dispatch } = this.props;
     const options: Option[] = [];
-    this.getWalletAccountsID(walletType).forEach((account, accountID) => {
-      const text = account.get("address");
-      const isLocked = account.get("isLocked");
-      const balance = account.get("balance");
+    this.getWalletAccounts(walletType).forEach(
+      (account: AccountState, accountID: string) => {
+        const text = account.get("address");
+        const isLocked = account.get("isLocked");
+        const balance = account.get("balance");
 
-      if (text) {
-        options.push({
-          value: accountID,
-          component: (
-            <div className="HydroSDK-address-option">
-              <span>
-                {" "}
-                {isLocked ? (
-                  <i className="HydroSDK-fa fa fa-lock" />
-                ) : (
-                  <i className="HydroSDK-fa fa fa-check" />
-                )}
-                {text}
-              </span>
-              <span>{balance.div("1000000000000000000").toString()} ETH</span>
-            </div>
-          ),
-          onSelect: (option: Option) => {
-            dispatch(selectAccount(option.value));
-          }
-        });
+        if (text) {
+          options.push({
+            value: accountID,
+            component: (
+              <div className="HydroSDK-address-option">
+                <span>
+                  {" "}
+                  {isLocked ? (
+                    <i className="HydroSDK-fa fa fa-lock" />
+                  ) : (
+                    <i className="HydroSDK-fa fa fa-check" />
+                  )}
+                  {truncateAddress(text)}
+                </span>
+                <span>{balance.div("1000000000000000000").toFixed(5)} ETH</span>
+              </div>
+            ),
+            onSelect: (option: Option) => {
+              dispatch(selectAccount(option.value));
+            }
+          });
+        }
       }
-    });
+    );
     return options;
   }
 
-  private getWalletAccountsID(walletType: string): AccountState {
+  private getWalletAccounts(walletType: string): AccountState {
     const { accounts } = this.props;
     return accounts.filter((account, accountID) => {
       return getWalletType(accountID) === walletType;
