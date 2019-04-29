@@ -213,3 +213,6 @@ button {
   justify-content: space-between;
   flex: 1;
 }
+.HydroSDK-qr-image {
+  width: 200px;
+}

@@ -8,8 +8,10 @@ export default class HydroWallet extends BaseWallet {
   private static TIMEOUT = 15 * 60 * 1000; // 15 minutes
   private static WALLETS_KEY = "Hydro-Wallets";
   private static _cache: Map<string, any> = new Map();
-  public static ACCOUNT_ID_PREFIX = "Hydro-Wallet:";
-  public static WALLET_TYPE = "Browser Wallet";
+
+  public static TYPE = "Hydro-Wallet";
+  public static LABEL = "Browser Wallet";
+
   private static nodeUrl: string = "https://ropsten.infura.io";
   public _address: string | null = null;
   public _wallet: Wallet | null = null;
@@ -76,8 +78,12 @@ export default class HydroWallet extends BaseWallet {
     }
   }
 
-  public getAccountID(): string {
-    return HydroWallet.ACCOUNT_ID_PREFIX + this._address;
+  public type(): string {
+    return HydroWallet.TYPE;
+  }
+
+  public id(): string {
+    return HydroWallet.TYPE + ":" + this._address;
   }
 
   public getContract(contractAddress: string, abi: any): Contract {

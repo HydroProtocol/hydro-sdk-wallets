@@ -28,15 +28,15 @@ export default abstract class baseWallet {
     txParams: txParams
   ): Promise<string | undefined>;
 
+  public abstract type(): string;
+
+  public abstract id(): string;
+
   public abstract getAddresses(): Promise<string[]>;
 
   public abstract loadBalance(address: string): Promise<any>;
 
-  public abstract getAccountID(): string;
-
   public abstract isSupported(): boolean;
-
-  public abstract unlock(password: string): void;
 
   public abstract isLocked(address: string | null): boolean;
 
