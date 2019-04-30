@@ -58,11 +58,9 @@
   font-size: 14px;
   background: #fcfcfc;
   color: #666666;
-  border: 0;
-  display: inline-block;
+  border: 1px solid #e0e0e0;
   height: auto;
   padding: 12px;
-  margin: -12px;
 }
 .HydroSDK-select {
   position: relative;
@@ -212,4 +210,8 @@ button {
   display: flex;
   justify-content: space-between;
   flex: 1;
+}
+.HydroSDK-qr-image {
+  width: 200px;
+  margin: 24px auto;
 }

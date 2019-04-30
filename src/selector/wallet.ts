@@ -1,5 +1,5 @@
 import { AccountState, WalletState } from "../reducers/wallet";
-import { Wallet } from "../wallets";
+import { BaseWallet } from "../wallets";
 
 export const getAccounts = (state: {
   WalletReducer: WalletState;
@@ -30,7 +30,7 @@ export const getAccount = (
 
 export const getSelectedAccountWallet = (state: {
   WalletReducer: WalletState;
-}): Wallet | null => {
+}): BaseWallet | null => {
   const selectedAccount = getSelectedAccount(state);
   return selectedAccount && selectedAccount.get("wallet", null);
 };
@@ -40,6 +40,6 @@ export const getWallet = (
     WalletReducer: WalletState;
   },
   accountID: string
-): Wallet | null => {
+): BaseWallet | null => {
   return state.WalletReducer.getIn(["accounts", accountID, "wallet"], null);
 };

@@ -1,12 +1,17 @@
 import { BigNumber } from "ethers/utils";
 import { getAccount, getWallet } from "../selector/wallet";
-import { Wallet } from "../wallets";
+import WalletConnect from "@walletconnect/browser";
+
 import {
+  BaseWallet,
   HydroWallet,
   ExtensionWallet,
   NeedUnlockWalletError,
-  NotSupportedError
+  NotSupportedError,
+  WalletConnectWallet,
+  getBalance
 } from "../wallets";
+import { AccountState } from "../reducers/wallet";
 
 const TIMER_KEYS = {
   ADDRESS: "ADDRESS",
@@ -36,7 +41,7 @@ const isTimerExist = (accountID: string) => {
   return !!timers[accountID];
 };
 
-export const initAccount = (accountID: string, wallet: Wallet) => {
+export const initAccount = (accountID: string, wallet: BaseWallet) => {
   return {
     type: "HYDRO_WALLET_INIT_ACCOUNT",
     payload: {
@@ -46,7 +51,7 @@ export const initAccount = (accountID: string, wallet: Wallet) => {
   };
 };
 
-export const updateWallet = (wallet: Wallet) => {
+export const updateWallet = (wallet: BaseWallet) => {
   return {
     type: "HYDRO_WALLET_UPDATE_WALLET",
     payload: {
@@ -111,15 +116,18 @@ export const unlockAccount = (accountID: string) => {
 };
 
 export const unlockBrowserWalletAccount = (
-  accountID: string,
+  account: AccountState,
   password: string
 ) => {
   return async (dispatch: any, getState: any) => {
-    const hydroWallet = getWallet(getState(), accountID);
+    const hydroWallet: HydroWallet | null = account.get(
+      "wallet"
+    ) as HydroWallet;
+
     if (hydroWallet) {
       await hydroWallet.unlock(password);
       dispatch(updateWallet(hydroWallet));
-      dispatch(unlockAccount(accountID));
+      dispatch(unlockAccount(hydroWallet.id()));
     }
   };
 };
@@ -136,22 +144,61 @@ export const hideWalletModal = () => {
   };
 };
 
-export const stopWatchers = (accountID: string) => {
-  return (dispatch: any, getState: any) => {
-    const account = getAccount(getState(), accountID);
-
-    if (account) {
-      clearTimer(accountID);
+export const loadExtensitonWallet = () => {
+  return (dispatch: any) => {
+    const wallet = new ExtensionWallet();
+    if (wallet.isSupported()) {
+      dispatch(supportExtensionWallet());
+      dispatch(watchWallet(wallet));
     }
   };
 };
 
-export const loadExtensitonWallet = () => {
-  return (dispatch: any) => {
-    if (ExtensionWallet.isSupported()) {
-      dispatch(supportExtensionWallet());
-      dispatch(watchWallet(ExtensionWallet));
+export const loadWalletConnectWallet = () => {
+  return async (dispatch: any) => {
+    const wallet = new WalletConnectWallet({ bridge: "" });
+
+    if (wallet.connector.connected) {
+      await wallet.connector.killSession();
     }
+
+    await wallet.connector.createSession();
+
+    dispatch(watchWallet(wallet));
+    const accountID = wallet.id();
+
+    wallet.connector.on("connect", async (error, payload) => {
+      if (error) {
+        throw error;
+      }
+
+      const addresses = await wallet.getAddresses();
+
+      dispatch(unlockAccount(accountID));
+      dispatch(selectAccount(accountID));
+      dispatch(loadAddress(accountID, addresses[0]));
+      dispatch(loadNetwork(accountID, payload.params[0].chainId));
+    });
+
+    wallet.connector.on("session_update", (error, payload) => {
+      if (error) {
+        throw error;
+      }
+
+      // get updated accounts and chainId
+      const { accounts, chainId } = payload.params[0];
+
+      dispatch(loadAddress(accountID, accounts[0]));
+      dispatch(loadNetwork(accountID, chainId));
+    });
+
+    wallet.connector.on("disconnect", async (error, payload) => {
+      if (error) {
+        throw error;
+      }
+
+      window.location.reload();
+    });
   };
 };
 
@@ -169,9 +216,10 @@ export const loadHydroWallet = (wallet: HydroWallet) => {
   };
 };
 
-const watchWallet = (wallet: Wallet) => {
+const watchWallet = (wallet: BaseWallet) => {
   return async (dispatch: any, getState: any) => {
-    const accountID = wallet.getAccountID();
+    const accountID = wallet.id();
+    const type = wallet.type();
 
     if (isTimerExist(accountID)) {
       clearTimer(accountID);
@@ -180,7 +228,7 @@ const watchWallet = (wallet: Wallet) => {
     if (!getAccount(getState(), accountID)) {
       await dispatch(initAccount(accountID, wallet));
     }
-    dispatch(updateWallet(wallet));
+
     const lastSelectedAccountID = window.localStorage.getItem(
       "HydroWallet:lastSelectedAccountID"
     );
@@ -190,7 +238,7 @@ const watchWallet = (wallet: Wallet) => {
     if (!currentSelectedAccountID && lastSelectedAccountID === accountID) {
       dispatch(selectAccount(accountID));
     }
-    if (accountID === ExtensionWallet.accountID) {
+    if (type === ExtensionWallet.TYPE) {
       ExtensionWallet.enableBrowserExtensionWallet();
     }
 
@@ -245,7 +293,7 @@ const watchWallet = (wallet: Wallet) => {
       ]);
       if (address) {
         try {
-          const balance = await wallet.loadBalance(address);
+          const balance = await getBalance(address);
           const balanceInStore = getState().WalletReducer.getIn([
             "accounts",
             accountID,

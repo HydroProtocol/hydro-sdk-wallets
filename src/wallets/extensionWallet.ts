@@ -1,6 +1,4 @@
 import BaseWallet, { txParams } from "./baseWallet";
-import { BigNumber } from "ethers/utils";
-import { Contract } from "ethers";
 declare global {
   interface Window {
     web3: any;
@@ -8,15 +6,19 @@ declare global {
   }
 }
 
-export default abstract class ExtensionWallet extends BaseWallet {
-  public static WALLET_TYPE = "Extension Wallet";
-  public static accountID = "EXTENSION";
+export default class ExtensionWallet extends BaseWallet {
+  public static LABEL = "Extension Wallet";
+  public static TYPE = "EXTENSION";
 
-  public static getAccountID(): string {
-    return this.accountID;
+  public type(): string {
+    return ExtensionWallet.TYPE;
   }
 
-  public static loadNetworkId(): Promise<number | undefined> {
+  public id(): string {
+    return ExtensionWallet.TYPE;
+  }
+
+  public loadNetworkId(): Promise<number | undefined> {
     return new Promise((resolve, reject) => {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
@@ -31,47 +33,18 @@ export default abstract class ExtensionWallet extends BaseWallet {
     });
   }
 
-  public static getContract(contractAddress: string, abi: any): Contract {
-    if (!this.isSupported()) {
-      throw BaseWallet.NotSupportedError;
-    }
-    return window.web3.eth.contract(abi).at(contractAddress);
+  public signMessage(message: string | Uint8Array): Promise<string> | null {
+    return this.signPersonalMessage(message);
   }
 
-  public static contractCall(
-    contract: Contract,
-    method: string,
-    ...args: any
-  ): Promise<any> {
-    return new Promise((resolve, reject) => {
-      contract[method](...args, (err: Error, res: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
-        }
-      });
-    });
-  }
-
-  public static signMessage(
-    message: string | Uint8Array,
-    address: string
-  ): Promise<string> | null {
-    return this.signPersonalMessage(message, address);
-  }
-
-  public static signPersonalMessage(
-    message: string | Uint8Array,
-    address: string
-  ): Promise<string> {
+  public signPersonalMessage(message: string | Uint8Array): Promise<string> {
     return new Promise((resolve, reject) => {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
       window.web3.personal.sign(
         window.web3.toHex(message),
-        address,
+        window.web3.eth.accounts[0],
         (err: Error, res: string) => {
           if (err) {
             reject(err);
@@ -83,9 +56,7 @@ export default abstract class ExtensionWallet extends BaseWallet {
     });
   }
 
-  public static sendTransaction(
-    txParams: txParams
-  ): Promise<string | undefined> {
+  public sendTransaction(txParams: txParams): Promise<string | undefined> {
     return new Promise((resolve, reject) => {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
@@ -100,22 +71,7 @@ export default abstract class ExtensionWallet extends BaseWallet {
     });
   }
 
-  public static getTransactionReceipt(txId: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      if (!this.isSupported()) {
-        reject(BaseWallet.NotSupportedError);
-      }
-      window.web3.eth.getTransactionReceipt(txId, (err: Error, res: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
-        }
-      });
-    });
-  }
-
-  public static sendCustomRequest(method: string, params: any): Promise<any> {
+  public sendCustomRequest(method: string, params: any): Promise<any> {
     return new Promise((resolve, reject) => {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
@@ -134,7 +90,7 @@ export default abstract class ExtensionWallet extends BaseWallet {
     });
   }
 
-  public static getAddresses(): Promise<string[]> {
+  public getAddresses(): Promise<string[]> {
     return new Promise((resolve, reject) => {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
@@ -149,26 +105,7 @@ export default abstract class ExtensionWallet extends BaseWallet {
     });
   }
 
-  public static loadBalance(address: string): Promise<BigNumber> {
-    return new Promise((resolve, reject) => {
-      if (!this.isSupported()) {
-        reject(BaseWallet.NotSupportedError);
-      }
-      window.web3.eth.getBalance(address, (err: Error, res: BigNumber) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
-        }
-      });
-    });
-  }
-
   public static enableBrowserExtensionWallet(): void {
-    if (!this.isSupported()) {
-      throw BaseWallet.NotSupportedError;
-    }
-
     if (!window.ethereum) {
       return;
     }
@@ -176,13 +113,11 @@ export default abstract class ExtensionWallet extends BaseWallet {
     window.ethereum.enable();
   }
 
-  public static unlock(): void {}
-
-  public static isLocked(address: string | null): boolean {
+  public isLocked(address: string | null): boolean {
     return !address;
   }
 
-  public static isSupported(): boolean {
+  public isSupported(): boolean {
     return !!window.web3;
   }
 }

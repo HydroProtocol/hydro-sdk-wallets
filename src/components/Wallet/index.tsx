@@ -5,12 +5,14 @@ import Create from "./Create";
 import Import from "./Import";
 import Input from "./Input";
 import Select, { Option } from "./Select";
+import * as qrImage from "qr-image";
+
 import {
   HydroWallet,
-  getWalletType,
   ExtensionWallet,
-  isHydroWallet,
-  WalletTypes
+  WalletConnectWallet,
+  WalletTypes,
+  setNodeUrl
 } from "../../wallets";
 import { WalletProps, WalletState, AccountState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
@@ -18,28 +20,28 @@ import {
   hideWalletModal,
   loadExtensitonWallet,
   loadHydroWallets,
+  loadWalletConnectWallet,
   unlockBrowserWalletAccount
 } from "../../actions/wallet";
 import Svg from "../Svg";
 
 const STEPS = {
-  SELETE: "SELETE",
+  SELECT: "SELECT",
   CREATE: "CREATE",
   IMPORT: "IMPORT"
 };
 
 interface State {
-  selectedWalletType: string;
   step: string;
   password: string;
   processing: boolean;
+  selectedWalletType: string;
 }
 
 interface Props extends WalletProps {
   dispatch: any;
   nodeUrl: string;
   title?: string;
-  hideBanner?: boolean;
   defaultWalletType?: string;
   selectedAccount: AccountState | null;
 }
@@ -47,23 +49,23 @@ interface Props extends WalletProps {
 class Wallet extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props);
-    const { defaultWalletType, selectedAccountID } = this.props;
-    let selectedWalletType: string;
-    const selectedAccountWalletType = getWalletType(selectedAccountID);
+    const { defaultWalletType, selectedAccount } = this.props;
 
-    if (selectedAccountWalletType) {
-      selectedWalletType = selectedAccountWalletType;
+    let selectedWalletType: string;
+
+    if (selectedAccount) {
+      selectedWalletType = selectedAccount.get("wallet").type();
     } else if (
       defaultWalletType &&
       WalletTypes.indexOf(defaultWalletType) > -1
     ) {
       selectedWalletType = defaultWalletType;
     } else {
-      selectedWalletType = ExtensionWallet.WALLET_TYPE;
+      selectedWalletType = ExtensionWallet.TYPE;
     }
 
     this.state = {
-      step: STEPS.SELETE,
+      step: STEPS.SELECT,
       selectedWalletType,
       password: "",
       processing: false
@@ -72,8 +74,9 @@ class Wallet extends React.PureComponent<Props, State> {
 
   public componentDidMount() {
     const { dispatch, nodeUrl } = this.props;
-    HydroWallet.setNodeUrl(nodeUrl);
+    setNodeUrl(nodeUrl);
     dispatch(loadHydroWallets());
+    dispatch(loadWalletConnectWallet());
 
     if (document.readyState === "complete") {
       this.loadExtensitonWallet();
@@ -88,7 +91,7 @@ class Wallet extends React.PureComponent<Props, State> {
 
   public render() {
     const { selectedWalletType } = this.state;
-    const { isShowWalletModal, title, hideBanner, dispatch } = this.props;
+    const { isShowWalletModal, title, dispatch } = this.props;
 
     return (
       <div className="HydroSDK-wallet">
@@ -98,15 +101,7 @@ class Wallet extends React.PureComponent<Props, State> {
             onClick={() => dispatch(hideWalletModal())}
           />
           <div className="HydroSDK-dialog">
-            <div className="HydroSDK-title">
-              {title || "Hydro SDK Wallet"}
-              <button
-                className="HydroSDK-closeButton"
-                onClick={() => dispatch(hideWalletModal())}
-              >
-                X
-              </button>
-            </div>
+            <div className="HydroSDK-title">{title || "Hydro SDK Wallet"}</div>
             <div className="HydroSDK-fieldGroup">
               <div className="HydroSDK-label">Select Wallet Type</div>
               <Select
@@ -117,9 +112,12 @@ class Wallet extends React.PureComponent<Props, State> {
             {this.renderStepContent()}
             {this.renderUnlockForm()}
             <div className="HydroSDK-footer">
-              {hideBanner ? null : (
-                <span className="HydroSDK-banner">Powered by Hydro</span>
-              )}
+              <button
+                className="HydroSDK-closeButton"
+                onClick={() => dispatch(hideWalletModal())}
+              >
+                Close
+              </button>
               {this.renderHydroWalletButtons()}
             </div>
           </div>
@@ -130,47 +128,63 @@ class Wallet extends React.PureComponent<Props, State> {
 
   private renderStepContent() {
     const { step, selectedWalletType } = this.state;
-    const {
-      extensionWalletSupported,
-      selectedAccountID,
-      accounts
-    } = this.props;
+    const { extensionWalletSupported, accounts, selectedAccount } = this.props;
     switch (step) {
-      case STEPS.SELETE:
+      case STEPS.SELECT:
+        if (selectedWalletType === WalletConnectWallet.TYPE) {
+          const account = accounts.get(WalletConnectWallet.TYPE)!;
+          if (account.get("isLocked")) return this.renderQrImage();
+        }
+
         return (
           <WalletSelector
             walletIsSupported={
-              selectedWalletType === ExtensionWallet.WALLET_TYPE
+              selectedWalletType === ExtensionWallet.TYPE
                 ? extensionWalletSupported
                 : true
             }
             accounts={accounts}
-            selectedAccountID={selectedAccountID}
+            selectedAccount={selectedAccount}
             walletType={selectedWalletType}
           />
         );
       case STEPS.CREATE:
         return (
-          <Create callback={() => this.setState({ step: STEPS.SELETE })} />
+          <Create callback={() => this.setState({ step: STEPS.SELECT })} />
         );
       case STEPS.IMPORT:
         return (
-          <Import callback={() => this.setState({ step: STEPS.SELETE })} />
+          <Import callback={() => this.setState({ step: STEPS.SELECT })} />
         );
       default:
         return null;
     }
   }
 
+  private renderQrImage() {
+    const { accounts } = this.props;
+    const wallet = accounts.get(WalletConnectWallet.TYPE)!.get("wallet");
+    const connector = (wallet as any).connector;
+
+    return (
+      <div
+        className="HydroSDK-qr-image"
+        dangerouslySetInnerHTML={{
+          __html: qrImage.imageSync(connector.uri, { type: "svg" }).toString()
+        }}
+      />
+    );
+  }
+
   private renderUnlockForm() {
     const { password, selectedWalletType, step } = this.state;
-    const { selectedAccountID, selectedAccount } = this.props;
+    const { selectedAccount } = this.props;
     if (
-      step !== STEPS.SELETE ||
-      selectedWalletType !== HydroWallet.WALLET_TYPE ||
-      !isHydroWallet(selectedAccountID) ||
+      step !== STEPS.SELECT ||
+      selectedWalletType !== HydroWallet.TYPE ||
       !selectedAccount ||
-      !selectedAccount.get("isLocked")
+      !selectedAccount.get("isLocked") ||
+      selectedAccount.get("wallet").type() !== HydroWallet.TYPE
     ) {
       return null;
     }
@@ -186,12 +200,11 @@ class Wallet extends React.PureComponent<Props, State> {
 
   private renderHydroWalletButtons(): JSX.Element | null {
     const { step, processing, selectedWalletType } = this.state;
-    const { selectedAccountID, selectedAccount } = this.props;
+    const { selectedAccount } = this.props;
 
     if (
-      selectedWalletType !== HydroWallet.WALLET_TYPE ||
-      step !== STEPS.SELETE ||
-      !selectedAccountID ||
+      selectedWalletType !== HydroWallet.TYPE ||
+      step !== STEPS.SELECT ||
       !selectedAccount ||
       !selectedAccount.get("isLocked")
     ) {
@@ -202,7 +215,7 @@ class Wallet extends React.PureComponent<Props, State> {
         <button
           className="HydroSDK-featureButton"
           disabled={processing}
-          onClick={async () => await this.handleUnlock(selectedAccountID)}
+          onClick={async () => await this.handleUnlock(selectedAccount)}
         >
           {processing ? (
             <i className="HydroSDK-fa fa fa-spinner fa-spin" />
@@ -213,12 +226,12 @@ class Wallet extends React.PureComponent<Props, State> {
     );
   }
 
-  private async handleUnlock(selectedAccountID: string): Promise<void> {
+  private async handleUnlock(selectedAccount: AccountState): Promise<void> {
     try {
       const { password } = this.state;
       this.setState({ processing: true });
       await this.props.dispatch(
-        unlockBrowserWalletAccount(selectedAccountID, password)
+        unlockBrowserWalletAccount(selectedAccount, password)
       );
     } catch (e) {
       alert(e);
@@ -230,33 +243,48 @@ class Wallet extends React.PureComponent<Props, State> {
   private getWalletsOptions(): Option[] {
     return [
       {
-        value: ExtensionWallet.WALLET_TYPE,
+        value: ExtensionWallet.TYPE,
         component: (
           <div className="HydroSDK-optionItem">
             <Svg name="extension" />
-            {ExtensionWallet.WALLET_TYPE}
+            {ExtensionWallet.LABEL}
           </div>
         ),
         onSelect: (option: Option) => {
           ExtensionWallet.enableBrowserExtensionWallet();
           this.setState({
             selectedWalletType: option.value,
-            step: STEPS.SELETE
+            step: STEPS.SELECT
           });
         }
       },
       {
-        value: HydroWallet.WALLET_TYPE,
+        value: WalletConnectWallet.TYPE,
         component: (
           <div className="HydroSDK-optionItem">
-            <Svg name="logo" />
-            {HydroWallet.WALLET_TYPE}
+            <Svg name="WalletConnect" />
+            {WalletConnectWallet.LABEL}
           </div>
         ),
         onSelect: (option: Option) => {
           this.setState({
             selectedWalletType: option.value,
-            step: STEPS.SELETE
+            step: STEPS.SELECT
+          });
+        }
+      },
+      {
+        value: HydroWallet.TYPE,
+        component: (
+          <div className="HydroSDK-optionItem">
+            <Svg name="logo" />
+            {HydroWallet.LABEL}
+          </div>
+        ),
+        onSelect: (option: Option) => {
+          this.setState({
+            selectedWalletType: option.value,
+            step: STEPS.SELECT
           });
         }
       },
@@ -270,7 +298,7 @@ class Wallet extends React.PureComponent<Props, State> {
         ),
         onSelect: () => {
           this.setState({
-            selectedWalletType: HydroWallet.WALLET_TYPE,
+            selectedWalletType: HydroWallet.TYPE,
             step: STEPS.IMPORT
           });
         }
@@ -285,7 +313,6 @@ export default connect((state: any) => {
   return {
     selectedAccount: getSelectedAccount(state),
     accounts: walletState.get("accounts"),
-    selectedAccountID: walletState.get("selectedAccountID"),
     extensionWalletSupported: walletState.get("extensionWalletSupported"),
     isShowWalletModal: walletState.get("isShowWalletModal")
   };

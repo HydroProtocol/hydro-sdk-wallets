@@ -28,7 +28,9 @@ module.exports = {
   },
   node: {
     fs: "empty",
-    child_process: "empty"
+    child_process: "empty",
+    net: "empty",
+    tls: "empty"
   },
   module: {
     rules: [

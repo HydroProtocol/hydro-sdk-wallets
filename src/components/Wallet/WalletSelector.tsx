@@ -1,6 +1,6 @@
 import * as React from "react";
 import Select, { Option } from "./Select";
-import { getWalletType, truncateAddress } from "../../wallets";
+import { truncateAddress } from "../../wallets";
 import { AccountState } from "../../reducers/wallet";
 import { connect } from "react-redux";
 import { selectAccount } from "../../actions/wallet";
@@ -8,7 +8,7 @@ import { selectAccount } from "../../actions/wallet";
 interface Props {
   walletIsSupported: boolean;
   walletType: string;
-  selectedAccountID: string | null;
+  selectedAccount: AccountState | null;
   accounts: AccountState;
   dispatch: any;
 }
@@ -21,12 +21,14 @@ const PLEASE_SELECT_A_ADDRESS_TEXT = "Please select an address";
 
 class SelectWallet extends React.PureComponent<Props, State> {
   public render() {
-    const { selectedAccountID, walletIsSupported } = this.props;
-    const acountIDOptions = this.getAccountIDOptions();
+    const { selectedAccount, walletIsSupported } = this.props;
+
+    const options = this.getOptions();
+
     let blankText;
     if (!walletIsSupported) {
       blankText = NOT_SUPPORTED_TEXT;
-    } else if (acountIDOptions.length === 0) {
+    } else if (options.length === 0) {
       blankText = NOT_FOUND_ANY_ADDRESSES_TEXT;
     } else {
       blankText = PLEASE_SELECT_A_ADDRESS_TEXT;
@@ -37,19 +39,21 @@ class SelectWallet extends React.PureComponent<Props, State> {
           <div className="HydroSDK-label">Select Address</div>
           <Select
             blank={blankText}
-            noCaret={acountIDOptions.length === 0}
-            disabled={acountIDOptions.length === 0}
-            options={acountIDOptions}
-            selected={selectedAccountID}
+            noCaret={options.length === 0}
+            disabled={options.length === 0}
+            options={options}
+            selected={selectedAccount ? selectedAccount.get("wallet").id() : ""}
           />
         </div>
       </>
     );
   }
 
-  private getAccountIDOptions(): Option[] {
+  private getOptions(): Option[] {
     const { walletType, dispatch } = this.props;
+
     const options: Option[] = [];
+
     this.getWalletAccounts(walletType).forEach(
       (account: AccountState, accountID: string) => {
         const text = account.get("address");
@@ -85,8 +89,9 @@ class SelectWallet extends React.PureComponent<Props, State> {
 
   private getWalletAccounts(walletType: string): AccountState {
     const { accounts } = this.props;
-    return accounts.filter((account, accountID) => {
-      return getWalletType(accountID) === walletType;
+
+    return accounts.filter((account: AccountState) => {
+      return account.get("wallet").type() === walletType;
     });
   }
 }

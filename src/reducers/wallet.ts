@@ -1,14 +1,14 @@
 import { Map, fromJS } from "immutable";
 import { BigNumber } from "bignumber.js";
 import { ImmutableMap } from ".";
-import { Wallet } from "../wallets";
+import { BaseWallet } from "../wallets";
 
 export interface AccountProps {
   address: string | null;
   balance: BigNumber;
   isLocked: boolean;
   networkId: number | null;
-  wallet: Wallet;
+  wallet: BaseWallet;
 }
 
 export type AccountState = ImmutableMap<AccountProps>;
@@ -44,13 +44,14 @@ export default (state = initialState, action: any) => {
         ["accounts", action.payload.accountID],
         initializeAccount
       );
+      state = state.setIn(
+        ["accounts", action.payload.accountID, "wallet"],
+        action.payload.wallet
+      );
       return state;
     case "HYDRO_WALLET_UPDATE_WALLET":
       const wallet = action.payload.wallet;
-      state = state.setIn(
-        ["accounts", wallet.getAccountID(), "wallet"],
-        wallet
-      );
+      state = state.setIn(["accounts", wallet.id(), "wallet"], wallet);
       return state;
     case "HYDRO_WALLET_SHOW_DIALOG":
       state = state.set("isShowWalletModal", true);

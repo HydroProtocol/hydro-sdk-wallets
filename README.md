@@ -1,7 +1,3 @@
-# Hydro SDK wallet
-
-**important:** this project is under very active development, and it is not ready for production usage. This warnning will be removed when it is reliable.
-
 ## Introduction
 
 Nearly every dapp needs to connect to a crypto wallet.There are many options such as metamask, ledger. Hydro sdk wallet makes it easier to integrate different kinds of wallets together, and give an uniform interfaces to interative with them.
@@ -15,12 +11,12 @@ There is a default ui in this package. You can also implement another ui as you 
 ### Support wallets:
 
 - Metamask
+- Wallet Connect Protocol
 - Browser Local Wallet
 
 ### Will support:
 
 - Ledger Wallet
-- Wallet Connect Protocol
 - Trust Wallet
 - Coinbase Wallet
 - Imtoken Wallet
@@ -121,8 +117,6 @@ Methods to get data from redux store.
 - `getAccount(state, accountID)` Return the corresponding account
 - `getSelectedAccount(state)` Return the selected account
 - `getAccounts(state)` Return all available accounts
-- `getSelectedAccountWallet(state)` Return the wallet of selected account
-- `getWallet(state, accountID)` Return the wallet of corresponding account
 
 ### Action creators
 
@@ -165,8 +159,7 @@ const txId = await wallet.sendTransaction(tx);
  *  Draft Message Parameters
  */
 const msgParams = [
-  "HYDRO-AUTHENTICATION", //message
-  "0x31Ebd457b999Bf99759602f5Ece5AA5033CB56B3" //address
+  "HYDRO-AUTHENTICATION" //message
 ];
 
 /**
@@ -183,7 +176,7 @@ const signature = await wallet.signPersonalMessage(msgParams);
  */
 const customRequest = [
   "eth_getTransactionReceipt", //method
-  "0x452817c981809fb7fab716dc84114b97c9ad2542c72fb9ed2c64d79e1bddb937" //txHash
+  ["0x452817c981809fb7fab716dc84114b97c9ad2542c72fb9ed2c64d79e1bddb937"] //params
 ];
 
 /**

@@ -13,6 +13,7 @@ import {
   showWalletModal,
   hideWalletModal
 } from "./actions/wallet";
+import { getBalance, getTransactionReceipt, getContract } from "./wallets";
 import "../index.css";
 
 export {
@@ -27,5 +28,8 @@ export {
   selectAccount,
   unlockBrowserWalletAccount,
   showWalletModal,
-  hideWalletModal
+  hideWalletModal,
+  getBalance,
+  getTransactionReceipt,
+  getContract
 };
