@@ -132,6 +132,9 @@ These functions are redux action creators. You need to dispatch the result to st
 - `unlockBrowserWalletAccount(accountID, password)` Unlock a browser local wallet
 - `showWalletModal()` Show the wallets modal
 - `hideWalletModal()` Hide the wallets modal
+- `getBalance(address)` Return the balance of the address
+- `getTransactionReceipt(txID)` Return the transaction receipt
+- `getContract(contractAddress, abi)` Return a contract instance
 
 ### Account functions
 
@@ -183,7 +186,7 @@ const signature = await wallet.signPersonalMessage(msgParams);
  */
 const customRequest = [
   "eth_getTransactionReceipt", //method
-  "0x452817c981809fb7fab716dc84114b97c9ad2542c72fb9ed2c64d79e1bddb937" //txHash
+  ["0x452817c981809fb7fab716dc84114b97c9ad2542c72fb9ed2c64d79e1bddb937"] //params
 ];
 
 /**

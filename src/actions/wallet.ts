@@ -1,5 +1,6 @@
 import { BigNumber } from "ethers/utils";
 import { getAccount, getWallet } from "../selector/wallet";
+import WalletConnect from "@walletconnect/browser";
 
 import {
   BaseWallet,
@@ -7,7 +8,8 @@ import {
   ExtensionWallet,
   NeedUnlockWalletError,
   NotSupportedError,
-  WalletConnectWallet
+  WalletConnectWallet,
+  getBalance
 } from "../wallets";
 import { AccountState } from "../reducers/wallet";
 
@@ -195,11 +197,7 @@ export const loadWalletConnectWallet = () => {
         throw error;
       }
 
-      // console.log(wallet.connector.uri);
-      // await wallet.connector.createSession();
-
-      // console.log(wallet.connector.uri);
-      dispatch(initAccount(accountID, wallet));
+      window.location.reload();
     });
   };
 };
@@ -295,7 +293,7 @@ const watchWallet = (wallet: BaseWallet) => {
       ]);
       if (address) {
         try {
-          const balance = await wallet.loadBalance(address);
+          const balance = await getBalance(address);
           const balanceInStore = getState().WalletReducer.getIn([
             "accounts",
             accountID,

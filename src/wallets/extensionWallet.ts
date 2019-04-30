@@ -1,6 +1,4 @@
 import BaseWallet, { txParams } from "./baseWallet";
-import { BigNumber } from "ethers/utils";
-import { Contract } from "ethers";
 declare global {
   interface Window {
     web3: any;
@@ -30,29 +28,6 @@ export default class ExtensionWallet extends BaseWallet {
           reject(err);
         } else {
           resolve(networkId);
-        }
-      });
-    });
-  }
-
-  public getContract(contractAddress: string, abi: any): Contract {
-    if (!this.isSupported()) {
-      throw BaseWallet.NotSupportedError;
-    }
-    return window.web3.eth.contract(abi).at(contractAddress);
-  }
-
-  public contractCall(
-    contract: Contract,
-    method: string,
-    ...args: any
-  ): Promise<any> {
-    return new Promise((resolve, reject) => {
-      contract[method](...args, (err: Error, res: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
         }
       });
     });
@@ -102,21 +77,6 @@ export default class ExtensionWallet extends BaseWallet {
     });
   }
 
-  public getTransactionReceipt(txId: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      if (!this.isSupported()) {
-        reject(BaseWallet.NotSupportedError);
-      }
-      window.web3.eth.getTransactionReceipt(txId, (err: Error, res: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
-        }
-      });
-    });
-  }
-
   public sendCustomRequest(method: string, params: any): Promise<any> {
     return new Promise((resolve, reject) => {
       if (!this.isSupported()) {
@@ -146,21 +106,6 @@ export default class ExtensionWallet extends BaseWallet {
           reject(err);
         } else {
           resolve(accounts);
-        }
-      });
-    });
-  }
-
-  public loadBalance(address: string): Promise<BigNumber> {
-    return new Promise((resolve, reject) => {
-      if (!this.isSupported()) {
-        reject(BaseWallet.NotSupportedError);
-      }
-      window.web3.eth.getBalance(address, (err: Error, res: BigNumber) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
         }
       });
     });

@@ -34,13 +34,9 @@ export default abstract class baseWallet {
 
   public abstract getAddresses(): Promise<string[]>;
 
-  public abstract loadBalance(address: string): Promise<any>;
-
   public abstract isSupported(): boolean;
 
   public abstract isLocked(address: string | null): boolean;
-
-  public abstract getTransactionReceipt(txId: string): Promise<any>;
 
   public abstract loadNetworkId(): Promise<number | undefined>;
 

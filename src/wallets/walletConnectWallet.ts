@@ -123,14 +123,14 @@ export default class WalletConnectWallet extends BaseWallet {
   public getAddresses(): Promise<string[]> {
     return new Promise((resolve, reject) => {
       if (!this.connector.connected) {
-        return [];
+        resolve([]);
       }
       resolve(this.connector.accounts);
     });
   }
 
   public loadNetworkId(): Promise<number | undefined> {
-    return new Promise((resolve, reject) => resolve(0));
+    return new Promise((resolve, reject) => resolve(this.connector.chainId));
   }
 
   public isLocked(): boolean {
@@ -155,13 +155,5 @@ export default class WalletConnectWallet extends BaseWallet {
       throw this.NotSupportedError;
     }
     return isSupported;
-  }
-
-  public loadBalance(address: string): Promise<any> {
-    return new Promise((resolve, reject) => resolve(0));
-  }
-
-  public getTransactionReceipt(txId: string): Promise<any> {
-    return new Promise((resolve, reject) => resolve(0));
   }
 }

@@ -1,4 +1,4 @@
-import { Wallet, utils, providers, Contract } from "ethers";
+import { Wallet, utils } from "ethers";
 import { JsonRpcProvider } from "ethers/providers";
 import BaseWallet, { txParams } from "./baseWallet";
 import { BigNumber } from "ethers/utils";
@@ -12,7 +12,7 @@ export default class HydroWallet extends BaseWallet {
   public static TYPE = "Hydro-Wallet";
   public static LABEL = "Browser Wallet";
 
-  private static nodeUrl: string = "https://ropsten.infura.io";
+  private static nodeUrl: string;
   public _address: string | null = null;
   public _wallet: Wallet | null = null;
   private _timer?: number;
@@ -86,18 +86,6 @@ export default class HydroWallet extends BaseWallet {
     return HydroWallet.TYPE + ":" + this._address;
   }
 
-  public getContract(contractAddress: string, abi: any): Contract {
-    return new Contract(contractAddress, abi, this.getProvider());
-  }
-
-  public contractCall(
-    contract: Contract,
-    method: string,
-    ...args: any
-  ): Promise<any> {
-    return contract[method](...args);
-  }
-
   public static list(): HydroWallet[] {
     return this.getWalletData().map(json => {
       const wallet = this.getWallet(this.parseWalletAddress(json));
@@ -154,15 +142,6 @@ export default class HydroWallet extends BaseWallet {
     }
   }
 
-  public async getTransactionReceipt(txId: string): Promise<any> {
-    if (!this._wallet) {
-      return Promise.reject(BaseWallet.NeedUnlockWalletError);
-    } else {
-      const tx = await this._wallet.provider.getTransactionReceipt(txId);
-      return tx;
-    }
-  }
-
   public async sendCustomRequest(method: string, params: any): Promise<any> {
     if (!this._provider) {
       return Promise.reject(BaseWallet.NeedUnlockWalletError);
@@ -178,16 +157,6 @@ export default class HydroWallet extends BaseWallet {
         resolve([this._address]);
       } else {
         resolve([]);
-      }
-    });
-  }
-
-  public loadBalance(): Promise<BigNumber> {
-    return new Promise((resolve, reject) => {
-      if (!this._wallet) {
-        reject(BaseWallet.NeedUnlockWalletError);
-      } else {
-        resolve(this._wallet.getBalance());
       }
     });
   }
@@ -226,7 +195,7 @@ export default class HydroWallet extends BaseWallet {
     if (this._provider) {
       return this._provider;
     }
-    this._provider = new providers.JsonRpcProvider(HydroWallet.nodeUrl);
+    this._provider = new JsonRpcProvider(HydroWallet.nodeUrl);
     return this._provider;
   }
 

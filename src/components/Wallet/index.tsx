@@ -11,7 +11,8 @@ import {
   HydroWallet,
   ExtensionWallet,
   WalletConnectWallet,
-  WalletTypes
+  WalletTypes,
+  setNodeUrl
 } from "../../wallets";
 import { WalletProps, WalletState, AccountState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
@@ -23,7 +24,6 @@ import {
   unlockBrowserWalletAccount
 } from "../../actions/wallet";
 import Svg from "../Svg";
-import { checkNew } from "ethers/errors";
 
 const STEPS = {
   SELECT: "SELECT",
@@ -42,7 +42,6 @@ interface Props extends WalletProps {
   dispatch: any;
   nodeUrl: string;
   title?: string;
-  hideBanner?: boolean;
   defaultWalletType?: string;
   selectedAccount: AccountState | null;
 }
@@ -75,7 +74,7 @@ class Wallet extends React.PureComponent<Props, State> {
 
   public componentDidMount() {
     const { dispatch, nodeUrl } = this.props;
-    HydroWallet.setNodeUrl(nodeUrl);
+    setNodeUrl(nodeUrl);
     dispatch(loadHydroWallets());
     dispatch(loadWalletConnectWallet());
 
@@ -92,7 +91,7 @@ class Wallet extends React.PureComponent<Props, State> {
 
   public render() {
     const { selectedWalletType } = this.state;
-    const { isShowWalletModal, title, hideBanner, dispatch } = this.props;
+    const { isShowWalletModal, title, dispatch } = this.props;
 
     return (
       <div className="HydroSDK-wallet">
@@ -102,15 +101,7 @@ class Wallet extends React.PureComponent<Props, State> {
             onClick={() => dispatch(hideWalletModal())}
           />
           <div className="HydroSDK-dialog">
-            <div className="HydroSDK-title">
-              {title || "Hydro SDK Wallet"}
-              <button
-                className="HydroSDK-closeButton"
-                onClick={() => dispatch(hideWalletModal())}
-              >
-                X
-              </button>
-            </div>
+            <div className="HydroSDK-title">{title || "Hydro SDK Wallet"}</div>
             <div className="HydroSDK-fieldGroup">
               <div className="HydroSDK-label">Select Wallet Type</div>
               <Select
@@ -121,9 +112,12 @@ class Wallet extends React.PureComponent<Props, State> {
             {this.renderStepContent()}
             {this.renderUnlockForm()}
             <div className="HydroSDK-footer">
-              {hideBanner ? null : (
-                <span className="HydroSDK-banner">Powered by Hydro</span>
-              )}
+              <button
+                className="HydroSDK-closeButton"
+                onClick={() => dispatch(hideWalletModal())}
+              >
+                Close
+              </button>
               {this.renderHydroWalletButtons()}
             </div>
           </div>
@@ -138,8 +132,8 @@ class Wallet extends React.PureComponent<Props, State> {
     switch (step) {
       case STEPS.SELECT:
         if (selectedWalletType === WalletConnectWallet.TYPE) {
-          const wallet = accounts.get(WalletConnectWallet.TYPE)!;
-          if (wallet.get("isLocked")) return this.renderQrImage();
+          const account = accounts.get(WalletConnectWallet.TYPE)!;
+          if (account.get("isLocked")) return this.renderQrImage();
         }
 
         return (
