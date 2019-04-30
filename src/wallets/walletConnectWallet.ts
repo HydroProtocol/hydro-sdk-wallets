@@ -35,30 +35,27 @@ export default class WalletConnectWallet extends BaseWallet {
 
   public NotSupportedError = new Error("Current Wallet Not Supported");
 
-  public signMessage(message: string, address: string): Promise<string> | null {
+  public signMessage(message: string): Promise<string> | null {
     return new Promise((resolve, reject) => {
       if (!this.connector.connected) {
         reject(this.NeedUnlockWalletError);
         return;
       }
       this.connector
-        .signMessage([address, message])
+        .signMessage([this.connector.accounts[0], message])
         .then((signature: string) => resolve(signature))
         .catch((error: Error) => reject(error));
     });
   }
 
-  public signPersonalMessage(
-    message: string | Uint8Array,
-    address: string
-  ): Promise<string> {
+  public signPersonalMessage(message: string | Uint8Array): Promise<string> {
     return new Promise((resolve, reject) => {
       if (!this.connector.connected) {
         reject(new Error("WalletConnect session not estabslished"));
         return;
       }
       this.connector
-        .signPersonalMessage([address, message])
+        .signPersonalMessage([this.connector.accounts[0], message])
         .then((signature: string) => resolve(signature))
         .catch((error: Error) => reject(error));
     });

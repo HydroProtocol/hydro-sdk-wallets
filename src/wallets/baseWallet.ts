@@ -14,14 +14,10 @@ export default abstract class baseWallet {
 
   public static NotSupportedError = new Error("Current Wallet Not Supported");
 
-  public abstract signMessage(
-    message: string,
-    address: string
-  ): Promise<string> | null;
+  public abstract signMessage(message: string): Promise<string> | null;
 
   public abstract signPersonalMessage(
-    message: string | Uint8Array,
-    address: string
+    message: string | Uint8Array
   ): Promise<string>;
 
   public abstract sendTransaction(

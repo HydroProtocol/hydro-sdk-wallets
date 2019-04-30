@@ -33,24 +33,18 @@ export default class ExtensionWallet extends BaseWallet {
     });
   }
 
-  public signMessage(
-    message: string | Uint8Array,
-    address: string
-  ): Promise<string> | null {
-    return this.signPersonalMessage(message, address);
+  public signMessage(message: string | Uint8Array): Promise<string> | null {
+    return this.signPersonalMessage(message);
   }
 
-  public signPersonalMessage(
-    message: string | Uint8Array,
-    address: string
-  ): Promise<string> {
+  public signPersonalMessage(message: string | Uint8Array): Promise<string> {
     return new Promise((resolve, reject) => {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
       window.web3.personal.sign(
         window.web3.toHex(message),
-        address,
+        window.web3.eth.accounts[0],
         (err: Error, res: string) => {
           if (err) {
             reject(err);

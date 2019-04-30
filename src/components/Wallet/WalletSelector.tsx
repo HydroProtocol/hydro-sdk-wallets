@@ -42,9 +42,7 @@ class SelectWallet extends React.PureComponent<Props, State> {
             noCaret={options.length === 0}
             disabled={options.length === 0}
             options={options}
-            selected={
-              selectedAccount ? selectedAccount.get("wallet").type() : ""
-            }
+            selected={selectedAccount ? selectedAccount.get("wallet").id() : ""}
           />
         </div>
       </>
