@@ -1,7 +1,5 @@
 import { BigNumber } from "ethers/utils";
-import { getAccount, getWallet } from "../selector/wallet";
-import WalletConnect from "@walletconnect/browser";
-
+import { getAccount } from "../selector/wallet";
 import {
   BaseWallet,
   HydroWallet,
@@ -74,10 +72,7 @@ export const loadBalance = (accountID: string, balance: BigNumber) => {
   };
 };
 
-export const loadNetwork = (
-  accountID: string,
-  networkId: number | undefined
-) => {
+export const loadNetwork = (accountID: string, networkId: number | undefined) => {
   return {
     type: "HYDRO_WALLET_LOAD_NETWORK",
     payload: {
@@ -115,14 +110,9 @@ export const unlockAccount = (accountID: string) => {
   };
 };
 
-export const unlockBrowserWalletAccount = (
-  account: AccountState,
-  password: string
-) => {
+export const unlockBrowserWalletAccount = (account: AccountState, password: string) => {
   return async (dispatch: any, getState: any) => {
-    const hydroWallet: HydroWallet | null = account.get(
-      "wallet"
-    ) as HydroWallet;
+    const hydroWallet: HydroWallet | null = account.get("wallet") as HydroWallet;
 
     if (hydroWallet) {
       await hydroWallet.unlock(password);
@@ -227,14 +217,12 @@ const watchWallet = (wallet: BaseWallet) => {
 
     if (!getAccount(getState(), accountID)) {
       await dispatch(initAccount(accountID, wallet));
+    } else {
+      await dispatch(updateWallet(wallet));
     }
 
-    const lastSelectedAccountID = window.localStorage.getItem(
-      "HydroWallet:lastSelectedAccountID"
-    );
-    const currentSelectedAccountID = getState().WalletReducer.get(
-      "selectedAccountID"
-    );
+    const lastSelectedAccountID = window.localStorage.getItem("HydroWallet:lastSelectedAccountID");
+    const currentSelectedAccountID = getState().WalletReducer.get("selectedAccountID");
     if (!currentSelectedAccountID && lastSelectedAccountID === accountID) {
       dispatch(selectAccount(accountID));
     }
@@ -257,23 +245,13 @@ const watchWallet = (wallet: BaseWallet) => {
       }
 
       const walletIsLocked = wallet.isLocked(address);
-      const walletStoreLocked = getState().WalletReducer.getIn([
-        "accounts",
-        accountID,
-        "isLocked"
-      ]);
+      const walletStoreLocked = getState().WalletReducer.getIn(["accounts", accountID, "isLocked"]);
 
       if (walletIsLocked !== walletStoreLocked) {
-        dispatch(
-          walletIsLocked ? lockAccount(accountID) : unlockAccount(accountID)
-        );
+        dispatch(walletIsLocked ? lockAccount(accountID) : unlockAccount(accountID));
       }
 
-      const currentAddressInStore = getState().WalletReducer.getIn([
-        "accounts",
-        accountID,
-        "address"
-      ]);
+      const currentAddressInStore = getState().WalletReducer.getIn(["accounts", accountID, "address"]);
 
       if (currentAddressInStore !== address) {
         dispatch(loadAddress(accountID, address));
@@ -286,19 +264,11 @@ const watchWallet = (wallet: BaseWallet) => {
     const watchBalance = async () => {
       const timerKey = TIMER_KEYS.BALANCE;
 
-      const address = getState().WalletReducer.getIn([
-        "accounts",
-        accountID,
-        "address"
-      ]);
+      const address = getState().WalletReducer.getIn(["accounts", accountID, "address"]);
       if (address) {
         try {
           const balance = await getBalance(address);
-          const balanceInStore = getState().WalletReducer.getIn([
-            "accounts",
-            accountID,
-            "balance"
-          ]);
+          const balanceInStore = getState().WalletReducer.getIn(["accounts", accountID, "balance"]);
 
           if (balance.toString() !== balanceInStore.toString()) {
             dispatch(loadBalance(accountID, balance));
@@ -318,11 +288,7 @@ const watchWallet = (wallet: BaseWallet) => {
 
       try {
         const networkId = await wallet.loadNetworkId();
-        if (
-          networkId &&
-          networkId !==
-            getState().WalletReducer.getIn(["accounts", accountID, "networkId"])
-        ) {
+        if (networkId && networkId !== getState().WalletReducer.getIn(["accounts", accountID, "networkId"])) {
           dispatch(loadNetwork(accountID, networkId));
         }
       } catch (e) {

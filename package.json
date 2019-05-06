@@ -1,11 +1,8 @@
 {
   "name": "@gongddex/hydro-sdk-wallet",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "main": "./build/index.js",
-  "files": [
-    "build",
-    "index.css"
-  ],
+  "files": ["build", "index.css"],
   "scripts": {
     "build": "rm -rf build && tsc",
     "example": "npm --prefix ./examples/$example install && npm --prefix ./examples/$example start",
@@ -14,12 +11,7 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
+  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"],
   "dependencies": {
     "@walletconnect/browser": "^1.0.0-beta.18",
     "ethereumjs-util": "5.2.0",
