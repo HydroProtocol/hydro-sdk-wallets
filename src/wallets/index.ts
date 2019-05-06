@@ -18,6 +18,13 @@ export {
   WalletConnectWallet
 };
 
+export const payloadId = (): number => {
+  const datePart = new Date().getTime() * Math.pow(10, 3)
+  const extraPart = Math.floor(Math.random() * Math.pow(10, 3))
+  const id = datePart + extraPart
+  return id
+}
+
 export const setNodeUrl = (nodeUrl: string) => {
   HydroWallet.setNodeUrl(nodeUrl);
   globalNodeUrl = nodeUrl;
@@ -33,7 +40,7 @@ export const getBalance = (address: string): Promise<BigNumber> => {
       globalNodeUrl,
       {
         headers: { "content-type": "application/json" },
-        form: `{"jsonrpc":"2.0","method":"eth_getBalance","params":["${address}"],"id":1}`
+        form: `{"jsonrpc":"2.0","method":"eth_getBalance","params":["${address}", "latest"],"id":${payloadId()}}`
       },
       (error, response, data) => {
         if (error) {
@@ -58,7 +65,7 @@ export const getTransactionReceipt = (txID: string): Promise<any> => {
       globalNodeUrl,
       {
         headers: { "content-type": "application/json" },
-        form: `{"jsonrpc":"2.0","method":"eth_getTransactionReceipt","params":["${txID}"],"id":1}`
+        form: `{"jsonrpc":"2.0","method":"eth_getTransactionReceipt","params":["${txID}"],"id":${payloadId()}}`
       },
       (error, response, data) => {
         if (error) {
