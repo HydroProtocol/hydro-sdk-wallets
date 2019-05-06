@@ -1,4 +1,4 @@
-## Introduction
+Introduction
 
 Nearly every dapp needs to connect to a crypto wallet.There are many options such as metamask, ledger. Hydro sdk wallet makes it easier to integrate different kinds of wallets together, and give an uniform interfaces to interative with them.
 
@@ -108,7 +108,7 @@ export default connect(state => {
 | Name              | Type   | Default                     | Desc                                                                           |
 | ----------------- | ------ | --------------------------- | ------------------------------------------------------------------------------ |
 | nodeUrl           | string | `https://ropsten.infura.io` | Ethereum JSON RPC Endpoint                                                     |
-| defaultWalletType | string | `Extension Wallet`          | default selected wallet type. Options are `Extension Wallet`, `Browser Wallet` |
+| defaultWalletType | string | `EXTENSION`                 | default selected wallet type. Options are `EXTENSION`, `Hydro-Wallet`, `WALLETCONNECT` |
 
 ### Selectors
 
