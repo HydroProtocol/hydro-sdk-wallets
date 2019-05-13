@@ -11,6 +11,16 @@ import {
 } from "../wallets";
 import { AccountState } from "../reducers/wallet";
 
+export const WALLET_STEPS = {
+  SELECT: "SELECT",
+  CREATE: "CREATE",
+  CREATE_CONFIRM: "CREATE_CONFIRM",
+  BACKUP: "BACKUP",
+  TEST_MNEMONIC: "TEST_MNEMONIC",
+  ADD_FUNDS: "ADD_FUNDS",
+  IMPORT: "IMPORT"
+};
+
 const TIMER_KEYS = {
   ADDRESS: "ADDRESS",
   STATUS: "STATUS",
@@ -37,6 +47,20 @@ const clearTimer = (accountID: string) => {
 
 const isTimerExist = (accountID: string) => {
   return !!timers[accountID];
+};
+
+export const cacheWallet = (wallet: HydroWallet, password: string) => {
+  return {
+    type: "HYDRO_WALLET_CACHE_WALLET",
+    payload: { wallet, password }
+  };
+};
+
+export const setWalletStep = (step: string) => {
+  return {
+    type: "HYDRO_WALLET_SET_STEP",
+    payload: { step }
+  };
 };
 
 export const initAccount = (accountID: string, wallet: BaseWallet) => {

@@ -2,10 +2,9 @@ import * as React from "react";
 import { HydroWallet } from "../../wallets";
 import Input from "./Input";
 import { connect } from "react-redux";
-import { loadHydroWallet } from "../../actions/wallet";
+import { loadHydroWallet, setWalletStep, WALLET_STEPS } from "../../actions/wallet";
 
 interface Props {
-  callback: () => any;
   dispatch: any;
 }
 
@@ -27,7 +26,7 @@ class Import extends React.PureComponent<Props, State> {
 
   private async submit(e: React.FormEvent) {
     let { password, privateKey } = this.state;
-    const { callback, dispatch } = this.props;
+    const { dispatch } = this.props;
 
     e.preventDefault();
 
@@ -52,7 +51,7 @@ class Import extends React.PureComponent<Props, State> {
 
       const wallet = await HydroWallet.import(privateKey, password);
       await dispatch(loadHydroWallet(wallet));
-      callback();
+      dispatch(setWalletStep(WALLET_STEPS.SELECT));
     } catch (e) {
       alert(e);
     } finally {
@@ -69,20 +68,9 @@ class Import extends React.PureComponent<Props, State> {
           text={privateKey}
           handleChange={(privateKey: string) => this.setState({ privateKey })}
         />
-        <Input
-          label="Password"
-          text={password}
-          handleChange={(password: string) => this.setState({ password })}
-        />
-        <button
-          className="HydroSDK-submitButton HydroSDK-featureButton"
-          type="submit"
-          disabled={processing}
-        >
-          {processing ? (
-            <i className="HydroSDK-fa fa fa-spinner fa-spin" />
-          ) : null}{" "}
-          Import
+        <Input label="Password" text={password} handleChange={(password: string) => this.setState({ password })} />
+        <button className="HydroSDK-submitButton HydroSDK-featureButton" type="submit" disabled={processing}>
+          {processing ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} Import
         </button>
       </form>
     );

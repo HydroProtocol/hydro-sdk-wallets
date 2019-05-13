@@ -1,10 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import {
-  Wallet,
-  getSelectedAccount,
-  WalletButton
-} from "@gongddex/hydro-sdk-wallet";
+import { Wallet, getSelectedAccount, WalletButton } from "@gongddex/hydro-sdk-wallet";
 
 class Example extends React.Component {
   renderAccount(account) {
@@ -23,8 +19,7 @@ class Example extends React.Component {
               .get("wallet")
               .signPersonalMessage("Test Message")
               .then(alert, alert)
-          }
-        >
+          }>
           Sign "Test Message"
         </button>
       </p>
@@ -40,13 +35,7 @@ class Example extends React.Component {
         <WalletButton />
 
         <h2>Info</h2>
-        <div>
-          {selectedAccount ? (
-            this.renderAccount(selectedAccount)
-          ) : (
-            <p>No selected Account</p>
-          )}
-        </div>
+        <div>{selectedAccount ? this.renderAccount(selectedAccount) : <p>No selected Account</p>}</div>
       </div>
     );
   }

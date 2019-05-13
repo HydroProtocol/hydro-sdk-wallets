@@ -29,14 +29,11 @@ export default class HydroWallet extends BaseWallet {
   public static async createRandom(password: string): Promise<HydroWallet> {
     const wallet = await Wallet.createRandom();
     const hydroWallet = new HydroWallet(wallet.address, wallet);
-    await hydroWallet.save(password);
+
     return hydroWallet;
   }
 
-  public static async import(
-    privateKey: string,
-    password: string
-  ): Promise<HydroWallet> {
+  public static async import(privateKey: string, password: string): Promise<HydroWallet> {
     const wallet = await new Wallet(privateKey);
     const hydroWallet = new HydroWallet(wallet.address, wallet);
     await hydroWallet.save(password);
@@ -49,9 +46,7 @@ export default class HydroWallet extends BaseWallet {
     }
     const data = await this._wallet.encrypt(password);
     const wallets = HydroWallet.getWalletData();
-    const index = wallets.findIndex(
-      json => HydroWallet.parseWalletAddress(json) === this._address
-    );
+    const index = wallets.findIndex(json => HydroWallet.parseWalletAddress(json) === this._address);
     if (index !== -1) {
       wallets.splice(index, 1, data);
     } else {
@@ -65,9 +60,7 @@ export default class HydroWallet extends BaseWallet {
   public delete(): boolean {
     this._wallet = null;
     HydroWallet._cache.delete(this._address!);
-    const wallets = HydroWallet.getWalletData().filter(
-      json => HydroWallet.parseWalletAddress(json) !== this._address
-    );
+    const wallets = HydroWallet.getWalletData().filter(json => HydroWallet.parseWalletAddress(json) !== this._address);
     HydroWallet.setWalletData(wallets);
     return true;
   }
@@ -128,9 +121,7 @@ export default class HydroWallet extends BaseWallet {
     return this.signMessage(ethUtil.toBuffer(message));
   }
 
-  public async sendTransaction(
-    txParams: txParams
-  ): Promise<string | undefined> {
+  public async sendTransaction(txParams: txParams): Promise<string | undefined> {
     if (txParams.value) {
       txParams.value = new BigNumber(txParams.value);
     }
@@ -174,9 +165,7 @@ export default class HydroWallet extends BaseWallet {
   }
 
   public async unlock(password: string) {
-    const json = HydroWallet.getWalletData().find(
-      json => HydroWallet.parseWalletAddress(json) === this._address
-    );
+    const json = HydroWallet.getWalletData().find(json => HydroWallet.parseWalletAddress(json) === this._address);
 
     this._wallet = await Wallet.fromEncryptedJson(json, password);
     this._wallet = this._wallet.connect(this.getProvider());
@@ -197,6 +186,22 @@ export default class HydroWallet extends BaseWallet {
     }
     this._provider = new JsonRpcProvider(HydroWallet.nodeUrl);
     return this._provider;
+  }
+
+  public getMnemonic(): string {
+    if (!this._wallet) {
+      throw BaseWallet.NeedUnlockWalletError;
+    }
+    this.resetTimeout();
+    return this._wallet.mnemonic;
+  }
+
+  public getPrivateKey(): string {
+    if (!this._wallet) {
+      throw BaseWallet.NeedUnlockWalletError;
+    }
+    this.resetTimeout();
+    return this._wallet.privateKey;
   }
 
   private resetTimeout() {

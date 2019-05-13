@@ -1,4 +1,5 @@
 import * as React from "react";
+import PerfectScrollbar from "perfect-scrollbar";
 
 export interface Option {
   value: any;
@@ -26,6 +27,7 @@ interface State {
 export default class Select extends React.PureComponent<Props, State> {
   private id: string;
   private container: any;
+  private ps: any;
 
   constructor(props: Props) {
     super(props);
@@ -80,10 +82,7 @@ export default class Select extends React.PureComponent<Props, State> {
       return location >= 0 ? location : 0;
     };
 
-    const bottomDistance =
-      window.innerHeight -
-      topDistance(this.container) -
-      this.container.offsetHeight;
+    const bottomDistance = window.innerHeight - topDistance(this.container) - this.container.offsetHeight;
 
     return bottomDistance < 200 ? "up" : "down";
   }
@@ -113,8 +112,7 @@ export default class Select extends React.PureComponent<Props, State> {
               option.onSelect(option, e);
             }
             this.setState({ unfolded: false });
-          }}
-        >
+          }}>
           {this.renderOption(option)}
         </div>
       );
@@ -129,7 +127,11 @@ export default class Select extends React.PureComponent<Props, State> {
       dropdownClassNames.push("up");
     }
 
-    return <div className={dropdownClassNames.join(" ")}>{items}</div>;
+    return (
+      <div className={dropdownClassNames.join(" ")} ref={this.setRef}>
+        {items}
+      </div>
+    );
   }
 
   private renderOption = (option: Option) => {
@@ -138,14 +140,7 @@ export default class Select extends React.PureComponent<Props, State> {
 
   private renderSelected() {
     let selectOption;
-    const {
-      options,
-      selected,
-      formatSelect,
-      noCaret,
-      blank,
-      disabled
-    } = this.props;
+    const { options, selected, formatSelect, noCaret, blank, disabled } = this.props;
 
     for (let option of options) {
       if (selected === option.value) {
@@ -160,17 +155,21 @@ export default class Select extends React.PureComponent<Props, State> {
           if (!disabled) {
             this.switchFold();
           }
-        }}
-      >
-        {selectOption
-          ? formatSelect
-            ? formatSelect(selectOption)
-            : this.renderOption(selectOption)
-          : blank}
+        }}>
+        {selectOption ? (formatSelect ? formatSelect(selectOption) : this.renderOption(selectOption)) : blank}
         {noCaret ? null : this.renderCaret()}
       </div>
     );
   }
+
+  public setRef = (ref: any) => {
+    if (ref) {
+      this.ps = new PerfectScrollbar(ref, {
+        suppressScrollX: true,
+        maxScrollbarLength: 20
+      });
+    }
+  };
 
   private renderCaret() {
     return <div className="HydroSDK-caret" />;
@@ -186,11 +185,7 @@ export default class Select extends React.PureComponent<Props, State> {
     }
 
     return (
-      <div
-        className={classNames.join(" ")}
-        id={this.id}
-        ref={this.setContainer}
-      >
+      <div className={classNames.join(" ")} id={this.id} ref={this.setContainer}>
         {this.renderSelected()}
         {this.renderDropdown()}
       </div>
