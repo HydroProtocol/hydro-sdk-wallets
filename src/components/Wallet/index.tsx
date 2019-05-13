@@ -19,7 +19,8 @@ import {
   loadWalletConnectWallet,
   unlockBrowserWalletAccount,
   WALLET_STEPS,
-  setWalletStep
+  setWalletStep,
+  deleteBrowserWalletAccount
 } from "../../actions/wallet";
 import Svg from "../Svg";
 
@@ -27,6 +28,7 @@ interface State {
   password: string;
   processing: boolean;
   selectedWalletType: string;
+  checkbox: boolean;
 }
 
 interface Props extends WalletProps {
@@ -56,7 +58,8 @@ class Wallet extends React.PureComponent<Props, State> {
     this.state = {
       selectedWalletType,
       password: "",
-      processing: false
+      processing: false,
+      checkbox: false
     };
   }
 
@@ -94,12 +97,10 @@ class Wallet extends React.PureComponent<Props, State> {
             </div>
             {this.renderStepContent()}
             {this.renderUnlockForm()}
-            <div className="HydroSDK-footer">
-              <button className="HydroSDK-closeButton" onClick={() => dispatch(hideWalletModal())}>
-                Close
-              </button>
-              {this.renderHydroWalletButtons()}
-            </div>
+            {this.renderDeleteForm()}
+            <button className="HydroSDK-closeButton" onClick={() => dispatch(hideWalletModal())}>
+              Close
+            </button>
           </div>
         </div>
       </div>
@@ -108,9 +109,10 @@ class Wallet extends React.PureComponent<Props, State> {
 
   private renderStepContent() {
     const { selectedWalletType } = this.state;
-    const { extensionWalletSupported, accounts, selectedAccount, step } = this.props;
+    const { extensionWalletSupported, accounts, step } = this.props;
     switch (step) {
       case WALLET_STEPS.SELECT:
+      case WALLET_STEPS.DELETE:
         if (selectedWalletType === WalletConnectWallet.TYPE) {
           const account = accounts.get(WalletConnectWallet.TYPE)!;
           if (account.get("isLocked")) return this.renderQrImage();
@@ -119,8 +121,6 @@ class Wallet extends React.PureComponent<Props, State> {
         return (
           <WalletSelector
             walletIsSupported={selectedWalletType === ExtensionWallet.TYPE ? extensionWalletSupported : true}
-            accounts={accounts}
-            selectedAccount={selectedAccount}
             walletType={selectedWalletType}
           />
         );
@@ -155,43 +155,80 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private renderUnlockForm() {
-    const { password, selectedWalletType } = this.state;
+    const { password, selectedWalletType, processing } = this.state;
     const { selectedAccount, step } = this.props;
     if (
-      step !== WALLET_STEPS.SELECT ||
       selectedWalletType !== HydroWallet.TYPE ||
-      !selectedAccount ||
-      !selectedAccount.get("isLocked") ||
-      selectedAccount.get("wallet").type() !== HydroWallet.TYPE
-    ) {
-      return null;
-    }
-
-    return <Input label="Password" text={password} handleChange={(password: string) => this.setState({ password })} />;
-  }
-
-  private renderHydroWalletButtons(): JSX.Element | null {
-    const { processing, selectedWalletType } = this.state;
-    const { selectedAccount, step } = this.props;
-
-    if (
-      selectedWalletType !== HydroWallet.TYPE ||
-      step !== WALLET_STEPS.SELECT ||
+      (step !== WALLET_STEPS.SELECT && step !== WALLET_STEPS.DELETE) ||
       !selectedAccount ||
       !selectedAccount.get("isLocked")
     ) {
       return null;
     }
+
     return (
-      <div className="HydroSDK-hydroWalletButtonGroup">
+      <>
+        <Input label="Password" text={password} handleChange={(password: string) => this.setState({ password })} />
         <button
-          className="HydroSDK-featureButton"
+          className="HydroSDK-submitButton HydroSDK-featureButton"
           disabled={processing}
-          onClick={async () => await this.handleUnlock(selectedAccount)}>
+          onClick={() => this.handleUnlock(selectedAccount)}>
           {processing ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} Unlock
         </button>
-      </div>
+      </>
     );
+  }
+
+  private renderDeleteForm() {
+    const { checkbox, processing, selectedWalletType } = this.state;
+    const { selectedAccount, step } = this.props;
+    if (
+      !selectedAccount ||
+      selectedAccount.get("isLocked") ||
+      step !== WALLET_STEPS.DELETE ||
+      selectedWalletType !== HydroWallet.TYPE
+    ) {
+      return null;
+    }
+    return (
+      <>
+        <div className="HydroSDK-hint">
+          <div className="HydroSDK-hintTitle">
+            <i className="HydroSDK-fa fa fa-bullhorn" />
+            Heads up!
+          </div>
+          <span>
+            Before you proceed, please make sure you have backed up your wallet. If you haven’t, you will permanently
+            lose access to this wallet and all funds within it. Once you click Delete, the deletion will occur.
+          </span>
+          <div
+            className={`HydroSDK-checkboxDiv ${checkbox ? "checked" : ""}`}
+            onClick={() => this.setState({ checkbox: !checkbox })}>
+            <div className="HydroSDK-checkbox">
+              <i className="fa fa-check" />
+            </div>
+            I understand that I will lose all my assets in my wallet if I haven’t backed up this wallet.
+          </div>
+        </div>
+        <button
+          className="HydroSDK-submitButton HydroSDK-featureButton"
+          disabled={processing || !checkbox}
+          onClick={() => this.handleDelete(selectedAccount)}>
+          {processing ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} Delete
+        </button>
+      </>
+    );
+  }
+
+  private async handleDelete(selectedAccount: AccountState): Promise<void> {
+    try {
+      this.setState({ processing: true });
+      await this.props.dispatch(deleteBrowserWalletAccount(selectedAccount));
+    } catch (e) {
+      alert(e);
+    } finally {
+      this.setState({ processing: false });
+    }
   }
 
   private async handleUnlock(selectedAccount: AccountState): Promise<void> {
@@ -280,6 +317,21 @@ class Wallet extends React.PureComponent<Props, State> {
         ),
         onSelect: () => {
           dispatch(setWalletStep(WALLET_STEPS.IMPORT));
+          this.setState({
+            selectedWalletType: HydroWallet.TYPE
+          });
+        }
+      },
+      {
+        value: WALLET_STEPS.DELETE,
+        component: (
+          <div className="HydroSDK-optionItem HydroSDK-walletFeature">
+            <Svg name="delete" />
+            Delete Wallet
+          </div>
+        ),
+        onSelect: () => {
+          dispatch(setWalletStep(WALLET_STEPS.DELETE));
           this.setState({
             selectedWalletType: HydroWallet.TYPE
           });

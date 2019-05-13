@@ -47,6 +47,9 @@ const initialState: WalletState = fromJS({
 
 export default (state = initialState, action: any) => {
   switch (action.type) {
+    case "HYDRO_WALLET_DELETE_ACCOUNT":
+      state = state.removeIn(["accounts", action.payload.accountID]);
+      return state;
     case "HYDRO_WALLET_CACHE_WALLET":
       state = state.set("walletCache", action.payload);
       return state;

@@ -1,3 +1,6 @@
+body {
+    font-size: 14px;
+}
 .HydroSDK-toggleButton {
     background-color: #535ec3;
     border-color: #4954ac;
@@ -17,9 +20,6 @@
     z-index: 2;
     border-radius: 2px;
     padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
 }
 .HydroSDK-backdrop {
     background: rgba(0, 0, 0, 0.7);
@@ -60,18 +60,13 @@
 .HydroSDK-errorMsg {
     color: #ee494c;
 }
-.HydroSDK-footer {
-    flex: 1;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-}
 .HydroSDK-closeButton {
+    position: absolute;
     font-size: 14px;
     background: #fcfcfc;
     color: #666666;
     border: 1px solid #e0e0e0;
-    height: auto;
+    bottom: 20px;
     padding: 12px;
 }
 .HydroSDK-select {
@@ -203,10 +198,6 @@ fieldset[disabled] button:hover {
     background: #738bd7;
     color: #fff;
     border-color: #738bd7;
-    margin-right: 12px;
-}
-.HydroSDK-featureButton:last-child {
-    margin-right: 0;
 }
 .HydroSDK-submitButton {
     position: absolute;
@@ -290,6 +281,7 @@ fieldset[disabled] button:hover {
     align-items: center;
     height: 35px;
     cursor: pointer;
+    color: #333;
 }
 .HydroSDK-checkbox > i {
     opacity: 0;
@@ -355,4 +347,17 @@ fieldset[disabled] button:hover {
     width: 160px;
     height: 100%;
     margin: 0 25px 0 15px;
+}
+.HydroSDK-hint {
+    background: #f7f7f7;
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    padding: 12px;
+    color: #666666;
+    margin-top: 20px;
+    text-align: left;
+}
+.HydroSDK-hintTitle {
+    margin-bottom: 4px;
+    color: #333;
 }

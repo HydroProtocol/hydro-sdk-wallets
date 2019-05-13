@@ -18,7 +18,8 @@ export const WALLET_STEPS = {
   BACKUP: "BACKUP",
   TEST_MNEMONIC: "TEST_MNEMONIC",
   ADD_FUNDS: "ADD_FUNDS",
-  IMPORT: "IMPORT"
+  IMPORT: "IMPORT",
+  DELETE: "DELETE"
 };
 
 const TIMER_KEYS = {
@@ -135,13 +136,25 @@ export const unlockAccount = (accountID: string) => {
 };
 
 export const unlockBrowserWalletAccount = (account: AccountState, password: string) => {
-  return async (dispatch: any, getState: any) => {
-    const hydroWallet: HydroWallet | null = account.get("wallet") as HydroWallet;
-
+  return async (dispatch: any) => {
+    const hydroWallet = account.get("wallet") as HydroWallet;
     if (hydroWallet) {
       await hydroWallet.unlock(password);
       dispatch(updateWallet(hydroWallet));
       dispatch(unlockAccount(hydroWallet.id()));
+    }
+  };
+};
+
+export const deleteBrowserWalletAccount = (account: AccountState) => {
+  return async (dispatch: any) => {
+    const hydroWallet = account.get("wallet") as HydroWallet;
+    const isLocked = account.get("isLocked");
+    if (hydroWallet && !isLocked) {
+      const accountID = hydroWallet.id();
+      clearTimer(accountID);
+      dispatch({ type: "HYDRO_WALLET_DELETE_ACCOUNT", payload: { accountID } });
+      await hydroWallet.delete();
     }
   };
 };
