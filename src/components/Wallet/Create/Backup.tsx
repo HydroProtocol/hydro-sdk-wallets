@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { WalletState } from "../../../reducers/wallet";
 import { HydroWallet } from "../../../wallets";
 import { setWalletStep, WALLET_STEPS } from "../../../actions/wallet";
+import { translations } from "../../../i18n";
 
 interface Props {
   wallet: HydroWallet;
@@ -35,23 +36,24 @@ class Backup extends React.PureComponent<Props, State> {
 
   public render() {
     const { testing } = this.state;
+    const { wallet } = this.props;
+    const handleCopy = (e: any) => {
+      e.clipboardData.setData("text/plain", wallet.getMnemonic());
+      e.preventDefault();
+    };
     return (
       <div className="HydroSDK-backup HydroSDK-fieldGroup">
-        <div className="HydroSDK-label">Recovery Phrase</div>
+        <div className="HydroSDK-label">{translations.recoveryPhrase}</div>
         <div className="HydroSDK-mnemonic">
-          <ol className="HydroSDK-words" ref={elem => this.setMnemonicElem(elem)}>
+          <ol className="HydroSDK-words" onCopy={e => handleCopy(e)} ref={elem => this.setMnemonicElem(elem)}>
             {this.getMnemonicArray().map((word, index) => this.renderWord(word, index))}
           </ol>
         </div>
-        <div className="HydroSDK-desc">
-          {testing
-            ? "Please enter the correct words into the fields below to verify that you have recorded your recovery phrase."
-            : "If you ever lose your computer, forget your password, change browsers or clear browsing data, you will need this recovery phrase to recover your wallet. Additionally, this phrase can be used to export your wallet to other applications. We recommend writing this down in multiple locations. DO NOT lose this recovery phrase: without it you could completely lose access to your wallet and funds."}
-        </div>
+        <div className="HydroSDK-desc">{testing ? translations.testingDesc : translations.backupDesc}</div>
         <button
           className="HydroSDK-submitButton HydroSDK-featureButton"
           onClick={() => (testing ? this.confirm() : this.test())}>
-          Next
+          {translations.next}
         </button>
       </div>
     );

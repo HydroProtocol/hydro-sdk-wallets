@@ -26,7 +26,7 @@ export default class HydroWallet extends BaseWallet {
     }
   }
 
-  public static async createRandom(password: string): Promise<HydroWallet> {
+  public static async createRandom(): Promise<HydroWallet> {
     const wallet = await Wallet.createRandom();
     const hydroWallet = new HydroWallet(wallet.address, wallet);
 
@@ -35,6 +35,13 @@ export default class HydroWallet extends BaseWallet {
 
   public static async import(privateKey: string, password: string): Promise<HydroWallet> {
     const wallet = await new Wallet(privateKey);
+    const hydroWallet = new HydroWallet(wallet.address, wallet);
+    await hydroWallet.save(password);
+    return hydroWallet;
+  }
+
+  public static async fromMnemonic(mnemonic: string, password: string): Promise<HydroWallet> {
+    const wallet = await Wallet.fromMnemonic(mnemonic);
     const hydroWallet = new HydroWallet(wallet.address, wallet);
     await hydroWallet.save(password);
     return hydroWallet;

@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { setWalletStep, WALLET_STEPS, loadHydroWallet } from "../../../actions/wallet";
 import { WalletState } from "../../../reducers/wallet";
 import { HydroWallet } from "../../../wallets";
+import { translations } from "../../../i18n";
 
 interface Props {
   dispatch: any;
@@ -28,7 +29,7 @@ class CreateConfirm extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      checkbox: [false, false, false, false],
+      checkbox: new Array(translations.createConfirm.length).fill(false),
       processing: false
     };
   }
@@ -38,15 +39,13 @@ class CreateConfirm extends React.PureComponent<Props, State> {
     return (
       <div className="HydroSDK-confirm">
         {this.renderConfirmCheckbox()}
-        <div className="HydroSDK-desc">
-          Please read and confirm the important terms above on using your browser wallet.
-        </div>
+        <div className="HydroSDK-desc">{translations.confirmDesc}</div>
         <button
           className="HydroSDK-submitButton HydroSDK-featureButton"
           type="submit"
           onClick={() => this.handleSubmit()}
           disabled={checkbox.indexOf(false) !== -1 || processing}>
-          {processing ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} Create
+          {processing ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {translations.create}
         </button>
       </div>
     );
@@ -62,12 +61,6 @@ class CreateConfirm extends React.PureComponent<Props, State> {
   }
   public renderConfirmCheckbox() {
     const { checkbox } = this.state;
-    const createConfirm = [
-      "I understand that my funds are held securely on this browser and not by Hydro Wallet.",
-      "I will make sure to back up this wallet's Password in combination with its Recovery Phrase.",
-      "I understand that if I cleared my browsing data (browsing history, cookies, cached images and files, etc.), my local wallet would be deleted.",
-      "I understand that if I delete my browser wallet, I will have to import my wallet using this wallet's Recovery Phrase to recover wallet."
-    ];
     const nodes = checkbox.map((checked: boolean, index: number) => {
       return (
         <div
@@ -77,7 +70,7 @@ class CreateConfirm extends React.PureComponent<Props, State> {
           <div className="HydroSDK-checkbox">
             <i className="fa fa-check" />
           </div>
-          {createConfirm[index]}
+          {translations.createConfirm[index]}
         </div>
       );
     });

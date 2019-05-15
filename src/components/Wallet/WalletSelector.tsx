@@ -4,6 +4,7 @@ import { truncateAddress } from "../../wallets";
 import { AccountState, WalletState } from "../../reducers/wallet";
 import { connect } from "react-redux";
 import { selectAccount } from "../../actions/wallet";
+import { translations } from "../../i18n";
 
 interface Props {
   walletIsSupported: boolean;
@@ -44,7 +45,7 @@ class WalletSelector extends React.PureComponent<Props, State> {
     return (
       <>
         <div className="HydroSDK-fieldGroup">
-          <div className="HydroSDK-label">Select Address</div>
+          <div className="HydroSDK-label">{translations.selectAddress}</div>
           <Select
             blank={blankText}
             noCaret={options.length === 0}
@@ -73,7 +74,6 @@ class WalletSelector extends React.PureComponent<Props, State> {
           component: (
             <div className="HydroSDK-address-option">
               <span>
-                {" "}
                 {isLocked ? <i className="HydroSDK-fa fa fa-lock" /> : <i className="HydroSDK-fa fa fa-check" />}
                 {truncateAddress(text)}
               </span>

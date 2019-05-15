@@ -4,6 +4,7 @@ import { WalletState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
 import { hideWalletModal, showWalletModal } from "../../actions/wallet";
 import { truncateAddress } from "../../wallets";
+import { translations } from "../../i18n";
 
 class WalletButton extends React.PureComponent<any, any> {
   public render() {
@@ -12,10 +13,7 @@ class WalletButton extends React.PureComponent<any, any> {
     return (
       <button
         className="HydroSDK-toggleButton"
-        onClick={() =>
-          dispatch(isShowWalletModal ? hideWalletModal() : showWalletModal())
-        }
-      >
+        onClick={() => dispatch(isShowWalletModal ? hideWalletModal() : showWalletModal())}>
         {this.toggleText()}
       </button>
     );
@@ -28,18 +26,14 @@ class WalletButton extends React.PureComponent<any, any> {
       const isLocked = selectedAccount.get("isLocked");
       return (
         <span>
-          {isLocked ? (
-            <i className="HydroSDK-fa fa fa-lock" />
-          ) : (
-            <i className="HydroSDK-fa fa fa-check" />
-          )}
+          {isLocked ? <i className="HydroSDK-fa fa fa-lock" /> : <i className="HydroSDK-fa fa fa-check" />}
           {selectedAccount.get("address")
             ? truncateAddress(selectedAccount.get("address"))
-            : "Please Click to Select A Wallet"}
+            : translations.toggleButtonText}
         </span>
       );
     } else {
-      return <span>Please Click to Select A Wallet</span>;
+      return <span>{translations.toggleButtonText}</span>;
     }
   }
 }

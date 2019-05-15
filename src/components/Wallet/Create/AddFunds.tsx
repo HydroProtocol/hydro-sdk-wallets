@@ -2,6 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { setWalletStep, WALLET_STEPS } from "../../../actions/wallet";
 import Svg from "../../Svg";
+import { translations } from "../../../i18n";
 
 interface Props {
   dispatch: any;
@@ -23,15 +24,11 @@ class AddFunds extends React.PureComponent<Props, any> {
             </div>
           </a>
         </div>
-        <div className="HydroSDK-desc">
-          There are multiple ways to add funds to your browser wallet. If you already have Ethereum or Wrapped Ethereum,
-          simply transfer to your DDEX wallet's public address. If you do not already have Ethereum, you can purchase
-          some from a variety of platforms. We've linked a few for your convenience.
-        </div>
+        <div className="HydroSDK-desc">{translations.addFundsDesc}</div>
         <button
           className="HydroSDK-submitButton HydroSDK-featureButton"
           onClick={() => this.props.dispatch(setWalletStep(WALLET_STEPS.SELECT))}>
-          Done
+          {translations.done}
         </button>
       </div>
     );

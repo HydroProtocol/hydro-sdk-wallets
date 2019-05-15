@@ -3,13 +3,14 @@ interface Props {
   handleChange: (passowr: string) => any;
   text: string;
   label: string;
+  type?: string;
   error?: boolean;
-  errorMsg?: string;
+  errorMsg?: string | null;
 }
 
 class PasswordInput extends React.PureComponent<Props, {}> {
   public render() {
-    const { handleChange, text, label, error, errorMsg } = this.props;
+    const { handleChange, text, label, error, errorMsg, type } = this.props;
     return (
       <div className="HydroSDK-fieldGroup">
         <div className="HydroSDK-labelGroup">
@@ -18,7 +19,7 @@ class PasswordInput extends React.PureComponent<Props, {}> {
         </div>
         <input
           className={`HydroSDK-input${error ? " HydroSDK-error" : ""}`}
-          type="password"
+          type={type || "password"}
           value={text}
           onChange={e => handleChange(e.target.value)}
         />

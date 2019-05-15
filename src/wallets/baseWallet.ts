@@ -16,13 +16,9 @@ export default abstract class baseWallet {
 
   public abstract signMessage(message: string): Promise<string> | null;
 
-  public abstract signPersonalMessage(
-    message: string | Uint8Array
-  ): Promise<string>;
+  public abstract signPersonalMessage(message: string | Uint8Array): Promise<string>;
 
-  public abstract sendTransaction(
-    txParams: txParams
-  ): Promise<string | undefined>;
+  public abstract sendTransaction(txParams: txParams): Promise<string | undefined>;
 
   public abstract type(): string;
 

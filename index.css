@@ -20,6 +20,8 @@ body {
     z-index: 2;
     border-radius: 2px;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
 }
 .HydroSDK-backdrop {
     background: rgba(0, 0, 0, 0.7);
@@ -186,6 +188,7 @@ fieldset[disabled] button:hover {
     line-height: 32px;
     background: #f7f7f7;
     border: 1px solid #e0e0e0;
+    font-size: 14px;
 }
 .HydroSDK-hydroWalletButtonGroup {
     display: flex;
@@ -230,8 +233,20 @@ fieldset[disabled] button:hover {
     flex: 1;
 }
 .HydroSDK-qr-image {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    margin: auto;
+    padding-bottom: 40px;
+}
+.HydroSDK-qr-image-bg {
     width: 200px;
-    margin: 24px auto;
+    height: 200px;
+    padding: 8px;
+    background: #fff;
+}
+.HydroSDK-qr-image-bg svg {
+    width: 200px;
 }
 .HydroSDK-mnemonic {
     text-align: center;
