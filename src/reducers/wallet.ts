@@ -26,6 +26,7 @@ export interface WalletProps {
   accounts: Map<string, AccountState>;
   selectedAccountID: string | null;
   extensionWalletSupported: boolean;
+  ledgerConnecting: boolean;
   isShowWalletModal: boolean;
   step: string;
   walletCache: {
@@ -40,6 +41,7 @@ const initialState: WalletState = fromJS({
   accounts: Map<string, AccountState>(),
   selectedAccountID: null,
   extensionWalletSupported: false,
+  ledgerConnecting: false,
   isShowWalletModal: false,
   step: WALLET_STEPS.SELECT,
   walletCache: null
@@ -47,6 +49,12 @@ const initialState: WalletState = fromJS({
 
 export default (state = initialState, action: any) => {
   switch (action.type) {
+    case "HYDRO_WALLET_DISCONNECT_LEDGER":
+      state = state.set("ledgerConnecting", false);
+      return state;
+    case "HYDRO_WALLET_CONNECT_LEDGER":
+      state = state.set("ledgerConnecting", true);
+      return state;
     case "HYDRO_WALLET_DELETE_ACCOUNT":
       state = state.removeIn(["accounts", action.payload.accountID]);
       return state;
@@ -80,7 +88,10 @@ export default (state = initialState, action: any) => {
       state = state.setIn(["accounts", action.payload.accountID, "address"], action.payload.address);
       return state;
     case "HYDRO_WALLET_LOAD_BALANCE":
-      state = state.setIn(["accounts", action.payload.accountID, "balance"], new BigNumber(action.payload.balance));
+      state = state.setIn(
+        ["accounts", action.payload.accountID, "balance"],
+        new BigNumber(String(action.payload.balance))
+      );
       return state;
     case "HYDRO_WALLET_SELECT_ACCOUNT":
       state = state.set("selectedAccountID", action.payload.accountID);

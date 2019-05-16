@@ -2,6 +2,7 @@ import HydroWallet from "./hydroWallet";
 import ExtensionWallet from "./extensionWallet";
 import BaseWallet from "./baseWallet";
 import WalletConnectWallet from "./WalletConnectWallet";
+import Ledger from "./ledger";
 import request from "request";
 import { BigNumber } from "ethers/utils";
 import { Contract } from "ethers";
@@ -15,23 +16,76 @@ export {
   ExtensionWallet,
   NeedUnlockWalletError,
   NotSupportedError,
-  WalletConnectWallet
+  WalletConnectWallet,
+  Ledger
 };
 
 export const payloadId = (): number => {
-  const datePart = new Date().getTime() * Math.pow(10, 3)
-  const extraPart = Math.floor(Math.random() * Math.pow(10, 3))
-  const id = datePart + extraPart
-  return id
-}
+  const datePart = new Date().getTime() * Math.pow(10, 3);
+  const extraPart = Math.floor(Math.random() * Math.pow(10, 3));
+  const id = datePart + extraPart;
+  return id;
+};
 
 export const setNodeUrl = (nodeUrl: string) => {
-  HydroWallet.setNodeUrl(nodeUrl);
-  globalNodeUrl = nodeUrl;
+  if (nodeUrl) {
+    HydroWallet.setNodeUrl(nodeUrl);
+    globalNodeUrl = nodeUrl;
+  }
 };
 
 export const truncateAddress = (address: string): string => {
   return address.slice(0, 6) + "..." + address.slice(-4);
+};
+
+export const getNetworkID = (): Promise<number> => {
+  return new Promise((resolve, reject) => {
+    request.post(
+      globalNodeUrl,
+      {
+        headers: { "content-type": "application/json" },
+        form: `{"jsonrpc":"2.0","method":"eth_sendRawTransaction","params":[],"id":${payloadId()}}`
+      },
+      (error, response, data) => {
+        if (error) {
+          reject(error);
+        }
+        try {
+          if (data) {
+            const json = JSON.parse(data);
+            resolve(parseInt(json.result, 10));
+          }
+        } catch (e) {
+          reject(e);
+        }
+      }
+    );
+  });
+};
+
+export const sendRawTransaction = (data: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    request.post(
+      globalNodeUrl,
+      {
+        headers: { "content-type": "application/json" },
+        form: `{"jsonrpc":"2.0","method":"net_version","params":["${data}"],"id":${payloadId()}}`
+      },
+      (error, response, data) => {
+        if (error) {
+          reject(error);
+        }
+        try {
+          if (data) {
+            const json = JSON.parse(data);
+            resolve(json.result);
+          }
+        } catch (e) {
+          reject(e);
+        }
+      }
+    );
+  });
 };
 
 export const getBalance = (address: string): Promise<BigNumber> => {
@@ -89,8 +143,4 @@ export const getContract = (contractAddress: string, abi: any): Contract => {
   return new Contract(contractAddress, abi, provider);
 };
 
-export const WalletTypes = [
-  HydroWallet.TYPE,
-  ExtensionWallet.TYPE,
-  WalletConnectWallet.TYPE
-];
+export const WalletTypes = [HydroWallet.TYPE, ExtensionWallet.TYPE, WalletConnectWallet.TYPE];

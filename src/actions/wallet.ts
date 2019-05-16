@@ -7,10 +7,10 @@ import {
   NeedUnlockWalletError,
   NotSupportedError,
   WalletConnectWallet,
-  getBalance
+  getBalance,
+  Ledger
 } from "../wallets";
 import { AccountState } from "../reducers/wallet";
-
 export const WALLET_STEPS = {
   SELECT: "SELECT",
   CREATE: "CREATE",
@@ -243,6 +243,27 @@ export const loadHydroWallet = (wallet: HydroWallet) => {
   };
 };
 
+export const loadLedger = () => {
+  return async (dispatch: any) => {
+    const wallet = new Ledger();
+    await wallet.initTransport();
+    dispatch(watchWallet(wallet));
+    dispatch(connectLedger());
+  };
+};
+
+export const connectLedger = () => {
+  return {
+    type: "HYDRO_WALLET_CONNECT_LEDGER"
+  };
+};
+
+export const disconnectLedger = () => {
+  return {
+    type: "HYDRO_WALLET_DISCONNECT_LEDGER"
+  };
+};
+
 const watchWallet = (wallet: BaseWallet) => {
   return async (dispatch: any, getState: any) => {
     const accountID = wallet.id();
@@ -275,7 +296,10 @@ const watchWallet = (wallet: BaseWallet) => {
         const addresses: string[] = await wallet.getAddresses();
         address = addresses.length > 0 ? addresses[0].toLowerCase() : null;
       } catch (e) {
-        if (e !== NeedUnlockWalletError && e !== NotSupportedError) {
+        if (type === Ledger.TYPE) {
+          dispatch(disconnectLedger());
+          clearTimer(accountID);
+        } else if (e !== NeedUnlockWalletError && e !== NotSupportedError) {
           throw e;
         }
         address = null;

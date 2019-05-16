@@ -31,7 +31,7 @@ class Example extends React.Component {
     return (
       <div>
         <h2>Basic Example</h2>
-        <Wallet title="Basic Wallet Demo" nodeUrl="http://localhost:8545" />
+        <Wallet title="Basic Wallet Demo" />
         <WalletButton />
 
         <h2>Info</h2>

@@ -29,9 +29,7 @@ export default class WalletConnectWallet extends BaseWallet {
   public static LABEL = "WalletConnect";
   public static TYPE = "WALLETCONNECT";
 
-  public NeedUnlockWalletError = new Error(
-    "WalletConnect session not established"
-  );
+  public NeedUnlockWalletError = new Error("WalletConnect session not established");
 
   public NotSupportedError = new Error("Current Wallet Not Supported");
 

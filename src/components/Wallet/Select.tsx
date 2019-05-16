@@ -18,6 +18,7 @@ interface Props {
   blank?: any;
   formatSelect?: any;
   disabled?: boolean;
+  footer?: any;
 }
 
 interface State {
@@ -46,6 +47,12 @@ export default class Select extends React.PureComponent<Props, State> {
 
   public componentDidMount() {
     window.document.addEventListener("mouseup", this.tryFoldListener);
+  }
+
+  public componentDidUpdate(prevProps: Props) {
+    if (this.props.options !== prevProps.options) {
+      this.ps.update();
+    }
   }
 
   public componentWillUnmount() {
@@ -88,7 +95,7 @@ export default class Select extends React.PureComponent<Props, State> {
   }
 
   private renderDropdown() {
-    const { options, onSelect } = this.props;
+    const { options, onSelect, footer } = this.props;
     const items: JSX.Element[] = [];
 
     for (let option of options) {
@@ -130,6 +137,7 @@ export default class Select extends React.PureComponent<Props, State> {
     return (
       <div className={dropdownClassNames.join(" ")} ref={this.setRef}>
         {items}
+        {footer && <div className="HydroSDK-selectFooter">{footer}</div>}
       </div>
     );
   }

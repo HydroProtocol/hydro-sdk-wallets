@@ -35,7 +35,13 @@ export let translations = {
   importWallet: "Import Wallet",
   deleteWallet: "Delete Wallet",
   selectAddress: "Select Address",
-  toggleButtonText: "Please Click to Select A Wallet"
+  toggleButtonText: "Please Click to Select A Wallet",
+  connectToLedger: "Connect to Ledger",
+  currentWalletTypeNotSupported: "Current wallet type is not supported",
+  noAvailableAddress: "No available address",
+  pleaseSelectAddress: "Please select an address",
+  selectPath: "Select Path",
+  inputPath: "Input a path"
 };
 
 export const setTranslations = (translations: { [key: string]: string }) => {

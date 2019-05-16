@@ -101,7 +101,7 @@ body {
     flex-direction: column;
     overflow: hidden;
     background: #f7f7f7;
-    max-height: 190px;
+    max-height: 240px;
 }
 .HydroSDK-dropdown.up {
     bottom: 110%;
@@ -375,4 +375,70 @@ fieldset[disabled] button:hover {
 .HydroSDK-hintTitle {
     margin-bottom: 4px;
     color: #333;
+}
+.HydroSDK-selectFooter {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #e0e0e0;
+    padding: 6px;
+}
+.HydroSDK-paginationGotoPage {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    right: 12px;
+}
+.HydroSDK-paginationGotoPage form {
+    margin-left: 12px;
+}
+.HydroSDK-paginationGotoPage input::-webkit-outer-spin-button,
+.HydroSDK-paginationGotoPage input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+.HydroSDK-pagination {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    bottom: 12px;
+}
+.HydroSDK-pagination ul,
+.HydroSDK-pagination li {
+    list-style: none;
+}
+.HydroSDK-pagination li a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 2px;
+    background: #fff;
+    color: #666666;
+    border-radius: 4px;
+    cursor: pointer;
+    height: 36px;
+    width: 36px;
+}
+.HydroSDK-pagination li.disabled a,
+.HydroSDK-pagination li.disabled a:hover,
+.HydroSDK-pagination li.disabled a:focus,
+.HydroSDK-pagination li.disabled a:visited {
+    background: #e0e0e0;
+    color: #666666;
+    cursor: not-allowed;
+}
+.HydroSDK-pagination li a:hover,
+.HydroSDK-pagination li.active a,
+.HydroSDK-pagination li.active a:hover,
+.HydroSDK-pagination li.active a:focus,
+.HydroSDK-pagination li.active a:visited {
+    background: #f7f7f7;
+    color: #333;
+}
+.HydroSDK-customizationInputGroup {
+    display: flex;
+    align-items: center;
+}
+.HydroSDK-customizationInputGroup input {
+    margin: 0 12px 0 4px;
 }

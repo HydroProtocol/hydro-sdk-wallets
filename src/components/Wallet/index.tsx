@@ -8,7 +8,7 @@ import AddFunds from "./Create/AddFunds";
 import Input from "./Input";
 import Select, { Option } from "./Select";
 import * as qrImage from "qr-image";
-import { HydroWallet, ExtensionWallet, WalletConnectWallet, WalletTypes, setNodeUrl } from "../../wallets";
+import { HydroWallet, ExtensionWallet, WalletConnectWallet, WalletTypes, setNodeUrl, Ledger } from "../../wallets";
 import { WalletProps, WalletState, AccountState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
 import {
@@ -19,11 +19,11 @@ import {
   unlockBrowserWalletAccount,
   WALLET_STEPS,
   setWalletStep,
-  deleteBrowserWalletAccount,
-  loadLedger
+  deleteBrowserWalletAccount
 } from "../../actions/wallet";
 import Svg from "../Svg";
 import { translations, setTranslations } from "../../i18n";
+import LedgerConnector from "./LedgerConnector";
 
 interface State {
   password: string;
@@ -71,7 +71,6 @@ class Wallet extends React.PureComponent<Props, State> {
     setNodeUrl(nodeUrl);
     dispatch(loadHydroWallets());
     dispatch(loadWalletConnectWallet());
-    dispatch(loadLedger());
 
     if (document.readyState === "complete") {
       this.loadExtensitonWallet();
@@ -120,14 +119,16 @@ class Wallet extends React.PureComponent<Props, State> {
         if (selectedWalletType === WalletConnectWallet.TYPE) {
           const account = accounts.get(WalletConnectWallet.TYPE)!;
           if (account.get("isLocked")) return this.renderQrImage();
+        } else if (selectedWalletType === Ledger.TYPE) {
+          return <LedgerConnector />;
+        } else {
+          return (
+            <WalletSelector
+              walletIsSupported={selectedWalletType === ExtensionWallet.TYPE ? extensionWalletSupported : true}
+              walletType={selectedWalletType}
+            />
+          );
         }
-
-        return (
-          <WalletSelector
-            walletIsSupported={selectedWalletType === ExtensionWallet.TYPE ? extensionWalletSupported : true}
-            walletType={selectedWalletType}
-          />
-        );
       case WALLET_STEPS.CREATE:
         return <Create />;
       case WALLET_STEPS.CREATE_CONFIRM:
@@ -263,6 +264,21 @@ class Wallet extends React.PureComponent<Props, State> {
         ),
         onSelect: (option: Option) => {
           ExtensionWallet.enableBrowserExtensionWallet();
+          dispatch(setWalletStep(WALLET_STEPS.SELECT));
+          this.setState({
+            selectedWalletType: option.value
+          });
+        }
+      },
+      {
+        value: Ledger.TYPE,
+        component: (
+          <div className="HydroSDK-optionItem">
+            <Svg name="ledger" />
+            {Ledger.LABEL}
+          </div>
+        ),
+        onSelect: (option: Option) => {
           dispatch(setWalletStep(WALLET_STEPS.SELECT));
           this.setState({
             selectedWalletType: option.value

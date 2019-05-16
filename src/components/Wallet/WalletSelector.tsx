@@ -24,10 +24,6 @@ const mapStateToProps = (state: any) => {
   };
 };
 
-const NOT_SUPPORTED_TEXT = "Current wallet type is not supported";
-const NOT_FOUND_ANY_ADDRESSES_TEXT = "No available address";
-const PLEASE_SELECT_A_ADDRESS_TEXT = "Please select an address";
-
 class WalletSelector extends React.PureComponent<Props, State> {
   public render() {
     const { selectedAccountID, walletIsSupported } = this.props;
@@ -36,11 +32,11 @@ class WalletSelector extends React.PureComponent<Props, State> {
 
     let blankText;
     if (!walletIsSupported) {
-      blankText = NOT_SUPPORTED_TEXT;
+      blankText = translations.currentWalletTypeNotSupported;
     } else if (options.length === 0) {
-      blankText = NOT_FOUND_ANY_ADDRESSES_TEXT;
+      blankText = translations.noAvailableAddress;
     } else {
-      blankText = PLEASE_SELECT_A_ADDRESS_TEXT;
+      blankText = translations.pleaseSelectAddress;
     }
     return (
       <>

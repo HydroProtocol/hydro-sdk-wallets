@@ -165,7 +165,16 @@ class Svg extends React.PureComponent<Props, any> {
             </g>
           </svg>
         );
-
+      case "ledger":
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+            <path
+              fill="#000"
+              fillRule="nonzero"
+              d="M13.129.5H6.207v9.259h9.29v-6.85C15.5 1.609 14.432.5 13.128.5zM4.082.5H2.92C1.616.5.5 1.56.5 2.913V4.07h3.582V.5zM.5 6.238h3.582v3.57H.5v-3.57zm11.418 9.258h1.161c1.305 0 2.421-1.06 2.421-2.412V11.93h-3.582v3.566zm-5.71-3.566h3.581v3.57H6.207v-3.57zm-5.708 0v1.157c0 1.3 1.063 2.413 2.42 2.413h1.162v-3.57H.5z"
+            />
+          </svg>
+        );
       default:
         return null;
     }
