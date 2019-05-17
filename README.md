@@ -35,12 +35,12 @@ The store should know how to handle actions coming from the wallet components. T
 
 ```javascript
 import { createStore, combineReducers } from "redux";
-import { walletReducer } from "@gongddex/hydro-sdk-wallet";
+import { WalletReducer } from "@gongddex/hydro-sdk-wallet";
 
 const rootReducer = combineReducers({
   // ...your other reducers here
-  // you have to pass walletReducer under 'walletReducer' key
-  walletReducer
+  // you have to pass walletReducer under 'WalletReducer' key
+  WalletReducer
 });
 
 const store = createStore(rootReducer);

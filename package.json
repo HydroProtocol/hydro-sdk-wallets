@@ -1,12 +1,13 @@
 {
   "name": "@gongddex/hydro-sdk-wallet",
-  "version": "0.0.24",
+  "version": "0.0.26",
   "main": "./build/index.js",
   "files": ["build", "index.css"],
   "scripts": {
     "build": "rm -rf build && tsc",
     "example": "npm --prefix ./examples/$example install && npm --prefix ./examples/$example start",
-    "example:basic": "example=basic npm run example"
+    "example:basic": "example=basic npm run example",
+    "prepublish": "npm run build"
   },
   "eslintConfig": {
     "extends": "react-app"

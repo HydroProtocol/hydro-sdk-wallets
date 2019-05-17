@@ -9,7 +9,7 @@ import Input from "./Input";
 import Select, { Option } from "./Select";
 import * as qrImage from "qr-image";
 import { HydroWallet, ExtensionWallet, WalletConnectWallet, WalletTypes, setNodeUrl, Ledger } from "../../wallets";
-import { WalletProps, WalletState, AccountState } from "../../reducers/wallet";
+import { WalletState, AccountState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
 import {
   hideWalletModal,
@@ -24,6 +24,7 @@ import {
 import Svg from "../Svg";
 import { translations, setTranslations } from "../../i18n";
 import LedgerConnector from "./LedgerConnector";
+import { Map } from "immutable";
 
 interface State {
   password: string;
@@ -32,12 +33,16 @@ interface State {
   checkbox: boolean;
 }
 
-interface Props extends WalletProps {
+interface Props {
   dispatch: any;
-  nodeUrl: string;
+  nodeUrl?: string;
   defaultWalletType?: string;
   translations?: { [key: string]: string };
   selectedAccount: AccountState | null;
+  accounts: Map<string, AccountState>;
+  extensionWalletSupported: boolean;
+  isShowWalletModal: boolean;
+  step: string;
 }
 
 class Wallet extends React.PureComponent<Props, State> {
@@ -68,7 +73,9 @@ class Wallet extends React.PureComponent<Props, State> {
 
   public componentDidMount() {
     const { dispatch, nodeUrl } = this.props;
-    setNodeUrl(nodeUrl);
+    if (nodeUrl) {
+      setNodeUrl(nodeUrl);
+    }
     dispatch(loadHydroWallets());
     dispatch(loadWalletConnectWallet());
 
