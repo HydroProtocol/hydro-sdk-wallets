@@ -42,17 +42,13 @@ export default class ExtensionWallet extends BaseWallet {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      window.web3.personal.sign(
-        window.web3.toHex(message),
-        window.web3.eth.accounts[0],
-        (err: Error, res: string) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(res);
-          }
+      window.web3.personal.sign(window.web3.toHex(message), window.web3.eth.accounts[0], (err: Error, res: string) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res);
         }
-      );
+      });
     });
   }
 
@@ -77,16 +73,13 @@ export default class ExtensionWallet extends BaseWallet {
         reject(BaseWallet.NotSupportedError);
       }
 
-      window.web3.currentProvider.sendAsync(
-        { method, params },
-        (err: Error, res: any) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(res.result);
-          }
+      window.web3.currentProvider.sendAsync({ method, params }, (err: Error, res: any) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res.result);
         }
-      );
+      });
     });
   }
 
@@ -119,5 +112,26 @@ export default class ExtensionWallet extends BaseWallet {
 
   public isSupported(): boolean {
     return !!window.web3;
+  }
+
+  public name(): string {
+    if (!this.isSupported()) {
+      throw BaseWallet.NotSupportedError;
+    }
+
+    const cp = window.web3.currentProvider;
+    if (cp.isMetaMask) {
+      return "MetaMask";
+    } else if (cp.isCipher) {
+      return "Cipher Wallet";
+    } else if (cp.isTrust) {
+      return "Trust Wallet";
+    } else if (cp.isToshi) {
+      return "Coinbase Wallet";
+    } else if (cp.host && cp.host.match(/token\.im/)) {
+      return "Imtoken Wallet";
+    } else {
+      return "Extension Wallet";
+    }
   }
 }

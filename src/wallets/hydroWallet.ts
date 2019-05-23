@@ -217,4 +217,7 @@ export default class HydroWallet extends BaseWallet {
     }
     this._timer = window.setTimeout(() => this.lock(), HydroWallet.TIMEOUT);
   }
+  public name(): string {
+    return "Hydro Wallet";
+  }
 }

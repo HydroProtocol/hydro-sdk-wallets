@@ -5,12 +5,12 @@ import { AccountState, WalletState } from "../../reducers/wallet";
 import { connect } from "react-redux";
 import { selectAccount } from "../../actions/wallet";
 import { translations } from "../../i18n";
+import { Map } from "immutable";
 
 interface Props {
-  walletIsSupported: boolean;
   walletType: string;
   selectedAccountID: string | null;
-  accounts: AccountState;
+  accounts: Map<string, AccountState>;
   dispatch: any;
 }
 
@@ -26,14 +26,12 @@ const mapStateToProps = (state: any) => {
 
 class WalletSelector extends React.PureComponent<Props, State> {
   public render() {
-    const { selectedAccountID, walletIsSupported } = this.props;
+    const { selectedAccountID } = this.props;
 
     const options = this.getOptions();
 
     let blankText;
-    if (!walletIsSupported) {
-      blankText = translations.currentWalletTypeNotSupported;
-    } else if (options.length === 0) {
+    if (options.length === 0) {
       blankText = translations.noAvailableAddress;
     } else {
       blankText = translations.pleaseSelectAddress;
@@ -85,9 +83,8 @@ class WalletSelector extends React.PureComponent<Props, State> {
     return options;
   }
 
-  private getWalletAccounts(walletType: string): AccountState {
+  private getWalletAccounts(walletType: string): Map<string, AccountState> {
     const { accounts } = this.props;
-
     return accounts.filter((account: AccountState) => {
       return account.get("wallet").type() === walletType;
     });

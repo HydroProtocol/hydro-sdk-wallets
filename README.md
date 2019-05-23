@@ -13,9 +13,6 @@ There is a default ui in this package. You can also implement another ui as you 
 - Metamask
 - Wallet Connect Protocol
 - Browser Local Wallet
-
-### Will support:
-
 - Ledger Wallet
 - Trust Wallet
 - Coinbase Wallet
@@ -81,9 +78,7 @@ import { connect } from "react-redux";
 class App extends React.Component {
   signMessage = async () => {
     const { currentAccount } = this.props;
-    const signature = await currentAccount.wallet.signPersonalMessage(
-      "test message"
-    );
+    const signature = await currentAccount.wallet.signPersonalMessage("test message");
     console.log(signature);
   };
 
@@ -106,10 +101,11 @@ export default connect(state => {
 
 ### Wallet Component Props
 
-| Name              | Type   | Default                     | Desc                                                                           |
-| ----------------- | ------ | --------------------------- | ------------------------------------------------------------------------------ |
-| nodeUrl           | string | `https://ropsten.infura.io` | Ethereum JSON RPC Endpoint                                                     |
-| defaultWalletType | string | `EXTENSION`                 | default selected wallet type. Options are `EXTENSION`, `Hydro-Wallet`, `WALLETCONNECT` |
+| Name              | Type         | Default                                      | Desc                                                                                   |
+| ----------------- | ------------ | -------------------------------------------- | -------------------------------------------------------------------------------------- |
+| nodeUrl           | string       | `https://ropsten.infura.io`                  | Ethereum JSON RPC Endpoint                                                             |
+| defaultWalletType | string       | `EXTENSION`                                  | default selected wallet type. Options are `EXTENSION`, `Hydro-Wallet`, `WALLETCONNECT` |
+| translations      | Translations | `import { translations } from 'src/i18n.ts'` | default translations in `src/i18n.ts`                                                  |
 
 ### Selectors
 

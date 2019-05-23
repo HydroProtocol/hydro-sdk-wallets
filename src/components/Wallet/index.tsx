@@ -25,6 +25,7 @@ import Svg from "../Svg";
 import { translations, setTranslations } from "../../i18n";
 import LedgerConnector from "./LedgerConnector";
 import { Map } from "immutable";
+import NotSupport from "./NotSupport";
 
 interface State {
   password: string;
@@ -136,13 +137,16 @@ class Wallet extends React.PureComponent<Props, State> {
           if (account.get("isLocked")) return this.renderQrImage();
         } else if (selectedWalletType === Ledger.TYPE) {
           return <LedgerConnector />;
-        } else {
+        } else if (selectedWalletType === ExtensionWallet.TYPE && !extensionWalletSupported) {
           return (
-            <WalletSelector
-              walletIsSupported={selectedWalletType === ExtensionWallet.TYPE ? extensionWalletSupported : true}
-              walletType={selectedWalletType}
+            <NotSupport
+              iconName={this.getExtensionIconName()}
+              title={translations.installMetamask}
+              desc={translations.installMetamaskDesc}
             />
           );
+        } else {
+          return <WalletSelector walletType={selectedWalletType} />;
         }
       case WALLET_STEPS.CREATE:
         return <Create />;
@@ -273,7 +277,7 @@ class Wallet extends React.PureComponent<Props, State> {
         value: ExtensionWallet.TYPE,
         component: (
           <div className="HydroSDK-optionItem">
-            <Svg name="extension" />
+            <Svg name={this.getExtensionIconName()} />
             {ExtensionWallet.LABEL}
           </div>
         ),
@@ -376,6 +380,10 @@ class Wallet extends React.PureComponent<Props, State> {
         }
       }
     ];
+  }
+  private getExtensionIconName(): string {
+    // TODO: If other extension wallets, should use corresponding icon
+    return "metamask";
   }
 }
 

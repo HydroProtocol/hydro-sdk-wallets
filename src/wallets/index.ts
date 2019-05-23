@@ -143,4 +143,4 @@ export const getContract = (contractAddress: string, abi: any): Contract => {
   return new Contract(contractAddress, abi, provider);
 };
 
-export const WalletTypes = [HydroWallet.TYPE, ExtensionWallet.TYPE, WalletConnectWallet.TYPE];
+export const WalletTypes = [HydroWallet.TYPE, ExtensionWallet.TYPE, WalletConnectWallet.TYPE, Ledger.TYPE];

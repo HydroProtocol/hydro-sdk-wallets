@@ -8,6 +8,7 @@ import Select, { Option } from "./Select";
 import { BigNumber } from "bignumber.js";
 import ReactPaginate from "react-paginate";
 import { WalletState } from "../../reducers/wallet";
+import NotSupport from "./NotSupport";
 
 interface Props {
   dispatch: any;
@@ -96,8 +97,7 @@ class LedgerConnector extends React.PureComponent<Props, State> {
             className="HydroSDK-button HydroSDK-submitButton HydroSDK-featureButton"
             disabled={ledgerConnecting}
             onClick={() => this.connectLedger()}>
-            {ledgerConnecting ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null}{" "}
-            {translations.connectToLedger}
+            {ledgerConnecting ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {translations.connectLedger}
           </button>
         )}
       </div>
@@ -107,7 +107,7 @@ class LedgerConnector extends React.PureComponent<Props, State> {
   private renderContent() {
     const { isLocked } = this.props;
     if (isLocked) {
-      return null;
+      return <NotSupport iconName="ledger" title={translations.connectLedger} desc={translations.connectLedgerDesc} />;
     }
     const { loading, currentAddress, pathType } = this.state;
     const addressOptions = this.getAddressOptions();

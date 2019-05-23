@@ -151,4 +151,8 @@ export default class WalletConnectWallet extends BaseWallet {
     }
     return isSupported;
   }
+
+  public name(): string {
+    return "WalletConnect";
+  }
 }

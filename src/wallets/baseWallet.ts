@@ -33,4 +33,6 @@ export default abstract class baseWallet {
   public abstract loadNetworkId(): Promise<number | undefined>;
 
   public abstract sendCustomRequest(method: string, params: any): Promise<any>;
+
+  public abstract name(): string;
 }

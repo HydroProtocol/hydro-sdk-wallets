@@ -1,170 +1,170 @@
 body {
-    font-size: 14px;
+  font-size: 14px;
 }
 .HydroSDK-toggleButton {
-    background-color: #535ec3;
-    border-color: #4954ac;
-    color: #fff !important;
+  background-color: #535ec3;
+  border-color: #4954ac;
+  color: #fff !important;
 }
 .HydroSDK-dialog {
-    max-width: 900px;
-    height: 500px;
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    margin: auto;
-    background: #fcfcfc;
-    color: #333;
-    z-index: 10000;
-    border-radius: 2px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
+  max-width: 900px;
+  height: 500px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  background: #fcfcfc;
+  color: #333;
+  z-index: 10000;
+  border-radius: 2px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 .HydroSDK-backdrop {
-    background: rgba(0, 0, 0, 0.7);
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 9999;
+  background: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9999;
 }
 .HydroSDK-title {
-    font-size: 24px;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  font-size: 24px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .HydroSDK-desc {
-    font-size: 13px;
-    color: #666666;
-    margin-top: 8px;
+  font-size: 13px;
+  color: #666666;
+  margin-top: 8px;
 }
 .HydroSDK-fieldGroup {
-    display: flex;
-    flex-flow: column;
-    margin: 0;
-    margin-top: 20px;
+  display: flex;
+  flex-flow: column;
+  margin: 0;
+  margin-top: 20px;
 }
 .HydroSDK-labelGroup {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 .HydroSDK-label {
-    font-size: 14px;
-    color: #666666;
-    margin-bottom: 8px;
+  font-size: 14px;
+  color: #666666;
+  margin-bottom: 8px;
 }
 .HydroSDK-errorMsg {
-    color: #ee494c;
+  color: #ee494c;
 }
 .HydroSDK-closeButton {
-    position: absolute;
-    font-size: 14px;
-    background: #fcfcfc;
-    color: #666666;
-    border: 1px solid #e0e0e0;
-    bottom: 20px;
-    padding: 12px;
+  position: absolute;
+  font-size: 14px;
+  background: #fcfcfc;
+  color: #666666;
+  border: 1px solid #e0e0e0;
+  bottom: 20px;
+  padding: 12px;
 }
 .HydroSDK-select {
-    position: relative;
+  position: relative;
 }
 .HydroSDK-unfolded .HydroSDK-dropdown {
-    height: auto;
-    border: 1px solid #e0e0e0;
+  height: auto;
+  border: 1px solid #e0e0e0;
 }
 .HydroSDK-selected {
-    border: 1px solid #e0e0e0;
-    border-radius: 2px;
-    padding: 0 12px;
-    height: 32px;
-    line-height: 32px;
-    background: #f7f7f7;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  border: 1px solid #e0e0e0;
+  border-radius: 2px;
+  padding: 0 12px;
+  height: 32px;
+  line-height: 32px;
+  background: #f7f7f7;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .HydroSDK-dropdown {
-    position: absolute;
-    border-radius: 2px;
-    height: 0;
-    z-index: 100;
-    left: 0;
-    right: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    background: #f7f7f7;
-    max-height: 240px;
+  position: absolute;
+  border-radius: 2px;
+  height: 0;
+  z-index: 100;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #f7f7f7;
+  max-height: 240px;
 }
 .HydroSDK-dropdown.up {
-    bottom: 110%;
+  bottom: 110%;
 }
 .HydroSDK-dropdown.down {
-    top: 110%;
+  top: 110%;
 }
 .HydroSDK-item {
-    padding: 0 12px;
-    height: 32px;
-    line-height: 32px;
-    cursor: pointer;
-    background: #f7f7f7;
+  padding: 0 12px;
+  height: 32px;
+  line-height: 32px;
+  cursor: pointer;
+  background: #f7f7f7;
 }
 .HydroSDK-item:hover {
-    background: #e0e0e0;
+  background: #e0e0e0;
 }
 
 .HydroSDK-item:first-child {
-    border-top-width: 1px;
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
+  border-top-width: 1px;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
 }
 .HydroSDK-item:last-child {
-    border-bottom-width: 1px;
-    border-bottom-left-radius: 2px;
-    border-bottom-right-radius: 2px;
+  border-bottom-width: 1px;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
 }
 
 .HydroSDK-item .disabled {
-    color: #666666;
-    cursor: not-allowed;
+  color: #666666;
+  cursor: not-allowed;
 }
 .HydroSDK-caret {
-    position: relative;
-    left: 12px;
-    width: 36px;
-    border-left: 1px solid #e0e0e0;
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 32px;
+  position: relative;
+  left: 12px;
+  width: 36px;
+  border-left: 1px solid #e0e0e0;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
 }
 .HydroSDK-caret:before {
-    content: "";
-    width: 0;
-    height: 0;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 5px solid #666666;
-    border-radius: 2px;
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid #666666;
+  border-radius: 2px;
 }
 .HydroSDK-button {
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 12px;
-    border-radius: 2px;
-    cursor: pointer;
-    outline: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border-radius: 2px;
+  cursor: pointer;
+  outline: 0;
 }
 button.disabled,
 button.disabled.focus,
@@ -177,268 +177,285 @@ button[disabled]:hover,
 fieldset[disabled] button.focus,
 fieldset[disabled] button:focus,
 fieldset[disabled] button:hover {
-    cursor: not-allowed;
-    opacity: 0.65;
+  cursor: not-allowed;
+  opacity: 0.65;
 }
 .HydroSDK-input {
-    display: block;
-    flex: 1;
-    padding: 0 12px;
-    height: 32px;
-    line-height: 32px;
-    background: #f7f7f7;
-    border: 1px solid #e0e0e0;
-    font-size: 14px;
+  display: block;
+  flex: 1;
+  padding: 0 12px;
+  height: 32px;
+  line-height: 32px;
+  background: #f7f7f7;
+  border: 1px solid #e0e0e0;
+  font-size: 14px;
 }
 .HydroSDK-hydroWalletButtonGroup {
-    display: flex;
+  display: flex;
 }
 .HydroSDK-input:focus {
-    border: 1px solid #cfcfcf;
-    outline: none;
+  border: 1px solid #cfcfcf;
+  outline: none;
 }
 .HydroSDK-featureButton {
-    background: #738bd7;
-    color: #fff;
-    border-color: #738bd7;
+  background: #738bd7;
+  color: #fff;
+  border-color: #738bd7;
 }
 .HydroSDK-submitButton {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
 }
 .HydroSDK-fa {
-    margin-right: 4px;
+  margin-right: 4px;
 }
 .fa-check {
-    color: #3da1a5;
+  color: #3da1a5;
 }
 .HydroSDK-optionItem svg {
-    margin-right: 6px;
+  margin-right: 6px;
 }
 .HydroSDK-optionItem {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 .HydroSDK-walletFeature {
-    padding-left: 20px;
+  padding-left: 20px;
 }
 .HydroSDK-banner {
-    float: right;
-    font-size: 12px;
+  float: right;
+  font-size: 12px;
 }
 .HydroSDK-address-option {
-    display: flex;
-    justify-content: space-between;
-    flex: 1;
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
 }
 .HydroSDK-qr-image {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    margin: auto;
-    padding-bottom: 40px;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  margin: auto;
+  padding-bottom: 40px;
 }
 .HydroSDK-qr-image-bg {
-    width: 200px;
-    height: 200px;
-    padding: 8px;
-    background: #fff;
+  width: 200px;
+  height: 200px;
+  padding: 8px;
+  background: #fff;
 }
 .HydroSDK-qr-image-bg svg {
-    width: 200px;
+  width: 200px;
 }
 .HydroSDK-mnemonic {
-    text-align: center;
-    padding: 20px 0;
-    border: 1px solid #cfcfcf;
-    border-radius: 2px;
+  text-align: center;
+  padding: 20px 0;
+  border: 1px solid #cfcfcf;
+  border-radius: 2px;
 }
 .HydroSDK-words {
-    display: grid;
-    font-size: 14px;
-    color: #333;
-    grid-auto-flow: row;
-    grid-template-columns: repeat(6, 1fr);
-    margin: 0;
-    padding-inline-start: 40px;
+  display: grid;
+  font-size: 14px;
+  color: #333;
+  grid-auto-flow: row;
+  grid-template-columns: repeat(6, 1fr);
+  margin: 0;
+  padding-inline-start: 40px;
 }
 .HydroSDK-word {
-    line-height: 30px;
-    text-align: left;
-    width: 80px;
+  line-height: 30px;
+  text-align: left;
+  width: 80px;
 }
 .HydroSDK-word > input {
-    display: inline-block;
-    height: 22px;
-    margin: 0;
-    padding: 0 5px;
-    text-align: left;
-    vertical-align: text-bottom;
-    width: 60px;
+  display: inline-block;
+  height: 22px;
+  margin: 0;
+  padding: 0 5px;
+  text-align: left;
+  vertical-align: text-bottom;
+  width: 60px;
 }
 .HydroSDK-word > input.invalid {
-    border-color: #ee494c;
+  border-color: #ee494c;
 }
 
 .HydroSDK-word > input.valid {
-    border-color: #41a275;
+  border-color: #41a275;
 }
 .HydroSDK-confirm {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 .HydroSDK-checkboxGroup {
-    margin-bottom: 20px;
-    font-size: 13px;
+  margin-bottom: 20px;
+  font-size: 13px;
 }
 .HydroSDK-checkboxDiv {
-    display: flex;
-    align-items: center;
-    height: 35px;
-    cursor: pointer;
-    color: #333;
+  display: flex;
+  align-items: center;
+  height: 35px;
+  cursor: pointer;
+  color: #333;
 }
 .HydroSDK-checkbox > i {
-    opacity: 0;
-    color: #fff;
+  opacity: 0;
+  color: #fff;
 }
 .HydroSDK-checkbox {
-    width: 15px;
-    height: 15px;
-    margin-right: 8px;
-    background: #cfcfcf;
-    text-align: center;
+  width: 15px;
+  height: 15px;
+  margin-right: 8px;
+  background: #cfcfcf;
+  text-align: center;
 }
 .checked > .HydroSDK-checkbox {
-    background: #738bd7;
+  background: #738bd7;
 }
 .checked > .HydroSDK-checkbox > i {
-    opacity: 1;
+  opacity: 1;
 }
 .ps__rail-y {
-    display: none;
+  display: none;
 }
 .HydroSDK-addFunds {
-    color: #333;
-    margin-top: 20px;
+  color: #333;
+  margin-top: 20px;
 }
 .HydroSDK-buttonGroup {
-    display: flex;
-    width: 520px;
-    text-align: center;
-    margin: 20px auto;
+  display: flex;
+  width: 520px;
+  text-align: center;
+  margin: 20px auto;
 }
 .HydroSDK-buttonGroup > a {
-    display: block;
-    width: 200px;
-    height: 50px;
+  display: block;
+  width: 200px;
+  height: 50px;
 }
 .HydroSDK-buttonGroup > a:first-child {
-    margin-right: 120px;
+  margin-right: 120px;
 }
 .HydroSDK-buttonGroup .button {
-    display: inline-block;
-    height: 50px;
-    width: 200px;
+  display: inline-block;
+  height: 50px;
+  width: 200px;
 }
 .HydroSDK-buttonGroup .coinbase {
-    background-color: #0f62bd;
+  background-color: #0f62bd;
 }
 .HydroSDK-buttonGroup .coinbase:hover {
-    background-color: #1172dc;
+  background-color: #1172dc;
 }
 .HydroSDK-buttonGroup .coinbase > svg {
-    padding-top: 7px;
-    width: 150px;
-    margin: 0 25px;
+  padding-top: 7px;
+  width: 150px;
+  margin: 0 25px;
 }
 .HydroSDK-buttonGroup .gemini {
-    background-color: #000;
+  background-color: #000;
 }
 .HydroSDK-buttonGroup .gemini:hover {
-    background-color: #222;
+  background-color: #222;
 }
 .HydroSDK-buttonGroup .gemini > svg {
-    width: 160px;
-    height: 100%;
-    margin: 0 25px 0 15px;
+  width: 160px;
+  height: 100%;
+  margin: 0 25px 0 15px;
 }
 .HydroSDK-hint {
-    background: #f7f7f7;
-    border: 1px solid #e0e0e0;
-    border-radius: 2px;
-    padding: 12px;
-    color: #666666;
-    margin-top: 20px;
-    text-align: left;
+  background: #f7f7f7;
+  border: 1px solid #e0e0e0;
+  border-radius: 2px;
+  padding: 12px;
+  color: #666666;
+  margin-top: 20px;
+  text-align: left;
 }
 .HydroSDK-hintTitle {
-    margin-bottom: 4px;
-    color: #333;
+  margin-bottom: 4px;
+  color: #333;
 }
 .HydroSDK-selectFooter {
-    position: relative;
-    display: flex;
-    align-items: center;
-    border-top: 1px solid #e0e0e0;
-    padding: 6px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #e0e0e0;
+  padding: 6px;
 }
 .HydroSDK-paginationGotoPage {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    right: 12px;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  right: 12px;
 }
 .HydroSDK-paginationGotoPage form {
-    margin-left: 12px;
+  margin-left: 12px;
 }
 .HydroSDK-paginationGotoPage input::-webkit-outer-spin-button,
 .HydroSDK-paginationGotoPage input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
+  -webkit-appearance: none;
 }
 
 .HydroSDK-pagination {
-    margin: 0 auto;
-    display: flex;
-    justify-content: center;
-    bottom: 12px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  bottom: 12px;
 }
 .HydroSDK-pagination ul,
 .HydroSDK-pagination li {
-    list-style: none;
+  list-style: none;
 }
 .HydroSDK-pagination li a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 2px;
-    background: #fff;
-    color: #666666;
-    border-radius: 4px;
-    cursor: pointer;
-    height: 36px;
-    width: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 2px;
+  background: #fff;
+  color: #666666;
+  border-radius: 4px;
+  cursor: pointer;
+  height: 36px;
+  width: 36px;
 }
 .HydroSDK-pagination li.disabled a,
 .HydroSDK-pagination li.disabled a:hover,
 .HydroSDK-pagination li.disabled a:focus,
 .HydroSDK-pagination li.disabled a:visited {
-    background: #e0e0e0;
-    color: #666666;
-    cursor: not-allowed;
+  background: #e0e0e0;
+  color: #666666;
+  cursor: not-allowed;
 }
 .HydroSDK-pagination li a:hover,
 .HydroSDK-pagination li.active a,
 .HydroSDK-pagination li.active a:hover,
 .HydroSDK-pagination li.active a:focus,
 .HydroSDK-pagination li.active a:visited {
-    background: #f7f7f7;
-    color: #333;
+  background: #f7f7f7;
+  color: #333;
 }
 .HydroSDK-customizationInputGroup {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 .HydroSDK-customizationInputGroup input {
-    margin: 0 12px 0 4px;
+  margin: 0 12px 0 4px;
+}
+.HydroSDK-notSupport {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 80px;
+}
+.HydroSDK-notSupportTitle {
+  margin-top: 12px;
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+}
+.HydroSDK-notSupportDesc {
+  color: #666666;
+  margin-top: 4px;
+  text-align: center;
 }

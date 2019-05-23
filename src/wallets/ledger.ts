@@ -151,4 +151,8 @@ export default class Ledger extends BaseWallet {
   public async sendCustomRequest(method: string, params: any): Promise<any> {
     return null;
   }
+
+  public name(): string {
+    return "Ledger";
+  }
 }

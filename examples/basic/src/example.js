@@ -14,6 +14,7 @@ class Example extends React.Component {
         <br />
         <br />
         <button
+          className="HydroSDK-button"
           onClick={() =>
             account
               .get("wallet")
@@ -25,7 +26,6 @@ class Example extends React.Component {
       </p>
     );
   }
-
   render() {
     const { selectedAccount } = this.props;
     return (

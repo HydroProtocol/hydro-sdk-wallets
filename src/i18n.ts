@@ -36,12 +36,17 @@ export let translations = {
   deleteWallet: "Delete Wallet",
   selectAddress: "Select Address",
   toggleButtonText: "Please Click to Select A Wallet",
-  connectToLedger: "Connect to Ledger",
+  connectLedger: "Connect Ledger",
   currentWalletTypeNotSupported: "Current wallet type is not supported",
   noAvailableAddress: "No available address",
   pleaseSelectAddress: "Please select an address",
   selectPath: "Select Path",
-  inputPath: "Input a path"
+  inputPath: "Input a path",
+  installMetamask: "Install MetaMask",
+  installMetamaskDesc:
+    'MetaMask browser extension currently runs on Google Chrome, Firefox, Opera, and Brave browsers. For Safari users, please try other wallet options. Click <a target="_blank" rel="noopener noreferrer" href="https://support.ddex.io/hc/en-us/articles/115004408534">here</a> for MetaMask support.',
+  connectLedgerDesc:
+    'Ensure “Browser Support” and “Contract Data” is enabled within your device settings. <br/>Having issues still? Try reconnecting your Ledger or view Ledger Support.<a target="_blank" rel="noopener noreferrer" href="https://support.ddex.io/hc/en-us/articles/360001576533">Ledger Support</a>'
 };
 
 export const setTranslations = (translations: { [key: string]: string }) => {
