@@ -12,7 +12,7 @@ class WalletButton extends React.PureComponent<any, any> {
 
     return (
       <button
-        className="HydroSDK-toggleButton"
+        className="HydroSDK-button HydroSDK-toggleButton"
         onClick={() => dispatch(isShowWalletModal ? hideWalletModal() : showWalletModal())}>
         {this.toggleText()}
       </button>

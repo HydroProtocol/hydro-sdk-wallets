@@ -81,7 +81,7 @@ class Create extends React.PureComponent<Props, State> {
         />
         <div className="HydroSDK-desc">{translations.createDesc}</div>
         <button
-          className="HydroSDK-submitButton HydroSDK-featureButton"
+          className="HydroSDK-button HydroSDK-submitButton HydroSDK-featureButton"
           type="submit"
           disabled={processing || !password || password !== confirmation}>
           {processing ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {translations.next}

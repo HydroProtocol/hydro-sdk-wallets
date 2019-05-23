@@ -51,7 +51,7 @@ class Backup extends React.PureComponent<Props, State> {
         </div>
         <div className="HydroSDK-desc">{testing ? translations.testingDesc : translations.backupDesc}</div>
         <button
-          className="HydroSDK-submitButton HydroSDK-featureButton"
+          className="HydroSDK-button HydroSDK-submitButton HydroSDK-featureButton"
           onClick={() => (testing ? this.confirm() : this.test())}>
           {translations.next}
         </button>

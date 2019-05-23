@@ -41,7 +41,7 @@ class CreateConfirm extends React.PureComponent<Props, State> {
         {this.renderConfirmCheckbox()}
         <div className="HydroSDK-desc">{translations.confirmDesc}</div>
         <button
-          className="HydroSDK-submitButton HydroSDK-featureButton"
+          className="HydroSDK-button HydroSDK-submitButton HydroSDK-featureButton"
           type="submit"
           onClick={() => this.handleSubmit()}
           disabled={checkbox.indexOf(false) !== -1 || processing}>

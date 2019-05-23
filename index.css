@@ -17,7 +17,7 @@ body {
     margin: auto;
     background: #fcfcfc;
     color: #333;
-    z-index: 2;
+    z-index: 10000;
     border-radius: 2px;
     padding: 20px;
     display: flex;
@@ -30,7 +30,7 @@ body {
     position: fixed;
     left: 0;
     top: 0;
-    z-index: 1;
+    z-index: 9999;
 }
 .HydroSDK-title {
     font-size: 24px;
@@ -156,7 +156,7 @@ body {
     border-top: 5px solid #666666;
     border-radius: 2px;
 }
-button {
+.HydroSDK-button {
     height: 40px;
     display: flex;
     align-items: center;

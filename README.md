@@ -31,7 +31,7 @@ This package requires `React` and `Redux`.
 
 ### Step2: Wallet Reducer
 
-The store should know how to handle actions coming from the wallet components. To enable this, we need to pass the `walletReducer` to your store.
+The store should know how to handle actions coming from the wallet components. To enable this, we need to pass the `WalletReducer` to your store.
 
 ```javascript
 import { createStore, combineReducers } from "redux";
@@ -39,7 +39,7 @@ import { WalletReducer } from "@gongddex/hydro-sdk-wallet";
 
 const rootReducer = combineReducers({
   // ...your other reducers here
-  // you have to pass walletReducer under 'WalletReducer' key
+  // you have to pass WalletReducer under 'WalletReducer' key
   WalletReducer
 });
 
@@ -55,6 +55,7 @@ import React from "react";
 import { Provider } from "react-redux";
 import { Wallet, WalletButton } from "@gongddex/hydro-sdk-wallet";
 import { store } from "./store";
+import "@gongddex/hydro-sdk-wallet/index.css";
 
 class App extends React.Component {
   render() {

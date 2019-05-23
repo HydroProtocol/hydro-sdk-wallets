@@ -93,7 +93,7 @@ class LedgerConnector extends React.PureComponent<Props, State> {
         {this.renderContent()}
         {isLocked && (
           <button
-            className="HydroSDK-submitButton HydroSDK-featureButton"
+            className="HydroSDK-button HydroSDK-submitButton HydroSDK-featureButton"
             disabled={ledgerConnecting}
             onClick={() => this.connectLedger()}>
             {ledgerConnecting ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null}{" "}
@@ -154,7 +154,10 @@ class LedgerConnector extends React.PureComponent<Props, State> {
             value={realPath.replace(Ledger.PREFIX_ETHEREUM_PATH, "")}
             onChange={this.handleChangeCustomizedPath}
           />
-          <button className="HydroSDK-featureButton" disabled={loading} onClick={() => this.loadAddresses()}>
+          <button
+            className="HydroSDK-button HydroSDK-featureButton"
+            disabled={loading}
+            onClick={() => this.loadAddresses()}>
             {loading ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} Load Accounts
           </button>
         </div>

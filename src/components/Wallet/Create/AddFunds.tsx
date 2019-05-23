@@ -26,7 +26,7 @@ class AddFunds extends React.PureComponent<Props, any> {
         </div>
         <div className="HydroSDK-desc">{translations.addFundsDesc}</div>
         <button
-          className="HydroSDK-submitButton HydroSDK-featureButton"
+          className="HydroSDK-button HydroSDK-submitButton HydroSDK-featureButton"
           onClick={() => this.props.dispatch(setWalletStep(WALLET_STEPS.SELECT))}>
           {translations.done}
         </button>

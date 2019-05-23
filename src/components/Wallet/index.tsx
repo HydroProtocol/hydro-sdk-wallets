@@ -86,6 +86,14 @@ class Wallet extends React.PureComponent<Props, State> {
     }
   }
 
+  public componentDidUpdate(prevProps: Props) {
+    const { selectedAccount, isShowWalletModal } = this.props;
+    if (!isShowWalletModal && isShowWalletModal !== prevProps.isShowWalletModal && selectedAccount) {
+      const wallet = selectedAccount.get("wallet");
+      this.setState({ selectedWalletType: wallet.type() });
+    }
+  }
+
   private loadExtensitonWallet() {
     this.props.dispatch(loadExtensitonWallet());
   }
@@ -108,7 +116,7 @@ class Wallet extends React.PureComponent<Props, State> {
             {this.renderStepContent()}
             {this.renderUnlockForm()}
             {this.renderDeleteForm()}
-            <button className="HydroSDK-closeButton" onClick={() => dispatch(hideWalletModal())}>
+            <button className="HydroSDK-button HydroSDK-closeButton" onClick={() => dispatch(hideWalletModal())}>
               {translations.close}
             </button>
           </div>
@@ -188,7 +196,7 @@ class Wallet extends React.PureComponent<Props, State> {
           handleChange={(password: string) => this.setState({ password })}
         />
         <button
-          className="HydroSDK-submitButton HydroSDK-featureButton"
+          className="HydroSDK-button HydroSDK-submitButton HydroSDK-featureButton"
           disabled={processing}
           onClick={() => this.handleUnlock(selectedAccount)}>
           {processing ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {translations.unlock}
@@ -226,7 +234,7 @@ class Wallet extends React.PureComponent<Props, State> {
           </div>
         </div>
         <button
-          className="HydroSDK-submitButton HydroSDK-featureButton"
+          className="HydroSDK-button HydroSDK-submitButton HydroSDK-featureButton"
           disabled={processing || !checkbox}
           onClick={() => this.handleDelete(selectedAccount)}>
           {processing ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {translations.delete}
