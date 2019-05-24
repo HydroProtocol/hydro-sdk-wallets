@@ -137,6 +137,30 @@ export const getTransactionReceipt = (txID: string): Promise<any> => {
     );
   });
 };
+export const getEstimateGas = (params: any): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    request.post(
+      globalNodeUrl,
+      {
+        headers: { "content-type": "application/json" },
+        form: `{"jsonrpc":"2.0","method":"eth_estimateGas","params":[${JSON.stringify(params)}],"id":${payloadId()}}`
+      },
+      (error, response, data) => {
+        if (error) {
+          reject(error);
+        }
+        try {
+          if (data) {
+            const json = JSON.parse(data);
+            resolve(json.result);
+          }
+        } catch (e) {
+          reject(e);
+        }
+      }
+    );
+  });
+};
 
 export const getContract = (contractAddress: string, abi: any): Contract => {
   const provider = new JsonRpcProvider(globalNodeUrl);
