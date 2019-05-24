@@ -107,7 +107,8 @@ export const loadNetwork = (accountID: string, networkId: number | undefined) =>
   };
 };
 
-export const selectAccount = (accountID: string) => {
+export const selectAccount = (accountID: string, type: string) => {
+  window.localStorage.setItem("HydroWallet:lastSelectedWalletType", type);
   window.localStorage.setItem("HydroWallet:lastSelectedAccountID", accountID);
   return {
     type: "HYDRO_WALLET_SELECT_ACCOUNT",
@@ -202,7 +203,7 @@ export const loadWalletConnectWallet = () => {
       const addresses = await wallet.getAddresses();
 
       dispatch(unlockAccount(accountID));
-      dispatch(selectAccount(accountID));
+      dispatch(selectAccount(accountID, wallet.type()));
       dispatch(loadAddress(accountID, addresses[0]));
       dispatch(loadNetwork(accountID, payload.params[0].chainId));
     });
@@ -282,7 +283,7 @@ const watchWallet = (wallet: BaseWallet) => {
     const lastSelectedAccountID = window.localStorage.getItem("HydroWallet:lastSelectedAccountID");
     const currentSelectedAccountID = getState().WalletReducer.get("selectedAccountID");
     if (!currentSelectedAccountID && lastSelectedAccountID === accountID) {
-      dispatch(selectAccount(accountID));
+      dispatch(selectAccount(accountID, type));
     }
     if (type === ExtensionWallet.TYPE) {
       ExtensionWallet.enableBrowserExtensionWallet();

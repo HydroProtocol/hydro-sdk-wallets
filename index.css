@@ -220,6 +220,9 @@ fieldset[disabled] button:hover {
   display: flex;
   align-items: center;
 }
+.HydroSDK-optionItem .disabled {
+  color: #666666;
+}
 .HydroSDK-walletFeature {
   padding-left: 20px;
 }
@@ -303,6 +306,7 @@ fieldset[disabled] button:hover {
   color: #fff;
 }
 .HydroSDK-checkbox {
+  display: flex;
   width: 15px;
   height: 15px;
   margin-right: 8px;

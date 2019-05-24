@@ -49,17 +49,18 @@ interface Props {
 class Wallet extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props);
-    const { defaultWalletType, selectedAccount } = this.props;
+    const { defaultWalletType } = this.props;
     if (this.props.translations) {
       setTranslations(this.props.translations);
     }
 
     let selectedWalletType: string;
+    const lastSelectedWalletType = window.localStorage.getItem("HydroWallet:lastSelectedWalletType");
 
-    if (selectedAccount) {
-      selectedWalletType = selectedAccount.get("wallet").type();
-    } else if (defaultWalletType && WalletTypes.indexOf(defaultWalletType) > -1) {
+    if (defaultWalletType && WalletTypes.indexOf(defaultWalletType) > -1) {
       selectedWalletType = defaultWalletType;
+    } else if (lastSelectedWalletType) {
+      selectedWalletType = lastSelectedWalletType;
     } else {
       selectedWalletType = ExtensionWallet.TYPE;
     }
@@ -215,6 +216,7 @@ class Wallet extends React.PureComponent<Props, State> {
     if (
       !selectedAccount ||
       selectedAccount.get("isLocked") ||
+      selectedAccount.get("wallet").type() !== HydroWallet.TYPE ||
       step !== WALLET_STEPS.DELETE ||
       selectedWalletType !== HydroWallet.TYPE
     ) {
@@ -272,6 +274,8 @@ class Wallet extends React.PureComponent<Props, State> {
 
   private getWalletsOptions(): Option[] {
     const { dispatch } = this.props;
+    const hydroWalletsCount = HydroWallet.list().length;
+    const isEmptyHydroWallet = hydroWalletsCount === 0;
     return [
       {
         value: ExtensionWallet.TYPE,
@@ -322,13 +326,13 @@ class Wallet extends React.PureComponent<Props, State> {
       {
         value: HydroWallet.TYPE,
         component: (
-          <div className="HydroSDK-optionItem">
+          <div className={`HydroSDK-optionItem${isEmptyHydroWallet ? " disabled" : ""}`}>
             <Svg name="logo" />
-            {HydroWallet.LABEL}
+            {HydroWallet.LABEL} ({hydroWalletsCount})
           </div>
         ),
         onSelect: (option: Option) => {
-          dispatch(setWalletStep(WALLET_STEPS.SELECT));
+          dispatch(setWalletStep(isEmptyHydroWallet ? WALLET_STEPS.CREATE : WALLET_STEPS.SELECT));
           this.setState({
             selectedWalletType: option.value
           });

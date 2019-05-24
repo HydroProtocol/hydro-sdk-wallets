@@ -302,7 +302,7 @@ class LedgerConnector extends React.PureComponent<Props, State> {
 
   private async connectLedger() {
     const { dispatch } = this.props;
-    dispatch(selectAccount(Ledger.TYPE));
+    dispatch(selectAccount(Ledger.TYPE, Ledger.TYPE));
     await dispatch(loadLedger());
     const pathType = Ledger.getPathType(Ledger.currentBasePath);
     this.setState({

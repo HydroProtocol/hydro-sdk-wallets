@@ -119,7 +119,7 @@ Methods to get data from redux store.
 
 These functions are redux action creators. You need to dispatch the result to store.
 
-- `selectAccount(accountID)` Change Selected Account
+- `selectAccount(accountID, type)` Change Selected Account
 - `unlockBrowserWalletAccount(accountID, password)` Unlock a browser local wallet
 - `showWalletModal()` Show the wallets modal
 - `hideWalletModal()` Hide the wallets modal

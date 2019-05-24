@@ -26,13 +26,11 @@ interface State {
 }
 
 export default class Select extends React.PureComponent<Props, State> {
-  private id: string;
   private container: any;
   private ps: any;
 
   constructor(props: Props) {
     super(props);
-    this.id = Math.random().toString();
 
     this.state = {
       unfolded: false
@@ -193,7 +191,7 @@ export default class Select extends React.PureComponent<Props, State> {
     }
 
     return (
-      <div className={classNames.join(" ")} id={this.id} ref={this.setContainer}>
+      <div className={classNames.join(" ")} ref={this.setContainer}>
         {this.renderSelected()}
         {this.renderDropdown()}
       </div>

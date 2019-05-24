@@ -61,6 +61,7 @@ class WalletSelector extends React.PureComponent<Props, State> {
       const text = account.get("address");
       const isLocked = account.get("isLocked");
       const balance = account.get("balance");
+      const wallet = account.get("wallet");
 
       if (text) {
         options.push({
@@ -75,7 +76,7 @@ class WalletSelector extends React.PureComponent<Props, State> {
             </div>
           ),
           onSelect: (option: Option) => {
-            dispatch(selectAccount(option.value));
+            dispatch(selectAccount(option.value, wallet.type()));
           }
         });
       }
