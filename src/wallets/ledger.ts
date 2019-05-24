@@ -2,7 +2,7 @@ import { BaseWallet, getNetworkID, sendRawTransaction } from ".";
 import AwaitLock from "await-lock";
 import { txParams } from "./baseWallet";
 import EthereumTx from "ethereumjs-tx";
-import { hashMessage } from "ethers/utils/hash";
+
 const U2fTransport = require("@ledgerhq/hw-transport-u2f").default;
 const LedgerEth = require("@ledgerhq/hw-app-eth").default;
 
@@ -60,10 +60,10 @@ export default class Ledger extends BaseWallet {
     return this.signPersonalMessage(message);
   }
 
-  public async signPersonalMessage(message: string | Uint8Array): Promise<string> {
+  public async signPersonalMessage(message: string): Promise<string> {
     try {
       await this.awaitLock.acquireAsync();
-      const result = await this.eth.signPersonalMessage(this.currentPath(), hashMessage(message).slice(2));
+      const result = await this.eth.signPersonalMessage(this.currentPath(), Buffer.from(message).toString("hex"));
       const v = parseInt(result.v, 10) - 27;
       let vHex = v.toString(16);
       if (vHex.length < 2) {
