@@ -73,13 +73,16 @@ export default class ExtensionWallet extends BaseWallet {
         reject(BaseWallet.NotSupportedError);
       }
 
-      window.web3.currentProvider.sendAsync({ method, params }, (err: Error, res: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res.result);
+      window.web3.currentProvider.sendAsync(
+        { method, params, from: window.web3.eth.accounts[0] },
+        (err: Error, res: any) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(res);
+          }
         }
-      });
+      );
     });
   }
 
