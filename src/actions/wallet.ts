@@ -57,6 +57,13 @@ export const cacheWallet = (wallet: HydroWallet, password: string) => {
   };
 };
 
+export const setTranslations = (translations: { [key: string]: string }) => {
+  return {
+    type: "HYDRO_WALLET_SET_TRANSLATIONS",
+    payload: { translations }
+  };
+};
+
 export const setWalletStep = (step: string) => {
   return {
     type: "HYDRO_WALLET_SET_STEP",
@@ -108,8 +115,10 @@ export const loadNetwork = (accountID: string, networkId: number | undefined) =>
 };
 
 export const selectAccount = (accountID: string, type: string) => {
-  window.localStorage.setItem("HydroWallet:lastSelectedWalletType", type);
-  window.localStorage.setItem("HydroWallet:lastSelectedAccountID", accountID);
+  if (type !== Ledger.TYPE) {
+    window.localStorage.setItem("HydroWallet:lastSelectedWalletType", type);
+    window.localStorage.setItem("HydroWallet:lastSelectedAccountID", accountID);
+  }
   return {
     type: "HYDRO_WALLET_SELECT_ACCOUNT",
     payload: { accountID }
@@ -280,11 +289,6 @@ const watchWallet = (wallet: BaseWallet) => {
       await dispatch(updateWallet(wallet));
     }
 
-    const lastSelectedAccountID = window.localStorage.getItem("HydroWallet:lastSelectedAccountID");
-    const currentSelectedAccountID = getState().WalletReducer.get("selectedAccountID");
-    if (!currentSelectedAccountID && lastSelectedAccountID === accountID) {
-      dispatch(selectAccount(accountID, type));
-    }
     if (type === ExtensionWallet.TYPE) {
       ExtensionWallet.enableBrowserExtensionWallet();
     }
@@ -317,6 +321,11 @@ const watchWallet = (wallet: BaseWallet) => {
 
       if (currentAddressInStore !== address) {
         dispatch(loadAddress(accountID, address));
+        const lastSelectedAccountID = window.localStorage.getItem("HydroWallet:lastSelectedAccountID");
+        const currentSelectedAccountID = getState().WalletReducer.get("selectedAccountID");
+        if (!currentSelectedAccountID && (lastSelectedAccountID === accountID || !lastSelectedAccountID)) {
+          dispatch(selectAccount(accountID, type));
+        }
       }
 
       const nextTimer = window.setTimeout(() => watchAddress(), 3000);
