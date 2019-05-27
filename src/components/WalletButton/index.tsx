@@ -4,7 +4,6 @@ import { WalletState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
 import { hideWalletModal, showWalletModal } from "../../actions/wallet";
 import { truncateAddress } from "../../wallets";
-import { translations } from "../../i18n";
 
 class WalletButton extends React.PureComponent<any, any> {
   public render() {
@@ -20,7 +19,7 @@ class WalletButton extends React.PureComponent<any, any> {
   }
 
   private toggleText() {
-    const { selectedAccount } = this.props;
+    const { selectedAccount, walletTranslations } = this.props;
 
     if (selectedAccount) {
       const isLocked = selectedAccount.get("isLocked");
@@ -29,11 +28,11 @@ class WalletButton extends React.PureComponent<any, any> {
           {isLocked ? <i className="HydroSDK-fa fa fa-lock" /> : <i className="HydroSDK-fa fa fa-check" />}
           {selectedAccount.get("address")
             ? truncateAddress(selectedAccount.get("address"))
-            : translations.toggleButtonText}
+            : walletTranslations.toggleButtonText}
         </span>
       );
     } else {
-      return <span>{translations.toggleButtonText}</span>;
+      return <span>{walletTranslations.toggleButtonText}</span>;
     }
   }
 }
@@ -43,6 +42,7 @@ export default connect((state: any) => {
 
   return {
     selectedAccount: getSelectedAccount(state),
-    isShowWalletModal: walletState.get("isShowWalletModal")
+    isShowWalletModal: walletState.get("isShowWalletModal"),
+    walletTranslations: walletState.get("walletTranslations")
   };
 })(WalletButton);

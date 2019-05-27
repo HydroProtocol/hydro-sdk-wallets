@@ -19,10 +19,10 @@ import {
   unlockBrowserWalletAccount,
   WALLET_STEPS,
   setWalletStep,
-  deleteBrowserWalletAccount
+  deleteBrowserWalletAccount,
+  setTranslations
 } from "../../actions/wallet";
 import Svg from "../Svg";
-import { translations, setTranslations } from "../../i18n";
 import LedgerConnector from "./LedgerConnector";
 import { Map } from "immutable";
 import NotSupport from "./NotSupport";
@@ -39,6 +39,7 @@ interface Props {
   nodeUrl?: string;
   defaultWalletType?: string;
   translations?: { [key: string]: string };
+  walletTranslations: { [key: string]: string };
   selectedAccount: AccountState | null;
   accounts: Map<string, AccountState>;
   extensionWalletSupported: boolean;
@@ -49,9 +50,9 @@ interface Props {
 class Wallet extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props);
-    const { defaultWalletType } = this.props;
-    if (this.props.translations) {
-      setTranslations(this.props.translations);
+    const { defaultWalletType, translations, dispatch } = this.props;
+    if (translations) {
+      dispatch(setTranslations(translations));
     }
 
     let selectedWalletType: string;
@@ -89,10 +90,14 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   public componentDidUpdate(prevProps: Props) {
-    const { selectedAccount, isShowWalletModal } = this.props;
+    const { selectedAccount, isShowWalletModal, dispatch, translations } = this.props;
     if (!isShowWalletModal && isShowWalletModal !== prevProps.isShowWalletModal && selectedAccount) {
       const wallet = selectedAccount.get("wallet");
       this.setState({ selectedWalletType: wallet.type() });
+    }
+
+    if (translations && translations !== prevProps.translations) {
+      dispatch(setTranslations(translations));
     }
   }
 
@@ -102,24 +107,26 @@ class Wallet extends React.PureComponent<Props, State> {
 
   public render() {
     const { selectedWalletType } = this.state;
-    const { isShowWalletModal, dispatch } = this.props;
+    const { isShowWalletModal, dispatch, walletTranslations } = this.props;
 
     return (
       <div className="HydroSDK-wallet">
         <div className="HydroSDK-container" hidden={!isShowWalletModal}>
           <div className="HydroSDK-backdrop" onClick={() => dispatch(hideWalletModal())} />
           <div className="HydroSDK-dialog">
-            <div className="HydroSDK-title">{translations.title}</div>
-            {translations.subtitle && <div className="HydroSDK-desc">{translations.subtitle}</div>}
+            <div className="HydroSDK-title">{walletTranslations.dialogTitle}</div>
+            {walletTranslations.dialogSubtitle && (
+              <div className="HydroSDK-desc">{walletTranslations.dialogSubtitle}</div>
+            )}
             <div className="HydroSDK-fieldGroup">
-              <div className="HydroSDK-label">{translations.selectWallet}</div>
+              <div className="HydroSDK-label">{walletTranslations.selectWallet}</div>
               <Select options={this.getWalletsOptions()} selected={selectedWalletType} />
             </div>
             {this.renderStepContent()}
             {this.renderUnlockForm()}
             {this.renderDeleteForm()}
             <button className="HydroSDK-button HydroSDK-closeButton" onClick={() => dispatch(hideWalletModal())}>
-              {translations.close}
+              {walletTranslations.close}
             </button>
           </div>
         </div>
@@ -129,7 +136,7 @@ class Wallet extends React.PureComponent<Props, State> {
 
   private renderStepContent() {
     const { selectedWalletType } = this.state;
-    const { extensionWalletSupported, accounts, step } = this.props;
+    const { extensionWalletSupported, accounts, step, walletTranslations } = this.props;
     switch (step) {
       case WALLET_STEPS.SELECT:
       case WALLET_STEPS.DELETE:
@@ -142,8 +149,8 @@ class Wallet extends React.PureComponent<Props, State> {
           return (
             <NotSupport
               iconName={this.getExtensionIconName()}
-              title={translations.installMetamask}
-              desc={translations.installMetamaskDesc}
+              title={walletTranslations.installMetamask}
+              desc={walletTranslations.installMetamaskDesc}
             />
           );
         } else {
@@ -183,7 +190,7 @@ class Wallet extends React.PureComponent<Props, State> {
 
   private renderUnlockForm() {
     const { password, selectedWalletType, processing } = this.state;
-    const { selectedAccount, step } = this.props;
+    const { selectedAccount, step, walletTranslations } = this.props;
     if (
       selectedWalletType !== HydroWallet.TYPE ||
       (step !== WALLET_STEPS.SELECT && step !== WALLET_STEPS.DELETE) ||
@@ -196,7 +203,7 @@ class Wallet extends React.PureComponent<Props, State> {
     return (
       <>
         <Input
-          label={translations.password}
+          label={walletTranslations.password}
           text={password}
           handleChange={(password: string) => this.setState({ password })}
         />
@@ -204,7 +211,7 @@ class Wallet extends React.PureComponent<Props, State> {
           className="HydroSDK-button HydroSDK-submitButton HydroSDK-featureButton"
           disabled={processing}
           onClick={() => this.handleUnlock(selectedAccount)}>
-          {processing ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {translations.unlock}
+          {processing ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {walletTranslations.unlock}
         </button>
       </>
     );
@@ -212,7 +219,7 @@ class Wallet extends React.PureComponent<Props, State> {
 
   private renderDeleteForm() {
     const { checkbox, processing, selectedWalletType } = this.state;
-    const { selectedAccount, step } = this.props;
+    const { selectedAccount, step, walletTranslations } = this.props;
     if (
       !selectedAccount ||
       selectedAccount.get("isLocked") ||
@@ -227,23 +234,23 @@ class Wallet extends React.PureComponent<Props, State> {
         <div className="HydroSDK-hint">
           <div className="HydroSDK-hintTitle">
             <i className="HydroSDK-fa fa fa-bullhorn" />
-            {translations.headsUp}
+            {walletTranslations.headsUp}
           </div>
-          <span>{translations.deleteTip}</span>
+          <span>{walletTranslations.deleteTip}</span>
           <div
             className={`HydroSDK-checkboxDiv ${checkbox ? "checked" : ""}`}
             onClick={() => this.setState({ checkbox: !checkbox })}>
             <div className="HydroSDK-checkbox">
               <i className="fa fa-check" />
             </div>
-            {translations.deleteConfirm}
+            {walletTranslations.deleteConfirm}
           </div>
         </div>
         <button
           className="HydroSDK-button HydroSDK-submitButton HydroSDK-featureButton"
           disabled={processing || !checkbox}
           onClick={() => this.handleDelete(selectedAccount)}>
-          {processing ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {translations.delete}
+          {processing ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {walletTranslations.delete}
         </button>
       </>
     );
@@ -273,7 +280,7 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private getWalletsOptions(): Option[] {
-    const { dispatch } = this.props;
+    const { dispatch, walletTranslations } = this.props;
     const hydroWalletsCount = HydroWallet.list().length;
     const isEmptyHydroWallet = hydroWalletsCount === 0;
     return [
@@ -343,7 +350,7 @@ class Wallet extends React.PureComponent<Props, State> {
         component: (
           <div className="HydroSDK-optionItem HydroSDK-walletFeature">
             <Svg name="create" />
-            {translations.createWallet}
+            {walletTranslations.createWallet}
           </div>
         ),
         onSelect: () => {
@@ -358,7 +365,7 @@ class Wallet extends React.PureComponent<Props, State> {
         component: (
           <div className="HydroSDK-optionItem HydroSDK-walletFeature">
             <Svg name="import" />
-            {translations.importWallet}
+            {walletTranslations.importWallet}
           </div>
         ),
         onSelect: () => {
@@ -373,7 +380,7 @@ class Wallet extends React.PureComponent<Props, State> {
         component: (
           <div className="HydroSDK-optionItem HydroSDK-walletFeature">
             <Svg name="delete" />
-            {translations.deleteWallet}
+            {walletTranslations.deleteWallet}
           </div>
         ),
         onSelect: () => {
@@ -395,6 +402,7 @@ export default connect((state: any) => {
   const walletState: WalletState = state.WalletReducer;
 
   return {
+    walletTranslations: walletState.get("walletTranslations"),
     selectedAccount: getSelectedAccount(state),
     accounts: walletState.get("accounts"),
     extensionWalletSupported: walletState.get("extensionWalletSupported"),

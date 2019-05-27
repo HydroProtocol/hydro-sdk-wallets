@@ -3,12 +3,12 @@ import { connect } from "react-redux";
 import { setWalletStep, WALLET_STEPS, loadHydroWallet } from "../../../actions/wallet";
 import { WalletState } from "../../../reducers/wallet";
 import { HydroWallet } from "../../../wallets";
-import { translations } from "../../../i18n";
 
 interface Props {
   dispatch: any;
   wallet: HydroWallet;
   password: string;
+  walletTranslations: { [key: string]: string };
 }
 
 interface State {
@@ -21,7 +21,8 @@ const mapStateToProps = (state: any) => {
   const walletCache = walletState.get("walletCache");
   return {
     wallet: walletCache.wallet,
-    password: walletCache.password
+    password: walletCache.password,
+    walletTranslations: walletState.get("walletTranslations")
   };
 };
 
@@ -29,23 +30,24 @@ class CreateConfirm extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
-      checkbox: new Array(translations.createConfirm.length).fill(false),
+      checkbox: new Array(this.props.walletTranslations.createConfirm.length).fill(false),
       processing: false
     };
   }
 
   public render() {
     const { checkbox, processing } = this.state;
+    const { walletTranslations } = this.props;
     return (
       <div className="HydroSDK-confirm">
         {this.renderConfirmCheckbox()}
-        <div className="HydroSDK-desc">{translations.confirmDesc}</div>
+        <div className="HydroSDK-desc">{walletTranslations.confirmDesc}</div>
         <button
           className="HydroSDK-button HydroSDK-submitButton HydroSDK-featureButton"
           type="submit"
           onClick={() => this.handleSubmit()}
           disabled={checkbox.indexOf(false) !== -1 || processing}>
-          {processing ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {translations.create}
+          {processing ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {walletTranslations.create}
         </button>
       </div>
     );
@@ -61,6 +63,7 @@ class CreateConfirm extends React.PureComponent<Props, State> {
   }
   public renderConfirmCheckbox() {
     const { checkbox } = this.state;
+    const { walletTranslations } = this.props;
     const nodes = checkbox.map((checked: boolean, index: number) => {
       return (
         <div
@@ -70,7 +73,7 @@ class CreateConfirm extends React.PureComponent<Props, State> {
           <div className="HydroSDK-checkbox">
             <i className="fa fa-check" />
           </div>
-          {translations.createConfirm[index]}
+          {walletTranslations.createConfirm[index]}
         </div>
       );
     });

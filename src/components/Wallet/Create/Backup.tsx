@@ -3,11 +3,11 @@ import { connect } from "react-redux";
 import { WalletState } from "../../../reducers/wallet";
 import { HydroWallet } from "../../../wallets";
 import { setWalletStep, WALLET_STEPS } from "../../../actions/wallet";
-import { translations } from "../../../i18n";
 
 interface Props {
   wallet: HydroWallet;
   dispatch: any;
+  walletTranslations: { [key: string]: string };
 }
 
 interface State {
@@ -19,7 +19,8 @@ const mapStateToProps = (state: any) => {
   const walletState: WalletState = state.WalletReducer;
   const walletCache = walletState.get("walletCache");
   return {
-    wallet: walletCache.wallet
+    wallet: walletCache.wallet,
+    walletTranslations: walletState.get("walletTranslations")
   };
 };
 
@@ -36,24 +37,24 @@ class Backup extends React.PureComponent<Props, State> {
 
   public render() {
     const { testing } = this.state;
-    const { wallet } = this.props;
+    const { wallet, walletTranslations } = this.props;
     const handleCopy = (e: any) => {
       e.clipboardData.setData("text/plain", wallet.getMnemonic());
       e.preventDefault();
     };
     return (
       <div className="HydroSDK-backup HydroSDK-fieldGroup">
-        <div className="HydroSDK-label">{translations.recoveryPhrase}</div>
+        <div className="HydroSDK-label">{walletTranslations.recoveryPhrase}</div>
         <div className="HydroSDK-mnemonic">
           <ol className="HydroSDK-words" onCopy={e => handleCopy(e)} ref={elem => this.setMnemonicElem(elem)}>
             {this.getMnemonicArray().map((word, index) => this.renderWord(word, index))}
           </ol>
         </div>
-        <div className="HydroSDK-desc">{testing ? translations.testingDesc : translations.backupDesc}</div>
+        <div className="HydroSDK-desc">{testing ? walletTranslations.testingDesc : walletTranslations.backupDesc}</div>
         <button
           className="HydroSDK-button HydroSDK-submitButton HydroSDK-featureButton"
           onClick={() => (testing ? this.confirm() : this.test())}>
-          {translations.next}
+          {walletTranslations.next}
         </button>
       </div>
     );

@@ -4,7 +4,6 @@ import { truncateAddress } from "../../wallets";
 import { AccountState, WalletState } from "../../reducers/wallet";
 import { connect } from "react-redux";
 import { selectAccount } from "../../actions/wallet";
-import { translations } from "../../i18n";
 import { Map } from "immutable";
 
 interface Props {
@@ -12,6 +11,7 @@ interface Props {
   selectedAccountID: string | null;
   accounts: Map<string, AccountState>;
   dispatch: any;
+  walletTranslations: { [key: string]: string };
 }
 
 interface State {}
@@ -20,26 +20,27 @@ const mapStateToProps = (state: any) => {
   const walletState: WalletState = state.WalletReducer;
   return {
     accounts: walletState.get("accounts"),
-    selectedAccountID: walletState.get("selectedAccountID")
+    selectedAccountID: walletState.get("selectedAccountID"),
+    walletTranslations: walletState.get("walletTranslations")
   };
 };
 
 class WalletSelector extends React.PureComponent<Props, State> {
   public render() {
-    const { selectedAccountID } = this.props;
+    const { selectedAccountID, walletTranslations } = this.props;
 
     const options = this.getOptions();
 
     let blankText;
     if (options.length === 0) {
-      blankText = translations.noAvailableAddress;
+      blankText = walletTranslations.noAvailableAddress;
     } else {
-      blankText = translations.pleaseSelectAddress;
+      blankText = walletTranslations.pleaseSelectAddress;
     }
     return (
       <>
         <div className="HydroSDK-fieldGroup">
-          <div className="HydroSDK-label">{translations.selectAddress}</div>
+          <div className="HydroSDK-label">{walletTranslations.selectAddress}</div>
           <Select
             blank={blankText}
             noCaret={options.length === 0}

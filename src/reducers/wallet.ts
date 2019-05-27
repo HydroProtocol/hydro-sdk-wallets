@@ -3,6 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { ImmutableMap } from ".";
 import { BaseWallet, HydroWallet } from "../wallets";
 import { WALLET_STEPS } from "../actions/wallet";
+import { translations } from "../i18n";
 
 export interface AccountProps {
   address: string | null;
@@ -33,6 +34,7 @@ export interface WalletProps {
     wallet: HydroWallet;
     password: string;
   };
+  walletTranslations: { [key: string]: string };
 }
 
 export type WalletState = ImmutableMap<WalletProps>;
@@ -44,11 +46,15 @@ const initialState: WalletState = fromJS({
   ledgerConnecting: false,
   isShowWalletModal: false,
   step: WALLET_STEPS.SELECT,
-  walletCache: null
+  walletCache: null,
+  walletTranslations: translations
 });
 
 export default (state = initialState, action: any) => {
   switch (action.type) {
+    case "HYDRO_WALLET_SET_TRANSLATIONS":
+      state = state.set("walletTranslations", action.payload.translations);
+      return state;
     case "HYDRO_WALLET_DISCONNECT_LEDGER":
       state = state.set("ledgerConnecting", false);
       return state;

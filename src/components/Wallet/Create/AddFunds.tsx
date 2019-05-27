@@ -2,14 +2,23 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { setWalletStep, WALLET_STEPS } from "../../../actions/wallet";
 import Svg from "../../Svg";
-import { translations } from "../../../i18n";
+import { WalletState } from "../../../reducers/wallet";
 
 interface Props {
   dispatch: any;
+  walletTranslations: { [key: string]: string };
 }
+
+const mapStateToProps = (state: { WalletReducer: WalletState }) => {
+  const WalletState = state.WalletReducer;
+  return {
+    walletTranslations: WalletState.get("walletTranslations")
+  };
+};
 
 class AddFunds extends React.PureComponent<Props, any> {
   public render() {
+    const { walletTranslations } = this.props;
     return (
       <div className="HydroSDK-addFunds">
         <div className="HydroSDK-buttonGroup">
@@ -24,15 +33,15 @@ class AddFunds extends React.PureComponent<Props, any> {
             </div>
           </a>
         </div>
-        <div className="HydroSDK-desc">{translations.addFundsDesc}</div>
+        <div className="HydroSDK-desc">{walletTranslations.addFundsDesc}</div>
         <button
           className="HydroSDK-button HydroSDK-submitButton HydroSDK-featureButton"
           onClick={() => this.props.dispatch(setWalletStep(WALLET_STEPS.SELECT))}>
-          {translations.done}
+          {walletTranslations.done}
         </button>
       </div>
     );
   }
 }
 
-export default connect()(AddFunds);
+export default connect(mapStateToProps)(AddFunds);

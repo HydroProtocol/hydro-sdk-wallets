@@ -3,11 +3,12 @@ import { HydroWallet } from "../../../wallets";
 import { connect } from "react-redux";
 import Input from "../Input";
 import { setWalletStep, WALLET_STEPS, cacheWallet, loadHydroWallet } from "../../../actions/wallet";
-import { translations } from "../../../i18n";
+import { WalletState } from "../../../reducers/wallet";
 
 interface Props {
   dispatch: any;
   isRecovery?: boolean;
+  walletTranslations: { [key: string]: string };
 }
 
 interface State {
@@ -18,6 +19,13 @@ interface State {
   mnemonic: string;
   errorMsg: string | null;
 }
+
+const mapStateToProps = (state: { WalletReducer: WalletState }) => {
+  const walletState = state.WalletReducer;
+  return {
+    walletTranslations: walletState.get("walletTranslations")
+  };
+};
 
 class Create extends React.PureComponent<Props, State> {
   constructor(props: Props) {
@@ -65,26 +73,27 @@ class Create extends React.PureComponent<Props, State> {
 
   public render() {
     const { password, confirmation, isConfirm, processing } = this.state;
+    const { walletTranslations } = this.props;
     return (
       <form className="HydroSDK-form" onSubmit={e => this.submit(e)}>
         {this.renderRecoveryInput()}
         <Input
-          label={translations.password}
+          label={walletTranslations.password}
           text={password}
           handleChange={(password: string) => this.setState({ password })}
         />
         <Input
-          label={translations.confirm}
-          errorMsg={isConfirm ? "" : translations.confirmErrorMsg}
+          label={walletTranslations.confirm}
+          errorMsg={isConfirm ? "" : walletTranslations.confirmErrorMsg}
           text={confirmation}
           handleChange={(confirmation: string) => this.setState({ confirmation })}
         />
-        <div className="HydroSDK-desc">{translations.createDesc}</div>
+        <div className="HydroSDK-desc">{walletTranslations.createDesc}</div>
         <button
           className="HydroSDK-button HydroSDK-submitButton HydroSDK-featureButton"
           type="submit"
           disabled={processing || !password || password !== confirmation}>
-          {processing ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {translations.next}
+          {processing ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {walletTranslations.next}
         </button>
       </form>
     );
@@ -117,4 +126,4 @@ class Create extends React.PureComponent<Props, State> {
   }
 }
 
-export default connect()(Create);
+export default connect(mapStateToProps)(Create);

@@ -21,8 +21,8 @@ export let translations = {
   confirmErrorMsg: "Confirmation must match",
   createDesc:
     "Once you click the Next button you will be taken through the wallet creation process. ***Please complete all three steps, or your wallet will NOT be created.***",
-  title: "Hydro SDK Wallet",
-  subtitle: "",
+  dialogTitle: "Hydro SDK Wallet",
+  dialogSubtitle: "",
   selectWallet: "Select Wallet",
   close: "Close",
   unlock: "Unlock",
@@ -47,8 +47,4 @@ export let translations = {
     'MetaMask browser extension currently runs on Google Chrome, Firefox, Opera, and Brave browsers. For Safari users, please try other wallet options. Click <a target="_blank" rel="noopener noreferrer" href="https://support.ddex.io/hc/en-us/articles/115004408534">here</a> for MetaMask support.',
   connectLedgerDesc:
     'Ensure “Browser Support” and “Contract Data” is enabled within your device settings. <br/>Having issues still? Try reconnecting your Ledger or view Ledger Support.<a target="_blank" rel="noopener noreferrer" href="https://support.ddex.io/hc/en-us/articles/360001576533">Ledger Support</a>'
-};
-
-export const setTranslations = (translations: { [key: string]: string }) => {
-  translations = translations;
 };
