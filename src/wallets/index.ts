@@ -44,7 +44,7 @@ export const getNetworkID = (): Promise<number> => {
       globalNodeUrl,
       {
         headers: { "content-type": "application/json" },
-        form: `{"jsonrpc":"2.0","method":"eth_sendRawTransaction","params":[],"id":${payloadId()}}`
+        form: `{"jsonrpc":"2.0","method":"net_version","params":[],"id":${payloadId()}}`
       },
       (error, response, data) => {
         if (error) {
@@ -69,7 +69,7 @@ export const sendRawTransaction = (data: string): Promise<string> => {
       globalNodeUrl,
       {
         headers: { "content-type": "application/json" },
-        form: `{"jsonrpc":"2.0","method":"net_version","params":["${data}"],"id":${payloadId()}}`
+        form: `{"jsonrpc":"2.0","method":"eth_sendRawTransaction","params":["${data}"],"id":${payloadId()}}`
       },
       (error, response, data) => {
         if (error) {
@@ -78,7 +78,13 @@ export const sendRawTransaction = (data: string): Promise<string> => {
         try {
           if (data) {
             const json = JSON.parse(data);
-            resolve(json.result);
+            if (json.result) {
+              resolve(json.result);
+            } else if (json.error) {
+              reject(json.error);
+            } else {
+              reject(new Error("Unknown Error"));
+            }
           }
         } catch (e) {
           reject(e);
@@ -153,6 +159,31 @@ export const getEstimateGas = (params: any): Promise<any> => {
           if (data) {
             const json = JSON.parse(data);
             resolve(json.result);
+          }
+        } catch (e) {
+          reject(e);
+        }
+      }
+    );
+  });
+};
+
+export const getTransactionCount = (address: string): Promise<number> => {
+  return new Promise((resolve, reject) => {
+    request.post(
+      globalNodeUrl,
+      {
+        headers: { "content-type": "application/json" },
+        form: `{"jsonrpc":"2.0","method":"eth_getTransactionCount","params":["${address}","latest"],"id":${payloadId()}}`
+      },
+      (error, response, data) => {
+        if (error) {
+          reject(error);
+        }
+        try {
+          if (data) {
+            const json = JSON.parse(data);
+            resolve(Number(json.result));
           }
         } catch (e) {
           reject(e);

@@ -1,4 +1,4 @@
-import { BaseWallet, getNetworkID, sendRawTransaction } from ".";
+import { BaseWallet, getNetworkID, sendRawTransaction, getTransactionCount } from ".";
 import AwaitLock from "await-lock";
 import { txParams } from "./baseWallet";
 import EthereumTx from "ethereumjs-tx";
@@ -63,7 +63,12 @@ export default class Ledger extends BaseWallet {
   public async signPersonalMessage(message: string): Promise<string> {
     try {
       await this.awaitLock.acquireAsync();
-      const result = await this.eth.signPersonalMessage(this.currentPath(), Buffer.from(message).toString("hex"));
+      if (message.slice(0, 2) === "0x") {
+        message = message.slice(2);
+      } else {
+        message = Buffer.from(message).toString("hex");
+      }
+      const result = await this.eth.signPersonalMessage(this.currentPath(), message);
       const v = parseInt(result.v, 10) - 27;
       let vHex = v.toString(16);
       if (vHex.length < 2) {
@@ -108,6 +113,11 @@ export default class Ledger extends BaseWallet {
   }
 
   public async sendTransaction(txParams: txParams): Promise<string> {
+    if (!txParams.nonce) {
+      const currentAddress = await this.getAddresses();
+      const nonce = await getTransactionCount(currentAddress[0]);
+      txParams.nonce = nonce;
+    }
     const rawData = await this.signTransaction(txParams);
     return sendRawTransaction(rawData);
   }

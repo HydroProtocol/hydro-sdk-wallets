@@ -5,6 +5,7 @@ export interface txParams {
   value?: number | string | BigNumber;
   gasPrice?: number | BigNumber;
   gasLimit?: number;
+  nonce?: number;
 }
 
 import { BigNumber } from "ethers/utils";
