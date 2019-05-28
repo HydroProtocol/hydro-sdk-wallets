@@ -4,12 +4,11 @@ import { truncateAddress } from "../../wallets";
 import { AccountState, WalletState } from "../../reducers/wallet";
 import { connect } from "react-redux";
 import { selectAccount } from "../../actions/wallet";
-import { Map } from "immutable";
 
 interface Props {
   walletType: string;
   selectedAccountID: string | null;
-  accounts: Map<string, AccountState>;
+  accounts: any;
   dispatch: any;
   walletTranslations: { [key: string]: any };
 }
@@ -85,7 +84,7 @@ class WalletSelector extends React.PureComponent<Props, State> {
     return options;
   }
 
-  private getWalletAccounts(walletType: string): Map<string, AccountState> {
+  private getWalletAccounts(walletType: string): any {
     const { accounts } = this.props;
     return accounts.filter((account: AccountState) => {
       return account.get("wallet").type() === walletType;
