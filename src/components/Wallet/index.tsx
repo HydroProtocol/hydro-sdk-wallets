@@ -20,7 +20,8 @@ import {
   WALLET_STEPS,
   setWalletStep,
   deleteBrowserWalletAccount,
-  setTranslations
+  setTranslations,
+  loadImToken
 } from "../../actions/wallet";
 import Svg from "../Svg";
 import LedgerConnector from "./LedgerConnector";
@@ -101,7 +102,11 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private loadExtensitonWallet() {
-    this.props.dispatch(loadExtensitonWallet());
+    if (typeof window !== "undefined" && window.ethereum && window.ethereum.isImToken) {
+      this.props.dispatch(loadImToken());
+    } else {
+      this.props.dispatch(loadExtensitonWallet());
+    }
   }
 
   public render() {

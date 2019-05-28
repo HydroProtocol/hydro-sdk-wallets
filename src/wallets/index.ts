@@ -1,5 +1,6 @@
 import HydroWallet from "./hydroWallet";
 import ExtensionWallet from "./extensionWallet";
+import ImToken from "./imtoken";
 import BaseWallet from "./baseWallet";
 import WalletConnectWallet from "./WalletConnectWallet";
 import Ledger from "./ledger";
@@ -17,7 +18,8 @@ export {
   NeedUnlockWalletError,
   NotSupportedError,
   WalletConnectWallet,
-  Ledger
+  Ledger,
+  ImToken
 };
 
 export const payloadId = (): number => {
@@ -198,4 +200,10 @@ export const getContract = (contractAddress: string, abi: any): Contract => {
   return new Contract(contractAddress, abi, provider);
 };
 
-export const WalletTypes = [HydroWallet.TYPE, ExtensionWallet.TYPE, WalletConnectWallet.TYPE, Ledger.TYPE];
+export const WalletTypes = [
+  HydroWallet.TYPE,
+  ExtensionWallet.TYPE,
+  WalletConnectWallet.TYPE,
+  Ledger.TYPE,
+  ImToken.TYPE
+];

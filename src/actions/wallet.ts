@@ -8,7 +8,8 @@ import {
   NotSupportedError,
   WalletConnectWallet,
   getBalance,
-  Ledger
+  Ledger,
+  ImToken
 } from "../wallets";
 import { AccountState } from "../reducers/wallet";
 export const WALLET_STEPS = {
@@ -178,6 +179,19 @@ export const showWalletModal = () => {
 export const hideWalletModal = () => {
   return {
     type: "HYDRO_WALLET_HIDE_DIALOG"
+  };
+};
+
+export const loadImToken = () => {
+  return async (dispatch: any) => {
+    await ImToken.enableImToken();
+    const wallet = new ImToken();
+    if (wallet.isSupported()) {
+      dispatch(supportExtensionWallet());
+      dispatch(watchWallet(wallet));
+    } else {
+      window.setTimeout(() => dispatch(loadImToken()), 1000);
+    }
   };
 };
 

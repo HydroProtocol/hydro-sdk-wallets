@@ -23,22 +23,13 @@ export default class ExtensionWallet extends BaseWallet {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      if (this.name() === "imToken") {
-        const res = await this.sendCustomRequest("net_version");
-        if (res.error) {
-          reject(res.error);
+      window.web3.version.getNetwork((err: Error, networkId: number) => {
+        if (err) {
+          reject(err);
         } else {
-          resolve(res.result);
+          resolve(networkId);
         }
-      } else {
-        window.web3.version.getNetwork((err: Error, networkId: number) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(networkId);
-          }
-        });
-      }
+      });
     });
   }
 
@@ -51,27 +42,13 @@ export default class ExtensionWallet extends BaseWallet {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      if (this.name() === "imToken") {
-        const address = await this.getAddresses();
-        const res = await this.sendCustomRequest("personal_sign", [message, address[0]]);
-        if (res.error) {
-          reject(res.error);
+      window.web3.personal.sign(window.web3.toHex(message), window.web3.eth.accounts[0], (err: Error, res: string) => {
+        if (err) {
+          reject(err);
         } else {
-          resolve(res.result);
+          resolve(res);
         }
-      } else {
-        window.web3.personal.sign(
-          window.web3.toHex(message),
-          window.web3.eth.accounts[0],
-          (err: Error, res: string) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(res);
-            }
-          }
-        );
-      }
+      });
     });
   }
 
@@ -80,22 +57,13 @@ export default class ExtensionWallet extends BaseWallet {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      if (this.name() === "imToken") {
-        const res = await this.sendCustomRequest("eth_sendTransaction", [txParams]);
-        if (res.error) {
-          reject(res.error);
+      window.web3.eth.sendTransaction(txParams, (err: Error, res: string) => {
+        if (err) {
+          reject(err);
         } else {
-          resolve(res.result);
+          resolve(res);
         }
-      } else {
-        window.web3.eth.sendTransaction(txParams, (err: Error, res: string) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(res);
-          }
-        });
-      }
+      });
     });
   }
 
@@ -104,26 +72,16 @@ export default class ExtensionWallet extends BaseWallet {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      if (this.name() === "imToken") {
-        window.ethereum.sendAsync({ method, params }, (err: Error, res: any) => {
+      window.web3.currentProvider.sendAsync(
+        { method, params, from: window.web3.eth.accounts[0] },
+        (err: Error, res: any) => {
           if (err) {
             reject(err);
           } else {
             resolve(res);
           }
-        });
-      } else {
-        window.web3.currentProvider.sendAsync(
-          { method, params, from: window.web3.eth.accounts[0] },
-          (err: Error, res: any) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(res);
-            }
-          }
-        );
-      }
+        }
+      );
     });
   }
 
@@ -132,22 +90,13 @@ export default class ExtensionWallet extends BaseWallet {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      if (this.name() === "imToken") {
-        const res = await window.ethereum.sendAsync({ method: "eth_accounts" });
-        if (res.error) {
-          reject(res.error);
+      window.web3.eth.getAccounts((err: Error, accounts: string[]) => {
+        if (err) {
+          reject(err);
         } else {
-          resolve(res.result);
+          resolve(accounts);
         }
-      } else {
-        window.web3.eth.getAccounts((err: Error, accounts: string[]) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(accounts);
-          }
-        });
-      }
+      });
     });
   }
 
@@ -155,7 +104,6 @@ export default class ExtensionWallet extends BaseWallet {
     if (!window.ethereum) {
       return;
     }
-
     await window.ethereum.enable();
   }
 
@@ -164,13 +112,10 @@ export default class ExtensionWallet extends BaseWallet {
   }
 
   public isSupported(): boolean {
-    return !!window.web3 || this.name() === "imToken";
+    return !!window.web3;
   }
 
   public name(): string {
-    if (window.ethereum && window.ethereum.isImToken) {
-      return "imToken";
-    }
     if (!this.isSupported()) {
       return "";
     }
