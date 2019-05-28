@@ -101,11 +101,11 @@ export default connect(state => {
 
 ### Wallet Component Props
 
-| Name              | Type         | Default                                      | Desc                                                                                   |
-| ----------------- | ------------ | -------------------------------------------- | -------------------------------------------------------------------------------------- |
-| nodeUrl           | string       | `https://ropsten.infura.io`                  | Ethereum JSON RPC Endpoint                                                             |
-| defaultWalletType | string       | `EXTENSION`                                  | default selected wallet type. Options are `EXTENSION`, `Hydro-Wallet`, `WALLETCONNECT` |
-| translations      | Translations | `import { translations } from 'src/i18n.ts'` | default translations in `src/i18n.ts`                                                  |
+| Name              | Type         | Default                     | Desc                                                                                             |
+| ----------------- | ------------ | --------------------------- | ------------------------------------------------------------------------------------------------ |
+| nodeUrl           | string       | `https://ropsten.infura.io` | Ethereum JSON RPC Endpoint                                                                       |
+| defaultWalletType | string       | `EXTENSION`                 | default selected wallet type. Options are `EXTENSION`, `Hydro-Wallet`, `WALLETCONNECT`, `Ledger` |
+| translations      | Translations | defaultTranslations         | default translations in `src/i18n.ts`                                                            |
 
 ### Selectors
 
