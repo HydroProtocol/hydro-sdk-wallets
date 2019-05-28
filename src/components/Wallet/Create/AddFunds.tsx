@@ -6,7 +6,7 @@ import { WalletState } from "../../../reducers/wallet";
 
 interface Props {
   dispatch: any;
-  walletTranslations: { [key: string]: string };
+  walletTranslations: { [key: string]: any };
 }
 
 const mapStateToProps = (state: { WalletReducer: WalletState }) => {

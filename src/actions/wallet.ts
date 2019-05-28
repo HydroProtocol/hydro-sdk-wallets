@@ -182,11 +182,14 @@ export const hideWalletModal = () => {
 };
 
 export const loadExtensitonWallet = () => {
-  return (dispatch: any) => {
+  return async (dispatch: any) => {
+    await ExtensionWallet.enableBrowserExtensionWallet();
     const wallet = new ExtensionWallet();
     if (wallet.isSupported()) {
       dispatch(supportExtensionWallet());
       dispatch(watchWallet(wallet));
+    } else {
+      window.setTimeout(() => dispatch(loadExtensitonWallet()), 1000);
     }
   };
 };
@@ -287,10 +290,6 @@ const watchWallet = (wallet: BaseWallet) => {
       await dispatch(initAccount(accountID, wallet));
     } else {
       await dispatch(updateWallet(wallet));
-    }
-
-    if (type === ExtensionWallet.TYPE) {
-      ExtensionWallet.enableBrowserExtensionWallet();
     }
 
     const watchAddress = async () => {

@@ -8,7 +8,7 @@ interface Props {
   dispatch: any;
   wallet: HydroWallet;
   password: string;
-  walletTranslations: { [key: string]: string };
+  walletTranslations: { [key: string]: any };
 }
 
 interface State {

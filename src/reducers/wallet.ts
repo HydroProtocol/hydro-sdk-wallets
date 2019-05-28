@@ -3,7 +3,6 @@ import { BigNumber } from "bignumber.js";
 import { ImmutableMap } from ".";
 import { BaseWallet, HydroWallet } from "../wallets";
 import { WALLET_STEPS } from "../actions/wallet";
-import { translations } from "../i18n";
 
 export interface AccountProps {
   address: string | null;
@@ -34,7 +33,7 @@ export interface WalletProps {
     wallet: HydroWallet;
     password: string;
   };
-  walletTranslations: { [key: string]: string };
+  walletTranslations: { [key: string]: any };
 }
 
 export type WalletState = ImmutableMap<WalletProps>;
@@ -47,7 +46,7 @@ const initialState: WalletState = fromJS({
   isShowWalletModal: false,
   step: WALLET_STEPS.SELECT,
   walletCache: null,
-  walletTranslations: translations
+  walletTranslations: {}
 });
 
 export default (state = initialState, action: any) => {

@@ -26,6 +26,7 @@ import Svg from "../Svg";
 import LedgerConnector from "./LedgerConnector";
 import { Map } from "immutable";
 import NotSupport from "./NotSupport";
+import defaultTranslations from "../../i18n";
 
 interface State {
   password: string;
@@ -38,8 +39,8 @@ interface Props {
   dispatch: any;
   nodeUrl?: string;
   defaultWalletType?: string;
-  translations?: { [key: string]: string };
-  walletTranslations: { [key: string]: string };
+  translations?: { [key: string]: any };
+  walletTranslations: { [key: string]: any };
   selectedAccount: AccountState | null;
   accounts: Map<string, AccountState>;
   extensionWalletSupported: boolean;
@@ -51,9 +52,7 @@ class Wallet extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props);
     const { defaultWalletType, translations, dispatch } = this.props;
-    if (translations) {
-      dispatch(setTranslations(translations));
-    }
+    dispatch(setTranslations(translations || defaultTranslations));
 
     let selectedWalletType: string;
     const lastSelectedWalletType = window.localStorage.getItem("HydroWallet:lastSelectedWalletType");
@@ -148,7 +147,7 @@ class Wallet extends React.PureComponent<Props, State> {
         } else if (selectedWalletType === ExtensionWallet.TYPE && !extensionWalletSupported) {
           return (
             <NotSupport
-              iconName={this.getExtensionIconName()}
+              iconName="metamask"
               title={walletTranslations.installMetamask}
               desc={walletTranslations.installMetamaskDesc}
             />
@@ -288,7 +287,7 @@ class Wallet extends React.PureComponent<Props, State> {
         value: ExtensionWallet.TYPE,
         component: (
           <div className="HydroSDK-optionItem">
-            <Svg name={this.getExtensionIconName()} />
+            <Svg name="metamask" />
             {ExtensionWallet.LABEL}
           </div>
         ),
@@ -391,10 +390,6 @@ class Wallet extends React.PureComponent<Props, State> {
         }
       }
     ];
-  }
-  private getExtensionIconName(): string {
-    // TODO: If other extension wallets, should use corresponding icon
-    return "metamask";
   }
 }
 

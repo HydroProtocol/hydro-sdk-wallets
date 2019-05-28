@@ -8,7 +8,7 @@ import { WalletState } from "../../../reducers/wallet";
 interface Props {
   dispatch: any;
   isRecovery?: boolean;
-  walletTranslations: { [key: string]: string };
+  walletTranslations: { [key: string]: any };
 }
 
 interface State {

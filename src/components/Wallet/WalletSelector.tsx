@@ -11,7 +11,7 @@ interface Props {
   selectedAccountID: string | null;
   accounts: Map<string, AccountState>;
   dispatch: any;
-  walletTranslations: { [key: string]: string };
+  walletTranslations: { [key: string]: any };
 }
 
 interface State {}

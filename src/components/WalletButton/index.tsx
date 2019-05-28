@@ -20,7 +20,6 @@ class WalletButton extends React.PureComponent<any, any> {
 
   private toggleText() {
     const { selectedAccount, walletTranslations } = this.props;
-
     if (selectedAccount) {
       const isLocked = selectedAccount.get("isLocked");
       return (

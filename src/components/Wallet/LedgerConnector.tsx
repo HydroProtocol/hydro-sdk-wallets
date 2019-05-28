@@ -14,7 +14,7 @@ interface Props {
   wallet: Ledger | null;
   isLocked: boolean;
   ledgerConnecting: boolean;
-  walletTranslations: { [key: string]: string };
+  walletTranslations: { [key: string]: any };
 }
 
 interface State {
