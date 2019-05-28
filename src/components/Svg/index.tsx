@@ -98,7 +98,12 @@ class Svg extends React.PureComponent<Props, any> {
         );
       case "create":
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 16 16">
+          <svg
+            className="HydroSDK-themeSvg"
+            xmlns="http://www.w3.org/2000/svg"
+            width={size}
+            height={size}
+            viewBox="0 0 16 16">
             <path
               fill="#666"
               fillRule="evenodd"
@@ -108,7 +113,12 @@ class Svg extends React.PureComponent<Props, any> {
         );
       case "import":
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 16 16">
+          <svg
+            className="HydroSDK-themeSvg"
+            xmlns="http://www.w3.org/2000/svg"
+            width={size}
+            height={size}
+            viewBox="0 0 16 16">
             <path
               fill="#666"
               fillRule="evenodd"
@@ -118,7 +128,12 @@ class Svg extends React.PureComponent<Props, any> {
         );
       case "delete":
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 16 16">
+          <svg
+            className="HydroSDK-themeSvg"
+            xmlns="http://www.w3.org/2000/svg"
+            width={size}
+            height={size}
+            viewBox="0 0 16 16">
             <path
               fill="#666"
               fillRule="evenodd"
@@ -128,7 +143,12 @@ class Svg extends React.PureComponent<Props, any> {
         );
       case "logo":
         return (
-          <svg width={size} height={size} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+          <svg
+            className="HydroSDK-themeSvg"
+            width={size}
+            height={size}
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 16 16">
             <g>
               <title>Layer 1</title>
               <g stroke="null" id="svg_12">
@@ -237,7 +257,12 @@ class Svg extends React.PureComponent<Props, any> {
         );
       case "ledger":
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 16 16">
+          <svg
+            className="HydroSDK-themeSvg"
+            xmlns="http://www.w3.org/2000/svg"
+            width={size}
+            height={size}
+            viewBox="0 0 16 16">
             <path
               fill="#000"
               fillRule="nonzero"
