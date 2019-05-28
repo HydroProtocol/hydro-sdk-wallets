@@ -19,17 +19,26 @@ export default class ExtensionWallet extends BaseWallet {
   }
 
   public loadNetworkId(): Promise<number | undefined> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      window.web3.version.getNetwork((err: Error, networkId: number) => {
-        if (err) {
-          reject(err);
+      if (this.name() === "imToken") {
+        const res = await this.sendCustomRequest("net_version");
+        if (res.error) {
+          reject(res.error);
         } else {
-          resolve(networkId);
+          resolve(res.result);
         }
-      });
+      } else {
+        window.web3.version.getNetwork((err: Error, networkId: number) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(networkId);
+          }
+        });
+      }
     });
   }
 
@@ -38,75 +47,116 @@ export default class ExtensionWallet extends BaseWallet {
   }
 
   public signPersonalMessage(message: string | Uint8Array): Promise<string> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      window.web3.personal.sign(window.web3.toHex(message), window.web3.eth.accounts[0], (err: Error, res: string) => {
-        if (err) {
-          reject(err);
+      if (this.name() === "imToken") {
+        const address = await this.getAddresses();
+        const res = await this.sendCustomRequest("personal_sign", [message, address[0]]);
+        if (res.error) {
+          reject(res.error);
         } else {
-          resolve(res);
+          resolve(res.result);
         }
-      });
+      } else {
+        window.web3.personal.sign(
+          window.web3.toHex(message),
+          window.web3.eth.accounts[0],
+          (err: Error, res: string) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(res);
+            }
+          }
+        );
+      }
     });
   }
 
   public sendTransaction(txParams: txParams): Promise<string | undefined> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      window.web3.eth.sendTransaction(txParams, (err: Error, res: string) => {
-        if (err) {
-          reject(err);
+      if (this.name() === "imToken") {
+        const res = await this.sendCustomRequest("eth_sendTransaction", [txParams]);
+        if (res.error) {
+          reject(res.error);
         } else {
-          resolve(res);
+          resolve(res.result);
         }
-      });
-    });
-  }
-
-  public sendCustomRequest(method: string, params: any): Promise<any> {
-    return new Promise((resolve, reject) => {
-      if (!this.isSupported()) {
-        reject(BaseWallet.NotSupportedError);
-      }
-
-      window.web3.currentProvider.sendAsync(
-        { method, params, from: window.web3.eth.accounts[0] },
-        (err: Error, res: any) => {
+      } else {
+        window.web3.eth.sendTransaction(txParams, (err: Error, res: string) => {
           if (err) {
             reject(err);
           } else {
             resolve(res);
           }
-        }
-      );
+        });
+      }
+    });
+  }
+
+  public sendCustomRequest(method: string, params?: any): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      if (!this.isSupported()) {
+        reject(BaseWallet.NotSupportedError);
+      }
+      if (this.name() === "imToken") {
+        window.ethereum.sendAsync({ method, params }, (err: Error, res: any) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(res);
+          }
+        });
+      } else {
+        window.web3.currentProvider.sendAsync(
+          { method, params, from: window.web3.eth.accounts[0] },
+          (err: Error, res: any) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(res);
+            }
+          }
+        );
+      }
     });
   }
 
   public getAddresses(): Promise<string[]> {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      window.web3.eth.getAccounts((err: Error, accounts: string[]) => {
-        if (err) {
-          reject(err);
+      if (this.name() === "imToken") {
+        const res = await window.ethereum.sendAsync({ method: "eth_accounts" });
+        if (res.error) {
+          reject(res.error);
         } else {
-          resolve(accounts);
+          resolve(res.result);
         }
-      });
+      } else {
+        window.web3.eth.getAccounts((err: Error, accounts: string[]) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(accounts);
+          }
+        });
+      }
     });
   }
 
-  public static enableBrowserExtensionWallet(): void {
+  public static async enableBrowserExtensionWallet(): Promise<void> {
     if (!window.ethereum) {
       return;
     }
 
-    window.ethereum.enable();
+    await window.ethereum.enable();
   }
 
   public isLocked(address: string | null): boolean {
@@ -114,25 +164,25 @@ export default class ExtensionWallet extends BaseWallet {
   }
 
   public isSupported(): boolean {
-    return !!window.web3;
+    return !!window.web3 || this.name() === "imToken";
   }
 
   public name(): string {
-    if (!this.isSupported()) {
-      throw BaseWallet.NotSupportedError;
+    if (window.ethereum && window.ethereum.isImToken) {
+      return "imToken";
     }
-
+    if (!this.isSupported()) {
+      return "";
+    }
     const cp = window.web3.currentProvider;
     if (cp.isMetaMask) {
       return "MetaMask";
     } else if (cp.isCipher) {
-      return "Cipher Wallet";
+      return "Cipher";
     } else if (cp.isTrust) {
-      return "Trust Wallet";
+      return "Trust";
     } else if (cp.isToshi) {
-      return "Coinbase Wallet";
-    } else if (cp.host && cp.host.match(/token\.im/)) {
-      return "Imtoken Wallet";
+      return "Coinbase";
     } else {
       return "Extension Wallet";
     }
