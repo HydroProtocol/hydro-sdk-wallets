@@ -14,7 +14,7 @@ export interface AccountProps {
 
 export type AccountState = ImmutableMap<AccountProps>;
 
-export const initializeAccount: ImmutableMap<AccountState> = Map({
+export const initializeAccount: AccountState = Map({
   address: null,
   balance: new BigNumber("0"),
   isLocked: true,

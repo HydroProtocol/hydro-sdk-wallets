@@ -115,7 +115,7 @@ export default class Ledger extends BaseWallet {
   public async sendTransaction(txParams: txParams): Promise<string> {
     if (!txParams.nonce) {
       const currentAddress = await this.getAddresses();
-      const nonce = await getTransactionCount(currentAddress[0]);
+      const nonce = await getTransactionCount(currentAddress[0], "pending");
       txParams.nonce = nonce;
     }
     const rawData = await this.signTransaction(txParams);

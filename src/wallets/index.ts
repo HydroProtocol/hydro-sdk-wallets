@@ -170,13 +170,13 @@ export const getEstimateGas = (params: any): Promise<any> => {
   });
 };
 
-export const getTransactionCount = (address: string): Promise<number> => {
+export const getTransactionCount = (address: string, status: string = "latest"): Promise<number> => {
   return new Promise((resolve, reject) => {
     request.post(
       globalNodeUrl,
       {
         headers: { "content-type": "application/json" },
-        form: `{"jsonrpc":"2.0","method":"eth_getTransactionCount","params":["${address}","latest"],"id":${payloadId()}}`
+        form: `{"jsonrpc":"2.0","method":"eth_getTransactionCount","params":["${address}","${status}"],"id":${payloadId()}}`
       },
       (error, response, data) => {
         if (error) {
