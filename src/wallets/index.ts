@@ -29,9 +29,8 @@ export const payloadId = (): number => {
   return id;
 };
 
-export const setNodeUrl = (nodeUrl: string) => {
+export const setGlobalNodeUrl = (nodeUrl: string) => {
   if (nodeUrl) {
-    HydroWallet.setNodeUrl(nodeUrl);
     globalNodeUrl = nodeUrl;
   }
 };
@@ -200,10 +199,4 @@ export const getContract = (contractAddress: string, abi: any): Contract => {
   return new Contract(contractAddress, abi, provider);
 };
 
-export const WalletTypes = [
-  HydroWallet.TYPE,
-  ExtensionWallet.TYPE,
-  WalletConnectWallet.TYPE,
-  Ledger.TYPE,
-  ImToken.TYPE
-];
+export const defaultWalletTypes = [ExtensionWallet.TYPE, HydroWallet.TYPE, WalletConnectWallet.TYPE, Ledger.TYPE];

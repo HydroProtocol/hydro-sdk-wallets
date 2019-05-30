@@ -7,7 +7,6 @@ import {
   NeedUnlockWalletError,
   NotSupportedError,
   WalletConnectWallet,
-  getBalance,
   Ledger,
   ImToken
 } from "../wallets";
@@ -55,6 +54,20 @@ export const cacheWallet = (wallet: HydroWallet, password: string) => {
   return {
     type: "HYDRO_WALLET_CACHE_WALLET",
     payload: { wallet, password }
+  };
+};
+
+export const initCustomLocalWallet = (walletClass: any) => {
+  return {
+    type: "HYDRO_WALLET_INIT_CUSTOM_LOCAL_WALLET",
+    payload: { walletClass }
+  };
+};
+
+export const selectWalletType = (type: string) => {
+  return {
+    type: "HYDRO_WALLET_SELECT_WALLET_TYPE",
+    payload: { type }
   };
 };
 
@@ -182,23 +195,37 @@ export const hideWalletModal = () => {
   };
 };
 
-export const loadImToken = () => {
-  return async (dispatch: any) => {
-    await ImToken.enableImToken();
-    const wallet = new ImToken();
-    if (wallet.isSupported()) {
-      dispatch(supportExtensionWallet());
-      dispatch(watchWallet(wallet));
-    } else {
-      window.setTimeout(() => dispatch(loadImToken()), 1000);
+export const loadWallet = (type: string, action?: any) => {
+  return (dispatch: any, getState: any) => {
+    const LocalWallet = getState().WalletReducer.get("LocalWallet");
+    switch (type) {
+      case ExtensionWallet.TYPE:
+        return dispatch(loadExtensitonWallet());
+      case LocalWallet.TYPE:
+        return dispatch(loadLocalWallets());
+      case WalletConnectWallet.TYPE:
+        return dispatch(loadWalletConnectWallet());
+      case Ledger.TYPE:
+        return dispatch(loadLedger());
+      default:
+        if (action) {
+          return action();
+        }
+        return;
     }
   };
 };
 
 export const loadExtensitonWallet = () => {
   return async (dispatch: any) => {
-    await ExtensionWallet.enableBrowserExtensionWallet();
-    const wallet = new ExtensionWallet();
+    let wallet;
+    if (typeof window !== "undefined" && window.ethereum && window.ethereum.isImToken) {
+      await ImToken.enableImToken();
+      wallet = new ImToken();
+    } else {
+      await ExtensionWallet.enableBrowserExtensionWallet();
+      wallet = new ExtensionWallet();
+    }
     if (wallet.isSupported()) {
       dispatch(supportExtensionWallet());
       dispatch(watchWallet(wallet));
@@ -256,17 +283,12 @@ export const loadWalletConnectWallet = () => {
   };
 };
 
-export const loadHydroWallets = () => {
-  return (dispatch: any) => {
-    HydroWallet.list().map(wallet => {
-      dispatch(loadHydroWallet(wallet));
+export const loadLocalWallets = () => {
+  return (dispatch: any, getState: any) => {
+    const LocalWallet = getState().WalletReducer.get("LocalWallet");
+    LocalWallet.list().map((wallet: any) => {
+      dispatch(watchWallet(wallet));
     });
-  };
-};
-
-export const loadHydroWallet = (wallet: HydroWallet) => {
-  return (dispatch: any) => {
-    dispatch(watchWallet(wallet));
   };
 };
 
@@ -291,7 +313,7 @@ export const disconnectLedger = () => {
   };
 };
 
-const watchWallet = (wallet: BaseWallet) => {
+export const watchWallet = (wallet: BaseWallet) => {
   return async (dispatch: any, getState: any) => {
     const accountID = wallet.id();
     const type = wallet.type();
@@ -351,7 +373,7 @@ const watchWallet = (wallet: BaseWallet) => {
       const address = getState().WalletReducer.getIn(["accounts", accountID, "address"]);
       if (address) {
         try {
-          const balance = await getBalance(address);
+          const balance = await wallet.getBalance(address);
           const balanceInStore = getState().WalletReducer.getIn(["accounts", accountID, "balance"]);
 
           if (balance.toString() !== balanceInStore.toString()) {

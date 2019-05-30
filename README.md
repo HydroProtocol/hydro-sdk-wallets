@@ -101,11 +101,16 @@ export default connect(state => {
 
 ### Wallet Component Props
 
-| Name              | Type         | Default                     | Desc                                                                                             |
-| ----------------- | ------------ | --------------------------- | ------------------------------------------------------------------------------------------------ |
-| nodeUrl           | string       | `https://ropsten.infura.io` | Ethereum JSON RPC Endpoint                                                                       |
-| defaultWalletType | string       | `EXTENSION`                 | default selected wallet type. Options are `EXTENSION`, `Hydro-Wallet`, `WALLETCONNECT`, `Ledger` |
-| translations      | Translations | defaultTranslations         | default translations in `src/i18n.ts`                                                            |
+| Name              | Type         | Default                     | Desc                                                                                              |
+| ----------------- | ------------ | --------------------------- | ------------------------------------------------------------------------------------------------- |
+| nodeUrl           | String       | `https://ropsten.infura.io` | Ethereum JSON RPC Endpoint.                                                                       |
+| defaultWalletType | String       | `EXTENSION`                 | default selected wallet type. Options are `EXTENSION`, `Hydro-Wallet`, `WALLETCONNECT`, `Ledger`. |
+| translations      | Translations | defaultTranslations         | i18n translations.                                                                                |
+| walletTypes       | Array        | defaultWalletTypes          | customized wallets.                                                                               |
+| menuOptions       | Option[]     | defaultMenuOptions          | customized wallet menu.                                                                           |
+| loadWalletActions | Actions      | {}                          | customized load wallet actions.                                                                   |
+| customLocalWallet | WalletClass  | HydroWallet                 | customized local wallet class.                                                                    |
+| hideLocalWallet   | Boolean      | false                       | Hide local wallet menu items.                                                                     |
 
 ### Selectors
 

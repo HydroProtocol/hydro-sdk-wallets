@@ -1,14 +1,14 @@
 import * as React from "react";
-import { HydroWallet } from "../../../wallets";
 import { connect } from "react-redux";
 import Input from "../Input";
-import { setWalletStep, WALLET_STEPS, cacheWallet, loadHydroWallet } from "../../../actions/wallet";
-import { WalletState } from "../../../reducers/wallet";
+import { setWalletStep, WALLET_STEPS, cacheWallet, watchWallet } from "../../../actions/wallet";
+import wallet, { WalletState } from "../../../reducers/wallet";
 
 interface Props {
   dispatch: any;
   isRecovery?: boolean;
   walletTranslations: { [key: string]: any };
+  LocalWallet: any;
 }
 
 interface State {
@@ -23,7 +23,8 @@ interface State {
 const mapStateToProps = (state: { WalletReducer: WalletState }) => {
   const walletState = state.WalletReducer;
   return {
-    walletTranslations: walletState.get("walletTranslations")
+    walletTranslations: walletState.get("walletTranslations"),
+    LocalWallet: walletState.get("LocalWallet")
   };
 };
 
@@ -49,7 +50,7 @@ class Create extends React.PureComponent<Props, State> {
 
   private async submit(e: React.FormEvent) {
     const { password, confirmation, mnemonic } = this.state;
-    const { dispatch, isRecovery } = this.props;
+    const { dispatch, isRecovery, LocalWallet } = this.props;
     e.preventDefault();
     if (password !== confirmation) {
       return;
@@ -58,11 +59,11 @@ class Create extends React.PureComponent<Props, State> {
     this.setState({ processing: true });
     try {
       if (isRecovery) {
-        const wallet = await HydroWallet.fromMnemonic(mnemonic, password);
-        dispatch(loadHydroWallet(wallet));
+        const wallet = await LocalWallet.fromMnemonic(mnemonic, password);
+        dispatch(watchWallet(wallet));
         dispatch(setWalletStep(WALLET_STEPS.SELECT));
       } else {
-        const wallet = await HydroWallet.createRandom();
+        const wallet = await LocalWallet.createRandom();
         dispatch(cacheWallet(wallet, password));
         dispatch(setWalletStep(WALLET_STEPS.BACKUP));
       }

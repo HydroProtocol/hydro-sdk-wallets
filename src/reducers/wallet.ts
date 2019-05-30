@@ -25,6 +25,7 @@ export const initializeAccount: AccountState = Map({
 export interface WalletProps {
   accounts: Map<string, AccountState>;
   selectedAccountID: string | null;
+  selectedWalletType: string;
   extensionWalletSupported: boolean;
   ledgerConnecting: boolean;
   isShowWalletModal: boolean;
@@ -34,6 +35,7 @@ export interface WalletProps {
     password: string;
   };
   walletTranslations: { [key: string]: any };
+  LocalWallet: HydroWallet;
 }
 
 export type WalletState = ImmutableMap<WalletProps>;
@@ -41,16 +43,24 @@ export type WalletState = ImmutableMap<WalletProps>;
 const initialState: WalletState = fromJS({
   accounts: Map<string, AccountState>(),
   selectedAccountID: null,
+  selectedWalletType: "",
   extensionWalletSupported: false,
   ledgerConnecting: false,
   isShowWalletModal: false,
   step: WALLET_STEPS.SELECT,
   walletCache: null,
-  walletTranslations: {}
+  walletTranslations: {},
+  LocalWallet: HydroWallet
 });
 
 export default (state = initialState, action: any) => {
   switch (action.type) {
+    case "HYDRO_WALLET_INIT_CUSTOM_LOCAL_WALLET":
+      state = state.set("LocalWallet", action.payload.walletClass);
+      return state;
+    case "HYDRO_WALLET_SELECT_WALLET_TYPE":
+      state = state.set("selectedWalletType", action.payload.type);
+      return state;
     case "HYDRO_WALLET_SET_TRANSLATIONS":
       state = state.set("walletTranslations", action.payload.translations);
       return state;

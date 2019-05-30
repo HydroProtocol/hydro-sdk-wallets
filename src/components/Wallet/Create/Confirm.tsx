@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from "react-redux";
-import { setWalletStep, WALLET_STEPS, loadHydroWallet } from "../../../actions/wallet";
+import { setWalletStep, WALLET_STEPS, watchWallet } from "../../../actions/wallet";
 import { WalletState } from "../../../reducers/wallet";
 import { HydroWallet } from "../../../wallets";
 
@@ -57,7 +57,7 @@ class CreateConfirm extends React.PureComponent<Props, State> {
     const { dispatch, wallet, password } = this.props;
     this.setState({ processing: true });
     await wallet.save(password);
-    await dispatch(loadHydroWallet(wallet));
+    await dispatch(watchWallet(wallet));
     this.setState({ processing: false });
     dispatch(setWalletStep(WALLET_STEPS.ADD_FUNDS));
   }

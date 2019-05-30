@@ -8,20 +8,19 @@ import AddFunds from "./Create/AddFunds";
 import Input from "./Input";
 import Select, { Option } from "./Select";
 import * as qrImage from "qr-image";
-import { HydroWallet, ExtensionWallet, WalletConnectWallet, WalletTypes, setNodeUrl, Ledger } from "../../wallets";
+import { ExtensionWallet, WalletConnectWallet, defaultWalletTypes, setGlobalNodeUrl, Ledger } from "../../wallets";
 import { WalletState, AccountState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
 import {
   hideWalletModal,
-  loadExtensitonWallet,
-  loadHydroWallets,
-  loadWalletConnectWallet,
   unlockBrowserWalletAccount,
   WALLET_STEPS,
   setWalletStep,
   deleteBrowserWalletAccount,
   setTranslations,
-  loadImToken
+  loadWallet,
+  selectWalletType,
+  initCustomLocalWallet
 } from "../../actions/wallet";
 import Svg from "../Svg";
 import LedgerConnector from "./LedgerConnector";
@@ -32,7 +31,6 @@ import defaultTranslations from "../../i18n";
 interface State {
   password: string;
   processing: boolean;
-  selectedWalletType: string;
   checkbox: boolean;
 }
 
@@ -47,27 +45,37 @@ interface Props {
   extensionWalletSupported: boolean;
   isShowWalletModal: boolean;
   step: string;
+  walletTypes?: [];
+  loadWalletActions?: { [key: string]: any };
+  menuOptions?: Option[];
+  selectedWalletType: string;
+  customLocalWallet?: any;
+  LocalWallet: any;
+  hideLocalWallet?: boolean;
 }
 
 class Wallet extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props);
-    const { defaultWalletType, translations, dispatch } = this.props;
+    const { defaultWalletType, translations, dispatch, customLocalWallet } = this.props;
     dispatch(setTranslations(translations || defaultTranslations));
+    if (customLocalWallet) {
+      dispatch(initCustomLocalWallet(customLocalWallet));
+    }
 
     let selectedWalletType: string;
     const lastSelectedWalletType = window.localStorage.getItem("HydroWallet:lastSelectedWalletType");
 
-    if (defaultWalletType && WalletTypes.indexOf(defaultWalletType) > -1) {
+    if (defaultWalletType) {
       selectedWalletType = defaultWalletType;
     } else if (lastSelectedWalletType) {
       selectedWalletType = lastSelectedWalletType;
     } else {
-      selectedWalletType = ExtensionWallet.TYPE;
+      selectedWalletType = defaultWalletTypes[0];
     }
+    dispatch(selectWalletType(selectedWalletType));
 
     this.state = {
-      selectedWalletType,
       password: "",
       processing: false,
       checkbox: false
@@ -75,12 +83,11 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   public componentDidMount() {
-    const { dispatch, nodeUrl } = this.props;
+    const { nodeUrl, LocalWallet } = this.props;
     if (nodeUrl) {
-      setNodeUrl(nodeUrl);
+      setGlobalNodeUrl(nodeUrl);
+      LocalWallet.setNodeUrl(nodeUrl);
     }
-    dispatch(loadHydroWallets());
-    dispatch(loadWalletConnectWallet());
 
     if (document.readyState === "complete") {
       this.loadExtensitonWallet();
@@ -93,7 +100,7 @@ class Wallet extends React.PureComponent<Props, State> {
     const { selectedAccount, isShowWalletModal, dispatch, translations } = this.props;
     if (!isShowWalletModal && isShowWalletModal !== prevProps.isShowWalletModal && selectedAccount) {
       const wallet = selectedAccount.get("wallet");
-      this.setState({ selectedWalletType: wallet.type() });
+      dispatch(selectWalletType(wallet.type()));
     }
 
     if (translations && translations !== prevProps.translations) {
@@ -102,16 +109,16 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private loadExtensitonWallet() {
-    if (typeof window !== "undefined" && window.ethereum && window.ethereum.isImToken) {
-      this.props.dispatch(loadImToken());
-    } else {
-      this.props.dispatch(loadExtensitonWallet());
-    }
+    const { dispatch, walletTypes, loadWalletActions } = this.props;
+    const types = walletTypes ? walletTypes : defaultWalletTypes;
+    types.map(type => {
+      const loadWalletAction = loadWalletActions ? loadWalletActions[type] : null;
+      dispatch(loadWallet(type, loadWalletAction));
+    });
   }
 
   public render() {
-    const { selectedWalletType } = this.state;
-    const { isShowWalletModal, dispatch, walletTranslations } = this.props;
+    const { isShowWalletModal, dispatch, walletTranslations, selectedWalletType } = this.props;
 
     return (
       <div className="HydroSDK-wallet">
@@ -139,8 +146,7 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private renderStepContent() {
-    const { selectedWalletType } = this.state;
-    const { extensionWalletSupported, accounts, step, walletTranslations } = this.props;
+    const { extensionWalletSupported, accounts, step, walletTranslations, selectedWalletType } = this.props;
     switch (step) {
       case WALLET_STEPS.SELECT:
       case WALLET_STEPS.DELETE:
@@ -193,10 +199,10 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private renderUnlockForm() {
-    const { password, selectedWalletType, processing } = this.state;
-    const { selectedAccount, step, walletTranslations } = this.props;
+    const { password, processing } = this.state;
+    const { selectedAccount, step, walletTranslations, selectedWalletType, LocalWallet } = this.props;
     if (
-      selectedWalletType !== HydroWallet.TYPE ||
+      selectedWalletType !== LocalWallet.TYPE ||
       (step !== WALLET_STEPS.SELECT && step !== WALLET_STEPS.DELETE) ||
       !selectedAccount ||
       !selectedAccount.get("isLocked")
@@ -222,14 +228,14 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private renderDeleteForm() {
-    const { checkbox, processing, selectedWalletType } = this.state;
-    const { selectedAccount, step, walletTranslations } = this.props;
+    const { checkbox, processing } = this.state;
+    const { selectedAccount, step, walletTranslations, selectedWalletType, LocalWallet } = this.props;
     if (
       !selectedAccount ||
       selectedAccount.get("isLocked") ||
-      selectedAccount.get("wallet").type() !== HydroWallet.TYPE ||
+      selectedAccount.get("wallet").type() !== LocalWallet.TYPE ||
       step !== WALLET_STEPS.DELETE ||
-      selectedWalletType !== HydroWallet.TYPE
+      selectedWalletType !== LocalWallet.TYPE
     ) {
       return null;
     }
@@ -284,69 +290,73 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private getWalletsOptions(): Option[] {
-    const { dispatch, walletTranslations } = this.props;
-    const hydroWalletsCount = HydroWallet.list().length;
+    let { dispatch, menuOptions } = this.props;
+    if (!menuOptions) {
+      menuOptions = [
+        {
+          value: ExtensionWallet.TYPE,
+          component: (
+            <div className="HydroSDK-optionItem">
+              <Svg name="metamask" />
+              {ExtensionWallet.LABEL}
+            </div>
+          ),
+          onSelect: (option: Option) => {
+            ExtensionWallet.enableBrowserExtensionWallet();
+            dispatch(setWalletStep(WALLET_STEPS.SELECT));
+            dispatch(selectWalletType(option.value));
+          }
+        },
+        {
+          value: Ledger.TYPE,
+          component: (
+            <div className="HydroSDK-optionItem">
+              <Svg name="ledger" />
+              {Ledger.LABEL}
+            </div>
+          ),
+          onSelect: (option: Option) => {
+            dispatch(setWalletStep(WALLET_STEPS.SELECT));
+            dispatch(selectWalletType(option.value));
+          }
+        },
+        {
+          value: WalletConnectWallet.TYPE,
+          component: (
+            <div className="HydroSDK-optionItem">
+              <Svg name="WalletConnect" />
+              {WalletConnectWallet.LABEL}
+            </div>
+          ),
+          onSelect: (option: Option) => {
+            dispatch(setWalletStep(WALLET_STEPS.SELECT));
+            dispatch(selectWalletType(option.value));
+          }
+        }
+      ];
+    }
+    return menuOptions.concat(this.localWalletOptions());
+  }
+
+  private localWalletOptions() {
+    const { dispatch, walletTranslations, LocalWallet, hideLocalWallet } = this.props;
+    const hydroWalletsCount = LocalWallet.list().length;
     const isEmptyHydroWallet = hydroWalletsCount === 0;
+    if (hideLocalWallet) {
+      return [];
+    }
     return [
       {
-        value: ExtensionWallet.TYPE,
-        component: (
-          <div className="HydroSDK-optionItem">
-            <Svg name="metamask" />
-            {ExtensionWallet.LABEL}
-          </div>
-        ),
-        onSelect: (option: Option) => {
-          ExtensionWallet.enableBrowserExtensionWallet();
-          dispatch(setWalletStep(WALLET_STEPS.SELECT));
-          this.setState({
-            selectedWalletType: option.value
-          });
-        }
-      },
-      {
-        value: Ledger.TYPE,
-        component: (
-          <div className="HydroSDK-optionItem">
-            <Svg name="ledger" />
-            {Ledger.LABEL}
-          </div>
-        ),
-        onSelect: (option: Option) => {
-          dispatch(setWalletStep(WALLET_STEPS.SELECT));
-          this.setState({
-            selectedWalletType: option.value
-          });
-        }
-      },
-      {
-        value: WalletConnectWallet.TYPE,
-        component: (
-          <div className="HydroSDK-optionItem">
-            <Svg name="WalletConnect" />
-            {WalletConnectWallet.LABEL}
-          </div>
-        ),
-        onSelect: (option: Option) => {
-          dispatch(setWalletStep(WALLET_STEPS.SELECT));
-          this.setState({
-            selectedWalletType: option.value
-          });
-        }
-      },
-      {
-        value: HydroWallet.TYPE,
+        value: LocalWallet.TYPE,
         component: (
           <div className={`HydroSDK-optionItem${isEmptyHydroWallet ? " disabled" : ""}`}>
             <Svg name="logo" />
-            {HydroWallet.LABEL} ({hydroWalletsCount})
+            {LocalWallet.LABEL} ({hydroWalletsCount})
           </div>
         ),
         onSelect: (option: Option) => {
           dispatch(setWalletStep(isEmptyHydroWallet ? WALLET_STEPS.CREATE : WALLET_STEPS.SELECT));
-          this.setState({
-            selectedWalletType: option.value
-          });
+          dispatch(selectWalletType(option.value));
         }
       },
       {
@@ -359,9 +369,7 @@ class Wallet extends React.PureComponent<Props, State> {
         ),
         onSelect: () => {
           dispatch(setWalletStep(WALLET_STEPS.CREATE));
-          this.setState({
-            selectedWalletType: HydroWallet.TYPE
-          });
+          dispatch(selectWalletType(LocalWallet.TYPE));
         }
       },
       {
@@ -374,9 +382,7 @@ class Wallet extends React.PureComponent<Props, State> {
         ),
         onSelect: () => {
           dispatch(setWalletStep(WALLET_STEPS.IMPORT));
-          this.setState({
-            selectedWalletType: HydroWallet.TYPE
-          });
+          dispatch(selectWalletType(LocalWallet.TYPE));
         }
       },
       {
@@ -389,9 +395,7 @@ class Wallet extends React.PureComponent<Props, State> {
         ),
         onSelect: () => {
           dispatch(setWalletStep(WALLET_STEPS.DELETE));
-          this.setState({
-            selectedWalletType: HydroWallet.TYPE
-          });
+          dispatch(selectWalletType(LocalWallet.TYPE));
         }
       }
     ];
@@ -407,6 +411,8 @@ export default connect((state: any) => {
     accounts: walletState.get("accounts"),
     extensionWalletSupported: walletState.get("extensionWalletSupported"),
     isShowWalletModal: walletState.get("isShowWalletModal"),
-    step: walletState.get("step")
+    step: walletState.get("step"),
+    selectedWalletType: walletState.get("selectedWalletType"),
+    LocalWallet: walletState.get("LocalWallet")
   };
 })(Wallet);

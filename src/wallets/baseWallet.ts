@@ -9,6 +9,7 @@ export interface txParams {
 }
 
 import { BigNumber } from "ethers/utils";
+import { getBalance } from "..";
 
 export default abstract class baseWallet {
   public static NeedUnlockWalletError = new Error("Need Unlock Wallet");
@@ -34,6 +35,10 @@ export default abstract class baseWallet {
   public abstract loadNetworkId(): Promise<number | undefined>;
 
   public abstract sendCustomRequest(method: string, params: any): Promise<any>;
+
+  public getBalance(address: string): Promise<BigNumber> {
+    return getBalance(address);
+  }
 
   public abstract name(): string;
 }
