@@ -340,11 +340,11 @@ class Wallet extends React.PureComponent<Props, State> {
 
   private localWalletOptions() {
     const { dispatch, walletTranslations, LocalWallet, hideLocalWallet } = this.props;
-    const hydroWalletsCount = LocalWallet.list().length;
-    const isEmptyHydroWallet = hydroWalletsCount === 0;
     if (hideLocalWallet) {
       return [];
     }
+    const hydroWalletsCount = LocalWallet.list().length;
+    const isEmptyHydroWallet = hydroWalletsCount === 0;
     return [
       {
         value: LocalWallet.TYPE,
