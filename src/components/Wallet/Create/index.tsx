@@ -2,7 +2,8 @@ import * as React from "react";
 import { connect } from "react-redux";
 import Input from "../Input";
 import { setWalletStep, WALLET_STEPS, cacheWallet, watchWallet } from "../../../actions/wallet";
-import wallet, { WalletState } from "../../../reducers/wallet";
+import { WalletState } from "../../../reducers/wallet";
+import { HydroWallet } from "../../../wallets";
 
 interface Props {
   dispatch: any;
@@ -24,7 +25,7 @@ const mapStateToProps = (state: { WalletReducer: WalletState }) => {
   const walletState = state.WalletReducer;
   return {
     walletTranslations: walletState.get("walletTranslations"),
-    LocalWallet: walletState.get("LocalWallet")
+    LocalWallet: walletState.get("LocalWallet") || HydroWallet
   };
 };
 

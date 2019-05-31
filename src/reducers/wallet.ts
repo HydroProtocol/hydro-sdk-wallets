@@ -35,7 +35,9 @@ export interface WalletProps {
     password: string;
   };
   walletTranslations: { [key: string]: any };
-  LocalWallet: HydroWallet;
+  LocalWallet: HydroWallet | null;
+  unit: string;
+  decimals: number;
 }
 
 export type WalletState = ImmutableMap<WalletProps>;
@@ -50,11 +52,17 @@ const initialState: WalletState = fromJS({
   step: WALLET_STEPS.SELECT,
   walletCache: null,
   walletTranslations: {},
-  LocalWallet: HydroWallet
+  LocalWallet: null,
+  unit: "ETH",
+  decimals: 18
 });
 
 export default (state = initialState, action: any) => {
   switch (action.type) {
+    case "HYDRO_WALLET_SET_UNIT":
+      state = state.set("unit", action.payload.unit);
+      state = state.set("decimals", action.payload.decimals);
+      return state;
     case "HYDRO_WALLET_INIT_CUSTOM_LOCAL_WALLET":
       state = state.set("LocalWallet", action.payload.walletClass);
       return state;

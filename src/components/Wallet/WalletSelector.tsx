@@ -4,6 +4,7 @@ import { truncateAddress } from "../../wallets";
 import { AccountState, WalletState } from "../../reducers/wallet";
 import { connect } from "react-redux";
 import { selectAccount } from "../../actions/wallet";
+import { BigNumber } from "ethers/utils";
 
 interface Props {
   walletType: string;
@@ -11,6 +12,8 @@ interface Props {
   accounts: any;
   dispatch: any;
   walletTranslations: { [key: string]: any };
+  unit: string;
+  decimals: number;
 }
 
 interface State {}
@@ -20,7 +23,9 @@ const mapStateToProps = (state: any) => {
   return {
     accounts: walletState.get("accounts"),
     selectedAccountID: walletState.get("selectedAccountID"),
-    walletTranslations: walletState.get("walletTranslations")
+    walletTranslations: walletState.get("walletTranslations"),
+    unit: walletState.get("unit"),
+    decimals: walletState.get("decimals")
   };
 };
 
@@ -53,7 +58,7 @@ class WalletSelector extends React.PureComponent<Props, State> {
   }
 
   private getOptions(): Option[] {
-    const { walletType, dispatch } = this.props;
+    const { walletType, dispatch, unit, decimals } = this.props;
 
     const options: Option[] = [];
 
@@ -72,7 +77,9 @@ class WalletSelector extends React.PureComponent<Props, State> {
                 {isLocked ? <i className="HydroSDK-fa fa fa-lock" /> : <i className="HydroSDK-fa fa fa-check" />}
                 {truncateAddress(text)}
               </span>
-              <span>{balance.div("1000000000000000000").toFixed(5)} ETH</span>
+              <span>
+                {balance.div(new BigNumber(10).pow(decimals).toString()).toFixed(5)} {unit}
+              </span>
             </div>
           ),
           onSelect: (option: Option) => {

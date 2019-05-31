@@ -57,6 +57,13 @@ export const cacheWallet = (wallet: HydroWallet, password: string) => {
   };
 };
 
+export const setUnit = (unit: string, decimals: number) => {
+  return {
+    type: "HYDRO_WALLET_SET_UNIT",
+    payload: { unit, decimals }
+  };
+};
+
 export const initCustomLocalWallet = (walletClass: any) => {
   return {
     type: "HYDRO_WALLET_INIT_CUSTOM_LOCAL_WALLET",
@@ -197,7 +204,7 @@ export const hideWalletModal = () => {
 
 export const loadWallet = (type: string, action?: any) => {
   return (dispatch: any, getState: any) => {
-    const LocalWallet = getState().WalletReducer.get("LocalWallet");
+    const LocalWallet = getState().WalletReducer.get("LocalWallet") || HydroWallet;
     switch (type) {
       case ExtensionWallet.TYPE:
         return dispatch(loadExtensitonWallet());
@@ -285,7 +292,7 @@ export const loadWalletConnectWallet = () => {
 
 export const loadLocalWallets = () => {
   return (dispatch: any, getState: any) => {
-    const LocalWallet = getState().WalletReducer.get("LocalWallet");
+    const LocalWallet = getState().WalletReducer.get("LocalWallet") || HydroWallet;
     LocalWallet.list().map((wallet: any) => {
       dispatch(watchWallet(wallet));
     });
@@ -334,7 +341,7 @@ export const watchWallet = (wallet: BaseWallet) => {
       let address;
       try {
         const addresses: string[] = await wallet.getAddresses();
-        address = addresses.length > 0 ? addresses[0].toLowerCase() : null;
+        address = addresses.length > 0 ? addresses[0] : null;
       } catch (e) {
         if (type === Ledger.TYPE) {
           dispatch(disconnectLedger());

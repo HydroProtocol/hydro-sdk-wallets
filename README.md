@@ -111,6 +111,8 @@ export default connect(state => {
 | loadWalletActions | Actions      | {}                          | customized load wallet actions.                                                                   |
 | customLocalWallet | WalletClass  | HydroWallet                 | customized local wallet class.                                                                    |
 | hideLocalWallet   | Boolean      | false                       | Hide local wallet menu items.                                                                     |
+| unit              | String       | `ETH`                       | balance unit                                                                                      |
+| decimals          | number       | 18                          | balance decimals                                                                                  |
 
 ### Selectors
 

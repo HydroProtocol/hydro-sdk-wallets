@@ -8,7 +8,14 @@ import AddFunds from "./Create/AddFunds";
 import Input from "./Input";
 import Select, { Option } from "./Select";
 import * as qrImage from "qr-image";
-import { ExtensionWallet, WalletConnectWallet, defaultWalletTypes, setGlobalNodeUrl, Ledger } from "../../wallets";
+import {
+  ExtensionWallet,
+  WalletConnectWallet,
+  defaultWalletTypes,
+  setGlobalNodeUrl,
+  Ledger,
+  HydroWallet
+} from "../../wallets";
 import { WalletState, AccountState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
 import {
@@ -20,7 +27,8 @@ import {
   setTranslations,
   loadWallet,
   selectWalletType,
-  initCustomLocalWallet
+  initCustomLocalWallet,
+  setUnit
 } from "../../actions/wallet";
 import Svg from "../Svg";
 import LedgerConnector from "./LedgerConnector";
@@ -45,22 +53,27 @@ interface Props {
   extensionWalletSupported: boolean;
   isShowWalletModal: boolean;
   step: string;
-  walletTypes?: [];
+  walletTypes?: string[];
   loadWalletActions?: { [key: string]: any };
   menuOptions?: Option[];
   selectedWalletType: string;
   customLocalWallet?: any;
   LocalWallet: any;
   hideLocalWallet?: boolean;
+  unit?: string;
+  decimals?: number;
 }
 
 class Wallet extends React.PureComponent<Props, State> {
   constructor(props: Props) {
     super(props);
-    const { defaultWalletType, translations, dispatch, customLocalWallet } = this.props;
+    const { defaultWalletType, translations, dispatch, customLocalWallet, unit, decimals } = this.props;
     dispatch(setTranslations(translations || defaultTranslations));
     if (customLocalWallet) {
       dispatch(initCustomLocalWallet(customLocalWallet));
+    }
+    if (unit && typeof decimals === "number") {
+      dispatch(setUnit(unit, decimals));
     }
 
     let selectedWalletType: string;
@@ -413,6 +426,6 @@ export default connect((state: any) => {
     isShowWalletModal: walletState.get("isShowWalletModal"),
     step: walletState.get("step"),
     selectedWalletType: walletState.get("selectedWalletType"),
-    LocalWallet: walletState.get("LocalWallet")
+    LocalWallet: walletState.get("LocalWallet") || HydroWallet
   };
 })(Wallet);
