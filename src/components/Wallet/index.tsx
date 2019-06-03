@@ -176,9 +176,8 @@ class Wallet extends React.PureComponent<Props, State> {
               desc={walletTranslations.installMetamaskDesc}
             />
           );
-        } else {
-          return <WalletSelector walletType={selectedWalletType} />;
         }
+        return <WalletSelector walletType={selectedWalletType} />;
       case WALLET_STEPS.CREATE:
         return <Create />;
       case WALLET_STEPS.CREATE_CONFIRM:

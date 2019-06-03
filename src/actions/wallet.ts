@@ -136,7 +136,7 @@ export const loadNetwork = (accountID: string, networkId: number | undefined) =>
 };
 
 export const selectAccount = (accountID: string, type: string) => {
-  if (type !== Ledger.TYPE) {
+  if (type !== Ledger.TYPE && type !== WalletConnectWallet.TYPE) {
     window.localStorage.setItem("HydroWallet:lastSelectedWalletType", type);
     window.localStorage.setItem("HydroWallet:lastSelectedAccountID", accountID);
   }
@@ -212,8 +212,6 @@ export const loadWallet = (type: string, action?: any) => {
         return dispatch(loadLocalWallets());
       case WalletConnectWallet.TYPE:
         return dispatch(loadWalletConnectWallet());
-      case Ledger.TYPE:
-        return dispatch(loadLedger());
       default:
         if (action) {
           return action();
