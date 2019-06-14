@@ -11,6 +11,7 @@ export default class Ledger extends BaseWallet {
   public static TYPE = "LEDGER";
   private awaitLock = new AwaitLock();
   private eth: any;
+  public ethAppVersion: string = "";
   public static PATH_TYPE = {
     LEDGER_LIVE: "m/44'/60'/0'/0",
     LEGACY: "m/44'/60'/0'"
@@ -31,6 +32,8 @@ export default class Ledger extends BaseWallet {
   public async initTransport() {
     const transport = await U2fTransport.create();
     this.eth = new LedgerEth(transport);
+    const config = await this.eth.getAppConfiguration();
+    this.ethAppVersion = config.version;
   }
 
   public static getPathType(basePath: string) {
@@ -75,6 +78,8 @@ export default class Ledger extends BaseWallet {
         vHex = `0${v}`;
       }
       return `0x${result.r}${result.s}${vHex}`;
+    } catch (e) {
+      throw e;
     } finally {
       this.awaitLock.release();
     }
@@ -107,6 +112,8 @@ export default class Ledger extends BaseWallet {
         throw new Error("Invalid networkId signature returned. Expected: " + networkID + ", Got: " + signedChainId);
       }
       return `0x${tx.serialize().toString("hex")}`;
+    } catch (e) {
+      throw e;
     } finally {
       this.awaitLock.release();
     }
