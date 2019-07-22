@@ -63,6 +63,7 @@ interface Props {
   hideLocalWallet?: boolean;
   unit?: string;
   decimals?: number;
+  copyCallback?: (text: string) => any;
 }
 
 class Wallet extends React.PureComponent<Props, State> {
@@ -162,7 +163,14 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private renderStepContent() {
-    const { extensionWalletSupported, accounts, step, walletTranslations, selectedWalletType } = this.props;
+    const {
+      extensionWalletSupported,
+      accounts,
+      step,
+      walletTranslations,
+      selectedWalletType,
+      copyCallback
+    } = this.props;
     switch (step) {
       case WALLET_STEPS.SELECT:
       case WALLET_STEPS.DELETE:
@@ -180,7 +188,7 @@ class Wallet extends React.PureComponent<Props, State> {
             />
           );
         }
-        return <WalletSelector walletType={selectedWalletType} />;
+        return <WalletSelector walletType={selectedWalletType} copyCallback={copyCallback} />;
       case WALLET_STEPS.CREATE:
         return <Create />;
       case WALLET_STEPS.CREATE_CONFIRM:

@@ -16,6 +16,7 @@ interface Props {
   unit: string;
   decimals: number;
   selectedAccountAddress: string | null;
+  copyCallback?: (text: string) => any;
 }
 
 interface State {}
@@ -36,7 +37,7 @@ const mapStateToProps = (state: any) => {
 
 class WalletSelector extends React.PureComponent<Props, State> {
   public render() {
-    const { selectedAccountID, walletTranslations, selectedAccountAddress } = this.props;
+    const { selectedAccountID, walletTranslations, selectedAccountAddress, copyCallback } = this.props;
 
     const options = this.getOptions();
 
@@ -56,7 +57,11 @@ class WalletSelector extends React.PureComponent<Props, State> {
               onClick={async () => {
                 if (selectedAccountAddress) {
                   await copy(selectedAccountAddress);
-                  alert("Copied to clipboard!");
+                  if (copyCallback) {
+                    copyCallback(selectedAccountAddress);
+                  } else {
+                    alert("Copied to clipboard!");
+                  }
                 }
               }}
             />
