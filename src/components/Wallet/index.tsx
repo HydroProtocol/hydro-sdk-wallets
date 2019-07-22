@@ -14,7 +14,8 @@ import {
   defaultWalletTypes,
   setGlobalNodeUrl,
   Ledger,
-  HydroWallet
+  HydroWallet,
+  globalNodeUrl
 } from "../../wallets";
 import { WalletState, AccountState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
@@ -100,6 +101,8 @@ class Wallet extends React.PureComponent<Props, State> {
     if (nodeUrl) {
       setGlobalNodeUrl(nodeUrl);
       LocalWallet.setNodeUrl(nodeUrl);
+    } else {
+      LocalWallet.setNodeUrl(globalNodeUrl);
     }
 
     if (document.readyState === "complete") {

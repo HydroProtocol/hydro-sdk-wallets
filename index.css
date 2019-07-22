@@ -463,6 +463,10 @@ fieldset[disabled] button:hover {
   margin-top: 4px;
   text-align: center;
 }
+.HydroSDK-copy {
+  margin-left: 8px;
+  cursor: pointer;
+}
 
 /* MetaMask logo svg style*/
 .st0 {

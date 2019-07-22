@@ -10,7 +10,7 @@ import { Contract } from "ethers";
 import { JsonRpcProvider } from "ethers/providers";
 
 const { NeedUnlockWalletError, NotSupportedError } = BaseWallet;
-let globalNodeUrl = "https://ropsten.infura.io";
+export let globalNodeUrl = "https://ropsten.infura.io";
 export {
   BaseWallet,
   HydroWallet,

@@ -5,6 +5,7 @@ import { AccountState, WalletState } from "../../reducers/wallet";
 import { connect } from "react-redux";
 import { selectAccount } from "../../actions/wallet";
 import { BigNumber } from "ethers/utils";
+import copy from "clipboard-copy";
 
 interface Props {
   walletType: string;
@@ -14,15 +15,19 @@ interface Props {
   walletTranslations: { [key: string]: any };
   unit: string;
   decimals: number;
+  selectedAccountAddress: string | null;
 }
 
 interface State {}
 
 const mapStateToProps = (state: any) => {
   const walletState: WalletState = state.WalletReducer;
+  const selectedAccountID = walletState.get("selectedAccountID");
+  const accounts = walletState.get("accounts");
   return {
-    accounts: walletState.get("accounts"),
-    selectedAccountID: walletState.get("selectedAccountID"),
+    accounts,
+    selectedAccountID,
+    selectedAccountAddress: accounts.getIn([selectedAccountID, "address"], null),
     walletTranslations: walletState.get("walletTranslations"),
     unit: walletState.get("unit"),
     decimals: walletState.get("decimals")
@@ -31,7 +36,7 @@ const mapStateToProps = (state: any) => {
 
 class WalletSelector extends React.PureComponent<Props, State> {
   public render() {
-    const { selectedAccountID, walletTranslations } = this.props;
+    const { selectedAccountID, walletTranslations, selectedAccountAddress } = this.props;
 
     const options = this.getOptions();
 
@@ -44,7 +49,18 @@ class WalletSelector extends React.PureComponent<Props, State> {
     return (
       <>
         <div className="HydroSDK-fieldGroup">
-          <div className="HydroSDK-label">{walletTranslations.selectAddress}</div>
+          <div className="HydroSDK-label">
+            {walletTranslations.selectAddress}
+            <i
+              className="HydroSDK-copy HydroSDK-fa fa fa-clipboard"
+              onClick={async () => {
+                if (selectedAccountAddress) {
+                  await copy(selectedAccountAddress);
+                  alert("Copied to clipboard!");
+                }
+              }}
+            />
+          </div>
           <Select
             blank={blankText}
             noCaret={options.length === 0}
