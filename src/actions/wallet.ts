@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers/utils";
-import { getAccount } from "../selector/wallet";
+import { getAccount, getWallet } from "../selector/wallet";
 import {
   BaseWallet,
   HydroWallet,
@@ -136,13 +136,19 @@ export const loadNetwork = (accountID: string, networkId: number | undefined) =>
 };
 
 export const selectAccount = (accountID: string, type: string) => {
-  if (type !== Ledger.TYPE && type !== WalletConnectWallet.TYPE) {
-    window.localStorage.setItem("HydroWallet:lastSelectedWalletType", type);
-    window.localStorage.setItem("HydroWallet:lastSelectedAccountID", accountID);
-  }
-  return {
-    type: "HYDRO_WALLET_SELECT_ACCOUNT",
-    payload: { accountID }
+  return async (dispatch: any, getState: any) => {
+    if (type !== Ledger.TYPE && type !== WalletConnectWallet.TYPE) {
+      window.localStorage.setItem("HydroWallet:lastSelectedWalletType", type);
+      window.localStorage.setItem("HydroWallet:lastSelectedAccountID", accountID);
+    }
+    await dispatch({
+      type: "HYDRO_WALLET_SELECT_ACCOUNT",
+      payload: { accountID }
+    });
+    const wallet = getWallet(getState(), accountID);
+    if (wallet) {
+      dispatch(watchWallet(wallet));
+    }
   };
 };
 
@@ -335,7 +341,6 @@ export const watchWallet = (wallet: BaseWallet) => {
 
     const watchAddress = async () => {
       const timerKey = TIMER_KEYS.ADDRESS;
-
       let address;
       try {
         const addresses: string[] = await wallet.getAddresses();
@@ -390,27 +395,33 @@ export const watchWallet = (wallet: BaseWallet) => {
           }
         }
       }
-      const nextTimer = window.setTimeout(() => watchBalance(), 3000);
+      const currentSelectedAccountID = getState().WalletReducer.get("selectedAccountID");
+      const watcherRate = getWatcherRate(currentSelectedAccountID, accountID);
+      const nextTimer = window.setTimeout(() => watchBalance(), watcherRate);
       setTimer(accountID, timerKey, nextTimer);
     };
 
     const watchNetwork = async () => {
       const timerKey = TIMER_KEYS.NETWORK;
-
       try {
         const networkId = await wallet.loadNetworkId();
         if (networkId && networkId !== getState().WalletReducer.getIn(["accounts", accountID, "networkId"])) {
           dispatch(loadNetwork(accountID, networkId));
+        } else {
+          const nextTimer = window.setTimeout(() => watchNetwork(), 3000);
+          setTimer(accountID, timerKey, nextTimer);
         }
       } catch (e) {
         if (e !== NeedUnlockWalletError && e !== NotSupportedError) {
           throw e;
         }
       }
-      const nextTimer = window.setTimeout(() => watchNetwork(), 3000);
-      setTimer(accountID, timerKey, nextTimer);
     };
 
     Promise.all([watchAddress(), watchBalance(), watchNetwork()]);
   };
+};
+
+const getWatcherRate = (selectedType: string, type: string) => {
+  return selectedType === type && window.document.visibilityState !== "hidden" ? 3000 : 300000;
 };

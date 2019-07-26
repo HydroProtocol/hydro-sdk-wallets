@@ -125,7 +125,7 @@ export default class WalletConnectWallet extends BaseWallet {
   }
 
   public loadNetworkId(): Promise<number | undefined> {
-    return new Promise((resolve, reject) => resolve(this.connector.chainId));
+    return new Promise((resolve, reject) => resolve(Number(this.connector.chainId)));
   }
 
   public isLocked(): boolean {

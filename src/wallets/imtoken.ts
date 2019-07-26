@@ -21,7 +21,7 @@ export default class ImToken extends BaseWallet {
       if (res.error) {
         reject(res.error);
       } else {
-        resolve(res.result);
+        resolve(Number(res.result));
       }
     });
   }

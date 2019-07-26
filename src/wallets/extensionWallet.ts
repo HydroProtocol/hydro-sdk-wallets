@@ -27,7 +27,7 @@ export default class ExtensionWallet extends BaseWallet {
         if (err) {
           reject(err);
         } else {
-          resolve(networkId);
+          resolve(Number(networkId));
         }
       });
     });
