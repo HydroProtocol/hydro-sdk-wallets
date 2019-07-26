@@ -50,6 +50,12 @@ const isTimerExist = (accountID: string) => {
   return !!timers[accountID];
 };
 
+export const destoryTimer = () => {
+  Object.keys(timers).map(accountID => {
+    clearTimer(accountID);
+  });
+};
+
 export const cacheWallet = (wallet: HydroWallet, password: string) => {
   return {
     type: "HYDRO_WALLET_CACHE_WALLET",

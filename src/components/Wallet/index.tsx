@@ -29,7 +29,8 @@ import {
   loadWallet,
   selectWalletType,
   initCustomLocalWallet,
-  setUnit
+  setUnit,
+  destoryTimer
 } from "../../actions/wallet";
 import Svg from "../Svg";
 import LedgerConnector from "./LedgerConnector";
@@ -123,6 +124,10 @@ class Wallet extends React.PureComponent<Props, State> {
     if (translations && translations !== prevProps.translations) {
       dispatch(setTranslations(translations));
     }
+  }
+
+  public componentWillUnmount() {
+    destoryTimer();
   }
 
   private loadExtensitonWallet() {
