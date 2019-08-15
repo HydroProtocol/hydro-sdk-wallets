@@ -270,6 +270,45 @@ class Svg extends React.PureComponent<Props, any> {
             />
           </svg>
         );
+      case 'dcent':
+        return (
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enableBackground="new 0 0 16 16" >  
+          <image width="16" height="16" x="0" y="0"
+            href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAIGNIUk0AAHomAACAhAAA+gAAAIDo
+            AAB1MAAA6mAAADqYAAAXcJy6UTwAAALKUExURQAAAG7JxKOnqW1vcaWpq42QkqSoqm2FhW5wcm1u
+            cGFiZG7JxG7JxG3JxKKoqaOnqaOnqW7JxG7JxG7JxG7JxG3KxKOnqaOnqaOnqW7JxG7JxG7JxG7J
+            xKOnqaOnqW7JxG7JxG7JxG7JxG7JxG7JxG7JxKOnqaOnqaOnqW7JxG7JxG7JxG7JxG3JxKOnqaOn
+            qaOnqaOnqaOnqaOnqaOnqW7JxG7JxG7JxG7JxKikp6SmqKOnqaOnqaOnqaOnqaOnqW7JxG7JxG7J
+            xG7JxKOnqaOnqaOnqaOnqaOnqW7JxG7JxG7JxG7JxG7JxG7JxKOnqaOnqaOnqaOnqW7JxG7JxG7J
+            xG7JxKOnqaOnqaOnqW7JxG7JxG7JxJeanKOnqaOnqaOnqW7JxG1vcWxucHJ0dqGlp6OnqW7JxG7J
+            xG1vcW1vcW1vcW1vcX6Bg6OnqaOnqaOnqW1vcW1vcW1vcW1vcW1vcW1vcaOnqaOnqaOnqW1vcW1v
+            caOnqaOnqW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW7KxW7Gwm1sbm1vcW1vcVxe
+            YJ6ipKSoqqOnqW7KxW7KxW6enG1vcW1vcW1vcW1vcW1vcW1vcW1vcWxucH+Bg6OnqaSoqm7JxG7J
+            xG7Lxm60sW1ydG1ucG1vcW1vcW1vcW1vcW1vcW1vcY2QkqSoqqOnqaOnqW7NyG6+uW19fm1tcG1v
+            cW1vcW1vcW1vcW1vcWxucHBydJaanKWpq21rbW1ucW1vcW1vcW1vcW1vcW1vcW1vcWttb21vcW1v
+            cW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1v
+            cW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcW1vcaOnqW7JxG1vcf//
+            /4C04gYAAADqdFJOUwAAAAAAAAAAAAAAD3GFeX8UBUGz+6CLoQgBKZbuyA0Wdt4KVsf8pyURAzqs
+            9qFteBaMvEUFI43q7wgCku+ZLAFi2f74A53gcgcV1f3OXg0mkeQjF+N+G3Hb5/SeLwdTxfwJAzlx
+            g+upAiCI7LUIN6j1EGjV/rQFCVLEk/wVr7MG+o/9zl8N538b32YIMwEGUs797phUla1BBAI2pahX
+            g+IY0rdbeNrtlCiH6IxVodonDVVnw910FmfU1XZSEiS9xlUJSbvNNxd23vWrovHlgx4plu7zo0L4
+            +8BNCGDP2GwS4+ojMJ7wqjliCxcPZj0AAAABYktHRO1WvoONAAAAB3RJTUUH4wgPBSgP/z7pywAA
+            AF50RVh0UmF3IHByb2ZpbGUgdHlwZSBpcHRjAAppcHRjCiAgICAgIDI4CjM4NDI0OTRkMDQwNDAw
+            MDAwMDAwMDAwZjFjMDI2ZTAwMDM1MjQ2NDcxYzAyMDAwMDAyMDAwNDAwCmCaPZ4AAAIVSURBVDjL
+            Y2BAAEZGbh5ePn4BJiYGrIBRUEhYRFTslbgEVgWMklLSMq9fAxXIymFRwMgor6D4+jUuBYyMSsoq
+            qq+hCtSAVjAxqWsgnMKoqaWt8xoCdPX0DZhACgyNjE2YoNpNzcyh0q8teCytQMJMTNavbGzt7JlA
+            2h0cnaDSzsJCgoxgXUwurq9evXJz92BiYPT0gkp7+/j6MYLlmZj8A2yACl4FBgEVBDtC5ENCw2DS
+            AuERr8Ag0h+uICo6RhIszcwSGxef8ApDgXAixHLmpOSU1LRXmArSM0AKmJkzs7JzcvPyC7AqYGYu
+            LCoueVNaxlpeUZmATUFSVfWbN0AFzExMNbXYFJTVvYEoAPokAI+CemZwSOJS0NCYhE9BU3NLKzMe
+            BW3tHUBpBgY2dAWdXd3szMxlLT29zODg4ujrnzARoWDS5ClTp02fwcwMkWZgnjlr9py58+ZDFCxY
+            uGjxkqVv3ixbvgKqnTlzZdubN6tWr1m7bj1QwYaNmzaDwufNmy1btzEDQeH2HSUgbsnOXbv3AFMM
+            5959YD4QVO8/cLD+0OEGKPfNkaMcXCATjx0/ARM6eer0GRj77LnzzFA39V64eOkNGrh8pWcmMzzd
+            M5ddzbmGLH39xs1bzMg5g5m59fadJph0yd1795mZ0TIPM3NH+wOI/MPVjzCkIcHz+MlToDufPU/C
+            Jg1WcuvAji0vXqJoBwCwsI9N5H6RoQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOS0wOC0xNVQwNTo0
+            MDoxNSswMzowMAGdVpkAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTktMDgtMTVUMDU6NDA6MTUrMDM6
+            MDBwwO4lAAAAAElFTkSuQmCC" />
+          </svg>
+        )
       default:
         return null;
     }

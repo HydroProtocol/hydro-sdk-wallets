@@ -8,7 +8,8 @@ import {
   NotSupportedError,
   WalletConnectWallet,
   Ledger,
-  ImToken
+  ImToken,
+  Dcent
 } from "../wallets";
 import { AccountState } from "../reducers/wallet";
 export const WALLET_STEPS = {
@@ -230,6 +231,13 @@ export const loadWallet = (type: string, action?: any) => {
         }
         return;
     }
+  };
+};
+
+export const loadDcentWallet = (dcent: any) => {
+  return async (dispatch: any) => {
+    const wallet = new Dcent(dcent);
+    dispatch(watchWallet(wallet));
   };
 };
 

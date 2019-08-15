@@ -4,6 +4,7 @@ import ImToken from "./imtoken";
 import BaseWallet from "./baseWallet";
 import WalletConnectWallet from "./WalletConnectWallet";
 import Ledger from "./ledger";
+import Dcent from "./dcent";
 import request from "request";
 import { BigNumber } from "ethers/utils";
 import { Contract } from "ethers";
@@ -19,7 +20,8 @@ export {
   NotSupportedError,
   WalletConnectWallet,
   Ledger,
-  ImToken
+  ImToken,
+  Dcent
 };
 
 export const payloadId = (): number => {

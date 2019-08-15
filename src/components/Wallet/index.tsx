@@ -15,7 +15,8 @@ import {
   setGlobalNodeUrl,
   Ledger,
   HydroWallet,
-  globalNodeUrl
+  globalNodeUrl,
+  Dcent
 } from "../../wallets";
 import { WalletState, AccountState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
@@ -30,7 +31,8 @@ import {
   selectWalletType,
   initCustomLocalWallet,
   setUnit,
-  destoryTimer
+  destoryTimer,
+  loadDcentWallet
 } from "../../actions/wallet";
 import Svg from "../Svg";
 import LedgerConnector from "./LedgerConnector";
@@ -65,6 +67,7 @@ interface Props {
   unit?: string;
   decimals?: number;
   copyCallback?: (text: string) => any;
+  dcent?: any;
 }
 
 class Wallet extends React.PureComponent<Props, State> {
@@ -115,7 +118,10 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   public componentDidUpdate(prevProps: Props) {
-    const { selectedAccount, isShowWalletModal, dispatch, translations } = this.props;
+    const { selectedAccount, isShowWalletModal, dispatch, translations, selectedWalletType, dcent } = this.props;
+    if (dcent && selectedWalletType === Dcent.TYPE && prevProps.selectedWalletType !== Dcent.TYPE) {
+      dispatch(loadDcentWallet(dcent));
+    }
     if (!isShowWalletModal && isShowWalletModal !== prevProps.isShowWalletModal && selectedAccount) {
       const wallet = selectedAccount.get("wallet");
       dispatch(selectWalletType(wallet.type()));
@@ -318,7 +324,7 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private getWalletsOptions(): Option[] {
-    let { dispatch, menuOptions } = this.props;
+    let { dispatch, menuOptions, dcent } = this.props;
     if (!menuOptions) {
       menuOptions = [
         {
@@ -362,6 +368,21 @@ class Wallet extends React.PureComponent<Props, State> {
           }
         }
       ];
+      if (dcent) {
+        menuOptions.push({
+          value: Dcent.TYPE,
+          component: (
+            <div className="HydroSDK-optionItem">
+              <Svg name="dcent" />
+              {Dcent.LABEL}
+            </div>
+          ),
+          onSelect: (option: Option) => {
+            dispatch(setWalletStep(WALLET_STEPS.SELECT));
+            dispatch(selectWalletType(option.value));
+          }
+        });
+      }
     }
     return menuOptions.concat(this.localWalletOptions());
   }
