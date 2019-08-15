@@ -91,7 +91,11 @@ export default class Dcent extends BaseWallet {
       const res = await this.dcent.getAddress(this.dcent.coinType.ETHEREUM, this.PATH);
       const address = res.body.parameter.address;
       this.connected = !!address;
-      return [address];
+      if (address) {
+        return [address.toLowerCase()];
+      } else {
+        return [];
+      }
     } catch (e) {
       throw e;
     } finally {
