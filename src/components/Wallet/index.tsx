@@ -189,7 +189,7 @@ class Wallet extends React.PureComponent<Props, State> {
           const account = accounts.get(WalletConnectWallet.TYPE)!;
           if (account.get("isLocked")) return this.renderQrImage();
         } else if (selectedWalletType === Ledger.TYPE) {
-          return <LedgerConnector />;
+          return <LedgerConnector copyCallback={copyCallback} />;
         } else if (selectedWalletType === ExtensionWallet.TYPE && !extensionWalletSupported) {
           return (
             <NotSupport

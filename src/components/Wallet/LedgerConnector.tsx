@@ -8,6 +8,7 @@ import { BigNumber } from "bignumber.js";
 import ReactPaginate from "react-paginate";
 import { WalletState } from "../../reducers/wallet";
 import NotSupport from "./NotSupport";
+import copy from "clipboard-copy";
 
 interface Props {
   dispatch: any;
@@ -15,6 +16,7 @@ interface Props {
   isLocked: boolean;
   ledgerConnecting: boolean;
   walletTranslations: { [key: string]: any };
+  copyCallback?: (text: string) => any;
 }
 
 interface State {
@@ -107,7 +109,7 @@ class LedgerConnector extends React.PureComponent<Props, State> {
   }
 
   private renderContent() {
-    const { isLocked, walletTranslations } = this.props;
+    const { isLocked, walletTranslations, copyCallback } = this.props;
     if (isLocked) {
       return (
         <NotSupport
@@ -129,7 +131,22 @@ class LedgerConnector extends React.PureComponent<Props, State> {
         </div>
         {pathType === Ledger.CUSTOMIZAION_PATH && this.renderCustomizedPath()}
         <div className="HydroSDK-fieldGroup">
-          <div className="HydroSDK-label">{walletTranslations.selectAddress}</div>
+          <div className="HydroSDK-label">
+            {walletTranslations.selectAddress}{" "}
+            <i
+              className="HydroSDK-copy HydroSDK-fa fa fa-clipboard"
+              onClick={async () => {
+                if (currentAddress) {
+                  await copy(currentAddress);
+                  if (copyCallback) {
+                    copyCallback(currentAddress);
+                  } else {
+                    alert("Copied to clipboard!");
+                  }
+                }
+              }}
+            />
+          </div>
           <Select
             options={addressOptions}
             selected={!loading && currentAddress}
