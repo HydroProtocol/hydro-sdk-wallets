@@ -133,19 +133,21 @@ class LedgerConnector extends React.PureComponent<Props, State> {
         <div className="HydroSDK-fieldGroup">
           <div className="HydroSDK-label">
             {walletTranslations.selectAddress}{" "}
-            <i
-              className="HydroSDK-copy HydroSDK-fa fa fa-clipboard"
-              onClick={async () => {
-                if (currentAddress) {
-                  await copy(currentAddress);
-                  if (copyCallback) {
-                    copyCallback(currentAddress);
-                  } else {
-                    alert("Copied to clipboard!");
+            {currentAddress && (
+              <i
+                className="HydroSDK-copy HydroSDK-fa fa fa-clipboard"
+                onClick={async () => {
+                  if (currentAddress) {
+                    await copy(currentAddress);
+                    if (copyCallback) {
+                      copyCallback(currentAddress);
+                    } else {
+                      alert("Copied to clipboard!");
+                    }
                   }
-                }
-              }}
-            />
+                }}
+              />
+            )}
           </div>
           <Select
             options={addressOptions}
