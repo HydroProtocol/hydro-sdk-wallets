@@ -1,6 +1,7 @@
 import { BigNumber } from "ethers/utils";
 import WalletConnect from "@walletconnect/browser";
 import { BaseWallet } from ".";
+import { convertUtf8ToHex } from "@walletconnect/utils";
 
 export interface WalletConnectWalletOptions {
   bridge?: string;
@@ -46,14 +47,14 @@ export default class WalletConnectWallet extends BaseWallet {
     });
   }
 
-  public signPersonalMessage(message: string | Uint8Array): Promise<string> {
+  public signPersonalMessage(message: string): Promise<string> {
     return new Promise((resolve, reject) => {
       if (!this.connector.connected) {
         reject(new Error("WalletConnect session not estabslished"));
         return;
       }
       this.connector
-        .signPersonalMessage([this.connector.accounts[0], message])
+        .signPersonalMessage([convertUtf8ToHex(message), this.connector.accounts[0]])
         .then((signature: string) => resolve(signature))
         .catch((error: Error) => reject(error));
     });
