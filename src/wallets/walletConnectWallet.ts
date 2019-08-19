@@ -41,7 +41,7 @@ export default class WalletConnectWallet extends BaseWallet {
         return;
       }
       this.connector
-        .signMessage([this.connector.accounts[0], message])
+        .signMessage([this.connector.accounts[0], message.indexOf("0x") === 0 ? message : convertUtf8ToHex(message)])
         .then((signature: string) => resolve(signature))
         .catch((error: Error) => reject(error));
     });
@@ -54,7 +54,10 @@ export default class WalletConnectWallet extends BaseWallet {
         return;
       }
       this.connector
-        .signPersonalMessage([convertUtf8ToHex(message), this.connector.accounts[0]])
+        .signPersonalMessage([
+          message.indexOf("0x") === 0 ? message : convertUtf8ToHex(message),
+          this.connector.accounts[0]
+        ])
         .then((signature: string) => resolve(signature))
         .catch((error: Error) => reject(error));
     });
