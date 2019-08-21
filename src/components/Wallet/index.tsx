@@ -110,7 +110,7 @@ class Wallet extends React.PureComponent<Props, State> {
       LocalWallet.setNodeUrl(globalNodeUrl);
     }
 
-    if (document.readyState === "complete") {
+    if (document.readyState === "complete" || document.readyState === "interactive") {
       this.loadExtensitonWallet();
     } else {
       window.addEventListener("load", this.loadExtensitonWallet.bind(this));
