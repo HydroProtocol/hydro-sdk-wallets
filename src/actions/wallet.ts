@@ -262,10 +262,11 @@ export const loadExtensitonWallet = () => {
 
 export const loadWalletConnectWallet = () => {
   return async (dispatch: any) => {
-    const wallet = new WalletConnectWallet({ bridge: "" });
+    let wallet = new WalletConnectWallet({ bridge: "" });
 
     if (wallet.connector.connected) {
       await wallet.connector.killSession();
+      wallet = new WalletConnectWallet({ bridge: "" });
     }
 
     await wallet.connector.createSession();
