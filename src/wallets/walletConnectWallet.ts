@@ -71,7 +71,7 @@ export default class WalletConnectWallet extends BaseWallet {
       }
       this.connector
         .sendTransaction({
-          from: txParams.from || "",
+          from: txParams.from || this.connector.accounts[0],
           to: txParams.to || "",
           data: txParams.data || "",
           value: new BigNumber(`${txParams.value}`).toString() || "",
@@ -91,7 +91,7 @@ export default class WalletConnectWallet extends BaseWallet {
       }
       this.connector
         .signTransaction({
-          from: txParams.from || "",
+          from: txParams.from || this.connector.accounts[0],
           to: txParams.to || "",
           data: txParams.data || "",
           value: new BigNumber(`${txParams.value}`).toString() || "",
