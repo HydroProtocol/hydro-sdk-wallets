@@ -7,7 +7,7 @@ declare global {
   }
 }
 export default class Dcent extends BaseWallet {
-  public static LABEL = "D'Cent";
+  public static LABEL = "D'CENT";
   public static TYPE = "DCENT";
   private awaitLock = new AwaitLock();
   private PATH = "m/44'/60'/0'/0/0";
