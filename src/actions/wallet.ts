@@ -9,7 +9,8 @@ import {
   WalletConnectWallet,
   Ledger,
   ImToken,
-  Dcent
+  Dcent,
+  CoinbaseWallet
 } from "../wallets";
 import { AccountState } from "../reducers/wallet";
 export const WALLET_STEPS = {
@@ -144,7 +145,12 @@ export const loadNetwork = (accountID: string, networkId: number | undefined) =>
 
 export const selectAccount = (accountID: string, type: string) => {
   return async (dispatch: any, getState: any) => {
-    if (type !== Ledger.TYPE && type !== WalletConnectWallet.TYPE) {
+    if (
+      type !== Ledger.TYPE &&
+      type !== WalletConnectWallet.TYPE &&
+      type !== Dcent.TYPE &&
+      type !== CoinbaseWallet.TYPE
+    ) {
       window.localStorage.setItem("HydroWallet:lastSelectedWalletType", type);
       window.localStorage.setItem("HydroWallet:lastSelectedAccountID", accountID);
     }
@@ -230,6 +236,16 @@ export const loadWallet = (type: string, action?: any) => {
           return action();
         }
         return;
+    }
+  };
+};
+
+export const loadCoinbaseWallet = (appName?: string, appLogoUrl?: string) => {
+  return async (dispatch: any) => {
+    const wallet = new CoinbaseWallet(appName, appLogoUrl);
+    await wallet.enable();
+    if (wallet.isSupported()) {
+      dispatch(watchWallet(wallet));
     }
   };
 };

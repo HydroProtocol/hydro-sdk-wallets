@@ -1,6 +1,7 @@
 import HydroWallet from "./hydroWallet";
 import ExtensionWallet from "./extensionWallet";
 import ImToken from "./imtoken";
+import CoinbaseWallet from "./coinbaseWallet";
 import BaseWallet from "./baseWallet";
 import WalletConnectWallet from "./WalletConnectWallet";
 import Ledger from "./ledger";
@@ -21,7 +22,8 @@ export {
   WalletConnectWallet,
   Ledger,
   ImToken,
-  Dcent
+  Dcent,
+  CoinbaseWallet
 };
 
 export const payloadId = (): number => {

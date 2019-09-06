@@ -2,7 +2,7 @@ import BaseWallet, { txParams } from "./baseWallet";
 declare global {
   interface Window {
     web3: any;
-    ethereum: any;
+    ethereum?: any;
   }
 }
 

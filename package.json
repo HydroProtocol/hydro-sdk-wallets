@@ -1,6 +1,6 @@
 {
   "name": "@gongddex/hydro-sdk-wallet",
-  "version": "0.0.77",
+  "version": "0.0.78",
   "main": "./build/index.js",
   "files": [
     "build",
@@ -32,7 +32,8 @@
     "ethers": "^4.0.27",
     "immutable": "^3.8.2",
     "qr-image": "^3.2.0",
-    "react-paginate": "^6.3.0"
+    "react-paginate": "^6.3.0",
+    "walletlink": "^1.0.0"
   },
   "devDependencies": {
     "@types/ethereumjs-tx": "^1.0.1",

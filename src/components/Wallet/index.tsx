@@ -16,7 +16,8 @@ import {
   Ledger,
   HydroWallet,
   globalNodeUrl,
-  Dcent
+  Dcent,
+  CoinbaseWallet
 } from "../../wallets";
 import { WalletState, AccountState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
@@ -32,7 +33,8 @@ import {
   initCustomLocalWallet,
   setUnit,
   destoryTimer,
-  loadDcentWallet
+  loadDcentWallet,
+  loadCoinbaseWallet
 } from "../../actions/wallet";
 import Svg from "../Svg";
 import LedgerConnector from "./LedgerConnector";
@@ -68,6 +70,8 @@ interface Props {
   decimals?: number;
   copyCallback?: (text: string) => any;
   dcent?: any;
+  appName?: string;
+  appLogoUrl?: string;
 }
 
 class Wallet extends React.PureComponent<Props, State> {
@@ -118,10 +122,24 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   public componentDidUpdate(prevProps: Props) {
-    const { selectedAccount, isShowWalletModal, dispatch, translations, selectedWalletType, dcent } = this.props;
+    const {
+      selectedAccount,
+      isShowWalletModal,
+      dispatch,
+      translations,
+      selectedWalletType,
+      dcent,
+      appName,
+      appLogoUrl
+    } = this.props;
     if (dcent && selectedWalletType === Dcent.TYPE && prevProps.selectedWalletType !== Dcent.TYPE) {
       dispatch(loadDcentWallet(dcent));
     }
+
+    if (selectedWalletType === CoinbaseWallet.TYPE && prevProps.selectedWalletType !== CoinbaseWallet.TYPE) {
+      dispatch(loadCoinbaseWallet(appName, appLogoUrl));
+    }
+
     if (!isShowWalletModal && isShowWalletModal !== prevProps.isShowWalletModal && selectedAccount) {
       const wallet = selectedAccount.get("wallet");
       dispatch(selectWalletType(wallet.type()));
@@ -360,6 +378,19 @@ class Wallet extends React.PureComponent<Props, State> {
             <div className="HydroSDK-optionItem">
               <Svg name="WalletConnect" />
               {WalletConnectWallet.LABEL}
+            </div>
+          ),
+          onSelect: (option: Option) => {
+            dispatch(setWalletStep(WALLET_STEPS.SELECT));
+            dispatch(selectWalletType(option.value));
+          }
+        },
+        {
+          value: CoinbaseWallet.TYPE,
+          component: (
+            <div className="HydroSDK-optionItem">
+              <Svg name="coinbase" />
+              {CoinbaseWallet.LABEL}
             </div>
           ),
           onSelect: (option: Option) => {
