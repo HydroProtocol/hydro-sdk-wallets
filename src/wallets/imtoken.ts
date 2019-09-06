@@ -79,13 +79,14 @@ export default class ImToken extends BaseWallet {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      const res = await window.ethereum.sendAsync({ method: "eth_accounts" });
-      console.log(res);
-      if (res.error) {
-        reject(res.error);
-      } else {
-        resolve(res.result);
-      }
+
+      window.ethereum.sendAsync({ method: "eth_accounts" }, (err: Error, res: any) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res.result);
+        }
+      });
     });
   }
 
