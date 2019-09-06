@@ -6,12 +6,12 @@ import { payloadId } from "@walletconnect/utils";
 export default class CoinbaseWallet extends BaseWallet {
   public static LABEL = "Coinbase Wallet";
   public static TYPE = "COINBASE_WALLET";
-  public ethereum: WalletLinkProvider;
+  public ethereum?: WalletLinkProvider;
 
-  public constructor(appName?: string, appLogoUrl?: string) {
+  public constructor(networkId: number, appName?: string, appLogoUrl?: string) {
     super();
     const walletLink = new WalletLink({ appName: appName || "Hydro", appLogoUrl: appLogoUrl || "" });
-    this.ethereum = walletLink.makeWeb3Provider(globalNodeUrl);
+    this.ethereum = walletLink.makeWeb3Provider(globalNodeUrl, networkId);
   }
 
   public type(): string {
@@ -74,8 +74,8 @@ export default class CoinbaseWallet extends BaseWallet {
       params = [];
     }
     return new Promise(async (resolve, reject) => {
-      if (!this.isSupported()) {
-        reject(BaseWallet.NotSupportedError);
+      if (!this.ethereum) {
+        return reject(BaseWallet.NotSupportedError);
       }
       this.ethereum.sendAsync([{ jsonrpc: "2.0", id: payloadId(), method, params }], (err: Error | null, res: any) => {
         if (err) {

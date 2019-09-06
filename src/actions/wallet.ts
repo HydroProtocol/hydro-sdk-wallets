@@ -10,7 +10,8 @@ import {
   Ledger,
   ImToken,
   Dcent,
-  CoinbaseWallet
+  CoinbaseWallet,
+  getNetworkID
 } from "../wallets";
 import { AccountState } from "../reducers/wallet";
 export const WALLET_STEPS = {
@@ -242,7 +243,8 @@ export const loadWallet = (type: string, action?: any) => {
 
 export const loadCoinbaseWallet = (appName?: string, appLogoUrl?: string) => {
   return async (dispatch: any) => {
-    const wallet = new CoinbaseWallet(appName, appLogoUrl);
+    const networkId = await getNetworkID();
+    const wallet = new CoinbaseWallet(networkId, appName, appLogoUrl);
     await wallet.enable();
     if (wallet.isSupported()) {
       dispatch(watchWallet(wallet));
