@@ -6,7 +6,7 @@ import { payloadId } from "@walletconnect/utils";
 export default class CoinbaseWallet extends BaseWallet {
   public static LABEL = "Coinbase Wallet";
   public static TYPE = "COINBASE_WALLET";
-  public ethereum?: WalletLinkProvider;
+  public ethereum: any;
 
   public constructor(networkId: number, appName?: string, appLogoUrl?: string) {
     super();
