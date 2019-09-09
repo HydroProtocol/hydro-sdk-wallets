@@ -33,8 +33,8 @@ import {
   initCustomLocalWallet,
   setUnit,
   destoryTimer,
-  loadDcentWallet,
-  loadCoinbaseWallet
+  loadCoinbaseWallet,
+  loadDcentWallet
 } from "../../actions/wallet";
 import Svg from "../Svg";
 import LedgerConnector from "./LedgerConnector";
@@ -122,24 +122,7 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   public componentDidUpdate(prevProps: Props) {
-    const {
-      selectedAccount,
-      isShowWalletModal,
-      dispatch,
-      translations,
-      selectedWalletType,
-      dcent,
-      appName,
-      appLogoUrl
-    } = this.props;
-    if (dcent && selectedWalletType === Dcent.TYPE && prevProps.selectedWalletType !== Dcent.TYPE) {
-      dispatch(loadDcentWallet(dcent));
-    }
-
-    if (selectedWalletType === CoinbaseWallet.TYPE && prevProps.selectedWalletType !== CoinbaseWallet.TYPE) {
-      dispatch(loadCoinbaseWallet(appName, appLogoUrl));
-    }
-
+    const { selectedAccount, isShowWalletModal, dispatch, translations } = this.props;
     if (!isShowWalletModal && isShowWalletModal !== prevProps.isShowWalletModal && selectedAccount) {
       const wallet = selectedAccount.get("wallet");
       dispatch(selectWalletType(wallet.type()));
@@ -185,10 +168,51 @@ class Wallet extends React.PureComponent<Props, State> {
             <button className="HydroSDK-button HydroSDK-closeButton" onClick={() => dispatch(hideWalletModal())}>
               {walletTranslations.close}
             </button>
+            {this.renderFeatureButton()}
           </div>
         </div>
       </div>
     );
+  }
+
+  private renderFeatureButton() {
+    const { selectedWalletType, walletTranslations, accounts } = this.props;
+    if (selectedWalletType !== Dcent.TYPE && selectedWalletType !== CoinbaseWallet.TYPE) {
+      return null;
+    }
+
+    const account = accounts.get(selectedWalletType);
+    const address = account ? account.get("address") : null;
+
+    if (!address) {
+      return (
+        <button
+          className="HydroSDK-button HydroSDK-featureButton HydroSDK-submitButton"
+          onClick={() => this.connectBridge()}>
+          {walletTranslations.connect}
+        </button>
+      );
+    } else if (selectedWalletType === Dcent.TYPE) {
+      return (
+        <button
+          className="HydroSDK-button HydroSDK-featureButton HydroSDK-submitButton"
+          onClick={() => window.location.reload()}>
+          {walletTranslations.disconnect}
+        </button>
+      );
+    } else {
+      return null;
+    }
+  }
+
+  private connectBridge() {
+    const { selectedWalletType, dispatch, dcent, appName, appLogoUrl } = this.props;
+
+    if (selectedWalletType === CoinbaseWallet.TYPE) {
+      dispatch(loadCoinbaseWallet(appName, appLogoUrl));
+    } else if (selectedWalletType === Dcent.TYPE && dcent) {
+      dispatch(loadDcentWallet(dcent));
+    }
   }
 
   private renderStepContent() {

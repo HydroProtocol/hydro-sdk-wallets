@@ -114,7 +114,7 @@ export const getBalance = (address: string): Promise<BigNumber> => {
         try {
           if (data) {
             const json = JSON.parse(data);
-            resolve(new BigNumber(json.result));
+            resolve(new BigNumber(json.result || 0));
           }
         } catch (e) {
           reject(e);

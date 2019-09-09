@@ -13,10 +13,28 @@ export default class Dcent extends BaseWallet {
   private PATH = "m/44'/60'/0'/0/0";
   public dcent: any;
   public connected: boolean = false;
+  public address?: string;
 
   public constructor(dcent: any) {
     super();
     this.dcent = dcent;
+    this.reconnect();
+  }
+
+  public reconnect() {
+    this.disconnect();
+    // hack await disconnect
+    setTimeout(() => {
+      this.connect();
+    }, 100);
+  }
+
+  public async connect() {
+    this.dcent.dcentPopupWindow();
+  }
+
+  public async disconnect() {
+    this.dcent.popupWindowClose();
   }
 
   public type(): string {
@@ -86,11 +104,19 @@ export default class Dcent extends BaseWallet {
   }
 
   public async getAddresses(): Promise<string[]> {
+    if (this.address) {
+      return [this.address];
+    }
+
+    // @ts-ignore
+    if (this.awaitLock._acquired) {
+      return [];
+    }
     try {
       await this.awaitLock.acquireAsync();
       const res = await this.dcent.getAddress(this.dcent.coinType.ETHEREUM, this.PATH);
       const address = res.body.parameter.address;
-      this.connected = !!address;
+      this.address = address;
       if (address) {
         return [address.toLowerCase()];
       } else {

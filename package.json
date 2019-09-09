@@ -1,6 +1,6 @@
 {
   "name": "@gongddex/hydro-sdk-wallet",
-  "version": "0.0.81",
+  "version": "0.0.82",
   "main": "./build/index.js",
   "files": [
     "build",

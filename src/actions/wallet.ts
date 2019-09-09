@@ -146,12 +146,7 @@ export const loadNetwork = (accountID: string, networkId: number | undefined) =>
 
 export const selectAccount = (accountID: string, type: string) => {
   return async (dispatch: any, getState: any) => {
-    if (
-      type !== Ledger.TYPE &&
-      type !== WalletConnectWallet.TYPE &&
-      type !== Dcent.TYPE &&
-      type !== CoinbaseWallet.TYPE
-    ) {
+    if (type === HydroWallet.TYPE || type === ExtensionWallet.TYPE) {
       window.localStorage.setItem("HydroWallet:lastSelectedWalletType", type);
       window.localStorage.setItem("HydroWallet:lastSelectedAccountID", accountID);
     }
@@ -392,13 +387,11 @@ export const watchWallet = (wallet: BaseWallet) => {
 
       const walletIsLocked = wallet.isLocked(address);
       const walletStoreLocked = getState().WalletReducer.getIn(["accounts", accountID, "isLocked"]);
-
       if (walletIsLocked !== walletStoreLocked) {
         dispatch(walletIsLocked ? lockAccount(accountID) : unlockAccount(accountID));
       }
 
       const currentAddressInStore = getState().WalletReducer.getIn(["accounts", accountID, "address"]);
-
       if (currentAddressInStore !== address) {
         dispatch(loadAddress(accountID, address));
         const lastSelectedAccountID = window.localStorage.getItem("HydroWallet:lastSelectedAccountID");
@@ -406,6 +399,16 @@ export const watchWallet = (wallet: BaseWallet) => {
         if (!currentSelectedAccountID && (lastSelectedAccountID === accountID || !lastSelectedAccountID)) {
           dispatch(selectAccount(accountID, type));
         }
+      }
+      const selectedAccountID = getState().WalletReducer.get("selectedAccountID");
+      const selectedWalletType = getState().WalletReducer.get("selectedWalletType");
+      if (
+        address &&
+        accountID !== selectedAccountID &&
+        type === selectedWalletType &&
+        (type === CoinbaseWallet.TYPE || type === Dcent.TYPE)
+      ) {
+        dispatch(selectAccount(accountID, type));
       }
 
       const nextTimer = window.setTimeout(() => watchAddress(), 3000);
