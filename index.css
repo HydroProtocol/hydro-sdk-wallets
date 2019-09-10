@@ -239,8 +239,7 @@ fieldset[disabled] button:hover {
   display: flex;
   align-items: center;
   flex: 1;
-  margin: auto;
-  padding-bottom: 40px;
+  margin: 20px auto;
 }
 .HydroSDK-qr-image-bg {
   width: 200px;
@@ -466,6 +465,16 @@ fieldset[disabled] button:hover {
 .HydroSDK-copy {
   margin-left: 8px;
   cursor: pointer;
+}
+.HydroSDK-walletDesc {
+  flex: 1;
+  padding-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  max-width: 580px;
+  justify-content: center;
+  text-align: center;
 }
 
 /* MetaMask logo svg style*/

@@ -48,5 +48,31 @@ export default {
   connectLedgerDesc:
     'Ensure “Browser Support” and “Contract Data” is enabled within your device settings. <br/>Having issues still? Try reconnecting your Ledger or view Ledger Support.<a target="_blank" rel="noopener noreferrer" href="https://support.ddex.io/hc/en-us/articles/360001576533">Ledger Support</a>',
   connect: "Connect",
-  disconnect: "Disconnect"
+  disconnect: "Disconnect",
+  walletDesc: {
+    extension: {
+      title: "",
+      desc: ""
+    },
+    hydro_wallet: {
+      title: "",
+      desc: ""
+    },
+    ledger: {
+      title: "",
+      desc: ""
+    },
+    walletconnect: {
+      title: "",
+      desc: `Please use a mobile wallet that supports wallet connect to scan the qrcode. Supported apps include DDEX, Trust Wallet. If you have none of them installed, you can download the <a target="_blank" rel="noopener noreferrer" href="https://apps.apple.com/us/app/ddex-2-0-crypto-dex/id1455868174">DDEX 2.0 IOS</a > or <a target="_blank" rel="noopener noreferrer" href="https://play.google.com/store/apps/details?id=io.ddex.dwallet">DDEX 2.0 Android</a >.`
+    },
+    coinbase_wallet: {
+      title: "",
+      desc: `After clicking the Connect button, the qrcode window will pop up. Then scan it with Coinbase Wallet. If you have issues, please see the wallet link official <a target="_blank" rel="noopener noreferrer" href="https://github.com/walletlink/walletlink/wiki/Browser-Troubleshooting">trouble shooting</a > for more info.`
+    },
+    dcent: {
+      title: "",
+      desc: ""
+    }
+  }
 };

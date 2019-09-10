@@ -163,14 +163,33 @@ class Wallet extends React.PureComponent<Props, State> {
               <Select options={this.getWalletsOptions()} selected={selectedWalletType} />
             </div>
             {this.renderStepContent()}
+            {this.renderDesc()}
             {this.renderUnlockForm()}
             {this.renderDeleteForm()}
+            {this.renderFeatureButton()}
             <button className="HydroSDK-button HydroSDK-closeButton" onClick={() => dispatch(hideWalletModal())}>
               {walletTranslations.close}
             </button>
-            {this.renderFeatureButton()}
           </div>
         </div>
+      </div>
+    );
+  }
+
+  private renderDesc() {
+    const { selectedWalletType, walletTranslations } = this.props;
+    let title = "",
+      desc = "";
+    if (selectedWalletType) {
+      const key = selectedWalletType.toLowerCase();
+      console.log(key);
+      title = walletTranslations.walletDesc[key].title;
+      desc = walletTranslations.walletDesc[key].desc;
+    }
+    return (
+      <div className="HydroSDK-walletDesc">
+        <div className="HydroSDK-walletDescTitle">{title}</div>
+        <div className="HydroSDK-walletDescDesc" dangerouslySetInnerHTML={{ __html: desc }} />
       </div>
     );
   }

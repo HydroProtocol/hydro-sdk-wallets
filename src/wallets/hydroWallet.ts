@@ -9,7 +9,7 @@ export default class HydroWallet extends BaseWallet {
   private static WALLETS_KEY = "Hydro-Wallets";
   private static _cache: Map<string, any> = new Map();
 
-  public static TYPE = "Hydro-Wallet";
+  public static TYPE = "Hydro_Wallet";
   public static LABEL = "Browser Wallet";
 
   private static nodeUrl: string;

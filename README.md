@@ -104,7 +104,7 @@ export default connect(state => {
 | Name              | Type         | Default                     | Desc                                                                                              |
 | ----------------- | ------------ | --------------------------- | ------------------------------------------------------------------------------------------------- |
 | nodeUrl           | String       | `https://ropsten.infura.io` | Ethereum JSON RPC Endpoint.                                                                       |
-| defaultWalletType | String       | `EXTENSION`                 | default selected wallet type. Options are `EXTENSION`, `Hydro-Wallet`, `WALLETCONNECT`, `Ledger`. |
+| defaultWalletType | String       | `EXTENSION`                 | default selected wallet type. Options are `EXTENSION`, `Hydro_Wallet`, `WALLETCONNECT`, `Ledger`. |
 | translations      | Translations | defaultTranslations         | i18n translations.                                                                                |
 | walletTypes       | Array        | defaultWalletTypes          | customized wallets.                                                                               |
 | menuOptions       | Option[]     | defaultMenuOptions          | customized wallet menu.                                                                           |
