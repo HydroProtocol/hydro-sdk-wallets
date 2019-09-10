@@ -41,4 +41,6 @@ export default abstract class baseWallet {
   }
 
   public abstract name(): string;
+
+  public clearSession() {}
 }

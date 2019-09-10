@@ -22,6 +22,10 @@ export default class CoinbaseWallet extends BaseWallet {
     return CoinbaseWallet.TYPE;
   }
 
+  public clearSession() {
+    this.ethereum._relay.storage.clear();
+  }
+
   public loadNetworkId(): Promise<number | undefined> {
     return new Promise(async (resolve, reject) => {
       if (!this.isSupported()) {

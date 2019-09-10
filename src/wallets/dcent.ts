@@ -12,7 +12,6 @@ export default class Dcent extends BaseWallet {
   private awaitLock = new AwaitLock();
   private PATH = "m/44'/60'/0'/0/0";
   public dcent: any;
-  public connected: boolean = false;
   public address?: string;
 
   public constructor(dcent: any) {
@@ -130,11 +129,11 @@ export default class Dcent extends BaseWallet {
   }
 
   public isSupported(): boolean {
-    return !this.connected;
+    return !this.address;
   }
 
   public isLocked(): boolean {
-    return !this.connected;
+    return !this.address;
   }
 
   public async loadNetworkId(): Promise<number> {

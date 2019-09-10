@@ -192,16 +192,18 @@ class Wallet extends React.PureComponent<Props, State> {
           {walletTranslations.connect}
         </button>
       );
-    } else if (selectedWalletType === Dcent.TYPE) {
+    } else {
+      const wallet = account.get("wallet");
       return (
         <button
           className="HydroSDK-button HydroSDK-featureButton HydroSDK-submitButton"
-          onClick={() => window.location.reload()}>
+          onClick={() => {
+            wallet.clearSession();
+            window.location.reload();
+          }}>
           {walletTranslations.disconnect}
         </button>
       );
-    } else {
-      return null;
     }
   }
 
