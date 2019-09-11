@@ -182,7 +182,6 @@ class Wallet extends React.PureComponent<Props, State> {
       desc = "";
     if (selectedWalletType) {
       const key = selectedWalletType.toLowerCase();
-      console.log(key);
       title = walletTranslations.walletDesc[key].title;
       desc = walletTranslations.walletDesc[key].desc;
     }
