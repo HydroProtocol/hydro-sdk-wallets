@@ -57,6 +57,9 @@ export default class ExtensionWallet extends BaseWallet {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
+      if (txParams.gasLimit) {
+        txParams.gas = txParams.gasLimit;
+      }
       window.web3.eth.sendTransaction(txParams, (err: Error, res: string) => {
         if (err) {
           reject(err);

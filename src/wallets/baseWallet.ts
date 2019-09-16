@@ -5,6 +5,7 @@ export interface txParams {
   value?: number | string | BigNumber;
   gasPrice?: number | BigNumber;
   gasLimit?: number;
+  gas?: number;
   nonce?: number;
 }
 

@@ -260,6 +260,12 @@ class Wallet extends React.PureComponent<Props, State> {
               desc={walletTranslations.installMetamaskDesc}
             />
           );
+        } else if (selectedWalletType === Dcent.TYPE || selectedWalletType === CoinbaseWallet.TYPE) {
+          const selectedAccount = accounts.get(selectedWalletType);
+          const selectedAddress = selectedAccount ? selectedAccount.get("address") : null;
+          if (!selectedAddress) {
+            return null;
+          }
         }
         return <WalletSelector walletType={selectedWalletType} copyCallback={copyCallback} />;
       case WALLET_STEPS.CREATE:

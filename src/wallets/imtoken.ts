@@ -50,6 +50,9 @@ export default class ImToken extends BaseWallet {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
+      if (txParams.gasLimit) {
+        txParams.gas = txParams.gasLimit;
+      }
       const res = await this.sendCustomRequest("eth_sendTransaction", [txParams]);
       if (res.error) {
         reject(res.error);
