@@ -6,6 +6,7 @@ import BaseWallet from "./baseWallet";
 import WalletConnectWallet from "./WalletConnectWallet";
 import Ledger from "./ledger";
 import Dcent from "./dcent";
+import Fortmatic from "./fortmatic";
 import request from "request";
 import { BigNumber } from "ethers/utils";
 import { Contract } from "ethers";
@@ -23,6 +24,7 @@ export {
   Ledger,
   ImToken,
   Dcent,
+  Fortmatic,
   CoinbaseWallet
 };
 

@@ -17,7 +17,8 @@ import {
   HydroWallet,
   globalNodeUrl,
   Dcent,
-  CoinbaseWallet
+  CoinbaseWallet,
+  Fortmatic
 } from "../../wallets";
 import { WalletState, AccountState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
@@ -34,7 +35,8 @@ import {
   setUnit,
   destoryTimer,
   loadCoinbaseWallet,
-  loadDcentWallet
+  loadDcentWallet,
+  loadFortmaticWallet
 } from "../../actions/wallet";
 import Svg from "../Svg";
 import LedgerConnector from "./LedgerConnector";
@@ -70,6 +72,7 @@ interface Props {
   decimals?: number;
   copyCallback?: (text: string) => any;
   dcent?: any;
+  fortmaticApiKey?: string;
   appName?: string;
   appLogoUrl?: string;
 }
@@ -182,8 +185,11 @@ class Wallet extends React.PureComponent<Props, State> {
       desc = "";
     if (selectedWalletType) {
       const key = selectedWalletType.toLowerCase();
-      title = walletTranslations.walletDesc[key].title;
-      desc = walletTranslations.walletDesc[key].desc;
+      const walletDesc = walletTranslations.walletDesc[key];
+      if (walletDesc) {
+        title = walletDesc.title;
+        desc = walletDesc.desc;
+      }
     }
     return (
       <div className="HydroSDK-walletDesc">
@@ -195,7 +201,11 @@ class Wallet extends React.PureComponent<Props, State> {
 
   private renderFeatureButton() {
     const { selectedWalletType, walletTranslations, accounts } = this.props;
-    if (selectedWalletType !== Dcent.TYPE && selectedWalletType !== CoinbaseWallet.TYPE) {
+    if (
+      selectedWalletType !== Dcent.TYPE &&
+      selectedWalletType !== CoinbaseWallet.TYPE &&
+      selectedWalletType !== Fortmatic.TYPE
+    ) {
       return null;
     }
 
@@ -226,12 +236,14 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private connectBridge() {
-    const { selectedWalletType, dispatch, dcent, appName, appLogoUrl } = this.props;
+    const { selectedWalletType, dispatch, dcent, appName, appLogoUrl, fortmaticApiKey } = this.props;
 
     if (selectedWalletType === CoinbaseWallet.TYPE) {
       dispatch(loadCoinbaseWallet(appName, appLogoUrl));
     } else if (selectedWalletType === Dcent.TYPE && dcent) {
       dispatch(loadDcentWallet(dcent));
+    } else if (selectedWalletType === Fortmatic.TYPE && fortmaticApiKey) {
+      dispatch(loadFortmaticWallet(fortmaticApiKey));
     }
   }
 
@@ -260,7 +272,11 @@ class Wallet extends React.PureComponent<Props, State> {
               desc={walletTranslations.installMetamaskDesc}
             />
           );
-        } else if (selectedWalletType === Dcent.TYPE || selectedWalletType === CoinbaseWallet.TYPE) {
+        } else if (
+          selectedWalletType === Dcent.TYPE ||
+          selectedWalletType === CoinbaseWallet.TYPE ||
+          selectedWalletType === Fortmatic.TYPE
+        ) {
           const selectedAccount = accounts.get(selectedWalletType);
           const selectedAddress = selectedAccount ? selectedAccount.get("address") : null;
           if (!selectedAddress) {
@@ -392,7 +408,7 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private getWalletsOptions(): Option[] {
-    let { dispatch, menuOptions, dcent } = this.props;
+    let { dispatch, menuOptions, dcent, fortmaticApiKey } = this.props;
     if (!menuOptions) {
       menuOptions = [
         {
@@ -456,6 +472,21 @@ class Wallet extends React.PureComponent<Props, State> {
             <div className="HydroSDK-optionItem">
               <Svg name="dcent" />
               {Dcent.LABEL}
+            </div>
+          ),
+          onSelect: (option: Option) => {
+            dispatch(setWalletStep(WALLET_STEPS.SELECT));
+            dispatch(selectWalletType(option.value));
+          }
+        });
+      }
+      if (fortmaticApiKey) {
+        menuOptions.push({
+          value: Fortmatic.TYPE,
+          component: (
+            <div className="HydroSDK-optionItem">
+              <Svg name="fortmatic" />
+              {Fortmatic.LABEL}
             </div>
           ),
           onSelect: (option: Option) => {

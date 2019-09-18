@@ -1,29 +1,36 @@
 import BaseWallet, { txParams } from "./baseWallet";
-import WalletLink from "walletlink";
+// @ts-ignore
+import FortmaticClass from "fortmatic";
 import { globalNodeUrl } from ".";
-import { payloadId } from "@walletconnect/utils";
 
-export default class CoinbaseWallet extends BaseWallet {
-  public static LABEL = "Coinbase Wallet";
-  public static TYPE = "COINBASE_WALLET";
-  public ethereum: any;
+export default class Fortmatic extends BaseWallet {
+  public static LABEL = "Fortmatic";
+  public static TYPE = "FORTMATIC";
+  public provider?: any;
+  public fortmatic: any;
+  public address?: string;
 
-  public constructor(networkId: number, appName?: string, appLogoUrl?: string) {
+  public constructor(apiKey: string) {
     super();
-    const walletLink = new WalletLink({ appName: appName || "Hydro", appLogoUrl: appLogoUrl || "" });
-    this.ethereum = walletLink.makeWeb3Provider(globalNodeUrl, networkId);
+    let network;
+    if (globalNodeUrl.includes("ropsten")) {
+      network = "ropsten";
+    } else if (globalNodeUrl.includes("kovan")) {
+      network = "kovan";
+    }
+    this.fortmatic = new FortmaticClass(apiKey, network);
   }
 
   public type(): string {
-    return CoinbaseWallet.TYPE;
+    return Fortmatic.TYPE;
   }
 
   public id(): string {
-    return CoinbaseWallet.TYPE;
+    return Fortmatic.TYPE;
   }
 
-  public clearSession() {
-    this.ethereum._relay.storage.clear();
+  public async clearSession() {
+    return await this.fortmatic.user.logout();
   }
 
   public loadNetworkId(): Promise<number | undefined> {
@@ -78,10 +85,10 @@ export default class CoinbaseWallet extends BaseWallet {
       params = [];
     }
     return new Promise(async (resolve, reject) => {
-      if (!this.ethereum) {
+      if (!this.provider) {
         return reject(BaseWallet.NotSupportedError);
       }
-      this.ethereum.sendAsync([{ jsonrpc: "2.0", id: payloadId(), method, params }], (err: Error | null, res: any) => {
+      this.provider.sendAsync([{ method, params }], (err: Error | null, res: any) => {
         if (err) {
           reject(err);
         } else {
@@ -92,20 +99,20 @@ export default class CoinbaseWallet extends BaseWallet {
   }
 
   public getAddresses(): Promise<string[]> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      const res = await this.sendCustomRequest("eth_accounts");
-      resolve(res.result);
+      resolve([this.provider.account]);
     });
   }
 
   public async enable(): Promise<void> {
-    if (!this.ethereum) {
+    if (!this.fortmatic) {
       return;
     }
-    await this.ethereum.enable();
+    this.provider = this.fortmatic.getProvider();
+    await this.provider.enable();
   }
 
   public isLocked(address: string | null): boolean {
@@ -113,10 +120,10 @@ export default class CoinbaseWallet extends BaseWallet {
   }
 
   public isSupported(): boolean {
-    return !!this.ethereum && !!this.ethereum.isWalletLink;
+    return !!this.provider && this.provider.isLoggedIn;
   }
 
   public name(): string {
-    return "CoinbaseWallet";
+    return "Fortmatic";
   }
 }

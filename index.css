@@ -101,7 +101,7 @@ body {
   flex-direction: column;
   overflow: hidden;
   background: #f7f7f7;
-  max-height: 240px;
+  max-height: 340px;
 }
 .HydroSDK-dropdown.up {
   bottom: 110%;

@@ -11,12 +11,15 @@ There is a default ui in this package. You can also implement another ui as you 
 ### Support wallets:
 
 - Metamask
-- Wallet Connect Protocol
 - Browser Local Wallet
-- Ledger Wallet
-- Trust Wallet
-- Coinbase Wallet
-- Imtoken Wallet
+- [Wallet Connect Protocol](https://walletconnect.org/)
+- [Ledger Wallet](https://www.ledger.com/)
+- [Trust Wallet](https://trustwallet.com/)
+- [Coinbase Wallet](https://wallet.coinbase.com/)
+- [Imtoken Wallet](https://token.im/)
+- [Wallet Link (Coinbase Wallet)](https://www.walletlink.org)
+- [D'CENT Wallet](https://dcentwallet.com/)
+- [Fortmatic](https://fortmatic.com)
 
 ## Basic Usage Guide
 
@@ -101,18 +104,23 @@ export default connect(state => {
 
 ### Wallet Component Props
 
-| Name              | Type         | Default                     | Desc                                                                                              |
-| ----------------- | ------------ | --------------------------- | ------------------------------------------------------------------------------------------------- |
-| nodeUrl           | String       | `https://ropsten.infura.io` | Ethereum JSON RPC Endpoint.                                                                       |
-| defaultWalletType | String       | `EXTENSION`                 | default selected wallet type. Options are `EXTENSION`, `Hydro_Wallet`, `WALLETCONNECT`, `Ledger`. |
-| translations      | Translations | defaultTranslations         | i18n translations.                                                                                |
-| walletTypes       | Array        | defaultWalletTypes          | customized wallets.                                                                               |
-| menuOptions       | Option[]     | defaultMenuOptions          | customized wallet menu.                                                                           |
-| loadWalletActions | Actions      | {}                          | customized load wallet actions.                                                                   |
-| customLocalWallet | WalletClass  | HydroWallet                 | customized local wallet class.                                                                    |
-| hideLocalWallet   | Boolean      | false                       | Hide local wallet menu items.                                                                     |
-| unit              | String       | `ETH`                       | balance unit                                                                                      |
-| decimals          | number       | 18                          | balance decimals                                                                                  |
+| Name              | Type                   | Default                       | Desc                                                                                              |
+| ----------------- | ---------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------- |
+| nodeUrl           | String                 | `https://ropsten.infura.io`   | Ethereum JSON RPC Endpoint.                                                                       |
+| defaultWalletType | String                 | `EXTENSION`                   | default selected wallet type. Options are `EXTENSION`, `Hydro_Wallet`, `WALLETCONNECT`, `Ledger`. |
+| translations      | Translations           | defaultTranslations           | i18n translations.                                                                                |
+| walletTypes       | Array                  | defaultWalletTypes            | customized wallets.                                                                               |
+| menuOptions       | Option[]               | defaultMenuOptions            | customized wallet menu.                                                                           |
+| loadWalletActions | Actions                | {}                            | customized load wallet actions.                                                                   |
+| customLocalWallet | WalletClass            | HydroWallet                   | customized local wallet class.                                                                    |
+| hideLocalWallet   | Boolean                | false                         | hide local wallet menu items.                                                                     |
+| unit              | String                 | `ETH`                         | balance unit.                                                                                     |
+| decimals          | number                 | 18                            | balance decimals.                                                                                 |
+| dcent             | DcentClass             |                               | support D'CENT wallet, if provided, will show D'CENT option in dropdown menu.                     |
+| appName           | string                 |                               | WalletLink prop.                                                                                  |
+| appLogoUrl        | string                 |                               | WalletLink prop.                                                                                  |
+| fortmaticApiKey   | string                 |                               | Fortmatic option, if provided, will show Fortmatic option in dropdown menu.                       |
+| copyCallback      | (text: string) => void | alert("Copied to clipboard!") | copy address callback.                                                                            |
 
 ### Selectors
 
@@ -146,7 +154,7 @@ const tx = {
   to: "0x0000000000000000000000000000000000000000",
   nonce: 1,
   gas: 100000,
-  value: 0,
+  value: "0x0",
   data: "0x0"
 };
 

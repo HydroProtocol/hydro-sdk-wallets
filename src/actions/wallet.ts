@@ -11,7 +11,8 @@ import {
   ImToken,
   Dcent,
   CoinbaseWallet,
-  getNetworkID
+  getNetworkID,
+  Fortmatic
 } from "../wallets";
 import { AccountState } from "../reducers/wallet";
 export const WALLET_STEPS = {
@@ -254,6 +255,16 @@ export const loadDcentWallet = (dcent: any) => {
   };
 };
 
+export const loadFortmaticWallet = (apiKey: string) => {
+  return async (dispatch: any) => {
+    const wallet = new Fortmatic(apiKey);
+    await wallet.enable();
+    if (wallet.isSupported()) {
+      dispatch(watchWallet(wallet));
+    }
+  };
+};
+
 export const loadExtensitonWallet = () => {
   return async (dispatch: any) => {
     let wallet;
@@ -406,7 +417,7 @@ export const watchWallet = (wallet: BaseWallet) => {
         address &&
         accountID !== selectedAccountID &&
         type === selectedWalletType &&
-        (type === CoinbaseWallet.TYPE || type === Dcent.TYPE)
+        (type === CoinbaseWallet.TYPE || type === Dcent.TYPE || type === Fortmatic.TYPE)
       ) {
         dispatch(selectAccount(accountID, type));
       }
