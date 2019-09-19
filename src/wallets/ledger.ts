@@ -134,7 +134,12 @@ export default class Ledger extends BaseWallet {
       await this.awaitLock.acquireAsync();
       const addresses: { [key: string]: string } = {};
       for (let i = from; i < from + count; i++) {
-        const path = basePath.replace("x", i.toString());
+        let path;
+        if (basePath.includes("x")) {
+          path = basePath.replace("x", i.toString());
+        } else {
+          path = basePath + "/" + i.toString();
+        }
         const address = await this.eth.getAddress(path, false, false);
         addresses[path] = address.address.toLowerCase();
       }
