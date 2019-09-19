@@ -115,12 +115,12 @@ export default connect(state => {
 | customLocalWallet | WalletClass  | HydroWallet                   | customized local wallet class.                                                                    |
 | hideLocalWallet   | Boolean      | false                         | hide local wallet menu items.                                                                     |
 | unit              | String       | `ETH`                         | balance unit.                                                                                     |
-| decimals          | number       | 18                            | balance decimals.                                                                                 |
+| decimals          | Number       | 18                            | balance decimals.                                                                                 |
 | dcent             | DcentClass   |                               | support D'CENT wallet, if provided, will show D'CENT option in dropdown menu.                     |
-| appName           | string       |                               | WalletLink prop.                                                                                  |
-| appLogoUrl        | string       |                               | WalletLink prop.                                                                                  |
-| fortmaticApiKey   | string       |                               | Fortmatic option, if provided, will show Fortmatic option in dropdown menu.                       |
-| copyCallback      | function     | alert("Copied to clipboard!") | copy address callback.                                                                            |
+| appName           | String       |                               | WalletLink prop.                                                                                  |
+| appLogoUrl        | String       |                               | WalletLink prop.                                                                                  |
+| fortmaticApiKey   | String       |                               | Fortmatic option, if provided, will show Fortmatic option in dropdown menu.                       |
+| copyCallback      | Function     | alert("Copied to clipboard!") | copy address callback.                                                                            |
 
 ### Selectors
 
