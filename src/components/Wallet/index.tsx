@@ -75,6 +75,7 @@ interface Props {
   fortmaticApiKey?: string;
   appName?: string;
   appLogoUrl?: string;
+  connecting: Map<string, boolean>;
 }
 
 class Wallet extends React.PureComponent<Props, State> {
@@ -200,7 +201,7 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private renderFeatureButton() {
-    const { selectedWalletType, walletTranslations, accounts } = this.props;
+    const { selectedWalletType, walletTranslations, accounts, connecting } = this.props;
     if (
       selectedWalletType !== Dcent.TYPE &&
       selectedWalletType !== CoinbaseWallet.TYPE &&
@@ -213,11 +214,13 @@ class Wallet extends React.PureComponent<Props, State> {
     const address = account ? account.get("address") : null;
 
     if (!address) {
+      const isConnecting = connecting.get(selectedWalletType, false);
       return (
         <button
           className="HydroSDK-button HydroSDK-featureButton HydroSDK-submitButton"
-          onClick={() => this.connectBridge()}>
-          {walletTranslations.connect}
+          onClick={() => this.connectBridge()}
+          disabled={isConnecting}>
+          {isConnecting ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {walletTranslations.connect}
         </button>
       );
     } else {
@@ -574,6 +577,7 @@ export default connect((state: any) => {
     isShowWalletModal: walletState.get("isShowWalletModal"),
     step: walletState.get("step"),
     selectedWalletType: walletState.get("selectedWalletType"),
-    LocalWallet: walletState.get("LocalWallet") || HydroWallet
+    LocalWallet: walletState.get("LocalWallet") || HydroWallet,
+    connecting: walletState.get("connecting")
   };
 })(Wallet);

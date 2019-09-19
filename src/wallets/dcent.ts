@@ -103,6 +103,10 @@ export default class Dcent extends BaseWallet {
   }
 
   public async getAddresses(): Promise<string[]> {
+    if (!this.isSupported()) {
+      throw BaseWallet.NotSupportedError;
+    }
+
     if (this.address) {
       return [this.address];
     }

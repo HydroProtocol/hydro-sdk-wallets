@@ -36,7 +36,7 @@ const mapStateToProps = (state: { WalletReducer: WalletState }) => {
   return {
     wallet: account ? (account.get("wallet") as Ledger) : null,
     isLocked: account ? account.get("isLocked") : true,
-    ledgerConnecting: state.WalletReducer.get("ledgerConnecting"),
+    ledgerConnecting: state.WalletReducer.getIn(["connecting", Ledger.TYPE]),
     walletTranslations: state.WalletReducer.get("walletTranslations")
   };
 };
@@ -100,8 +100,7 @@ class LedgerConnector extends React.PureComponent<Props, State> {
             className="HydroSDK-button HydroSDK-submitButton HydroSDK-featureButton"
             disabled={ledgerConnecting}
             onClick={() => this.connectLedger()}>
-            {ledgerConnecting ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null}{" "}
-            {walletTranslations.connectLedger}
+            {ledgerConnecting ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {walletTranslations.connect}
           </button>
         )}
       </div>

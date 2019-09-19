@@ -239,11 +239,15 @@ export const loadWallet = (type: string, action?: any) => {
 
 export const loadCoinbaseWallet = (appName?: string, appLogoUrl?: string) => {
   return async (dispatch: any) => {
-    const networkId = await getNetworkID();
-    const wallet = new CoinbaseWallet(networkId, appName, appLogoUrl);
-    await wallet.enable();
-    if (wallet.isSupported()) {
+    try {
+      dispatch(connectWallet(CoinbaseWallet.TYPE));
+      const networkId = await getNetworkID();
+      const wallet = new CoinbaseWallet(networkId, appName, appLogoUrl);
+      await wallet.enable();
       dispatch(watchWallet(wallet));
+    } catch (e) {
+      dispatch(connectWalletFinished(CoinbaseWallet.TYPE));
+      throw e;
     }
   };
 };
@@ -257,10 +261,14 @@ export const loadDcentWallet = (dcent: any) => {
 
 export const loadFortmaticWallet = (apiKey: string) => {
   return async (dispatch: any) => {
-    const wallet = new Fortmatic(apiKey);
-    await wallet.enable();
-    if (wallet.isSupported()) {
+    try {
+      dispatch(connectWallet(Fortmatic.TYPE));
+      const wallet = new Fortmatic(apiKey);
+      await wallet.enable();
       dispatch(watchWallet(wallet));
+    } catch (e) {
+      dispatch(connectWalletFinished(Fortmatic.TYPE));
+      throw e;
     }
   };
 };
@@ -346,22 +354,29 @@ export const loadLocalWallets = () => {
 
 export const loadLedger = () => {
   return async (dispatch: any) => {
-    const wallet = new Ledger();
-    await wallet.initTransport();
-    dispatch(watchWallet(wallet));
-    dispatch(connectLedger());
+    try {
+      dispatch(connectWallet(Ledger.TYPE));
+      const wallet = new Ledger();
+      await wallet.initTransport();
+      dispatch(watchWallet(wallet));
+    } catch (e) {
+      dispatch(connectWalletFinished(Ledger.TYPE));
+      throw e;
+    }
   };
 };
 
-export const connectLedger = () => {
+export const connectWallet = (type: string) => {
   return {
-    type: "HYDRO_WALLET_CONNECT_LEDGER"
+    type: "HYDRO_WALLET_CONNECT_WALLET",
+    payload: { type }
   };
 };
 
-export const disconnectLedger = () => {
+export const connectWalletFinished = (type: string) => {
   return {
-    type: "HYDRO_WALLET_DISCONNECT_LEDGER"
+    type: "HYDRO_WALLET_CONNECT_WALLET_FINISHED",
+    payload: { type }
   };
 };
 
@@ -387,13 +402,14 @@ export const watchWallet = (wallet: BaseWallet) => {
         const addresses: string[] = await wallet.getAddresses();
         address = addresses.length > 0 ? addresses[0] : null;
       } catch (e) {
-        if (type === Ledger.TYPE) {
-          dispatch(disconnectLedger());
+        if (type === Ledger.TYPE || type === Dcent.TYPE || type === Fortmatic.TYPE || type === CoinbaseWallet.TYPE) {
           clearTimer(accountID);
         } else if (e !== NeedUnlockWalletError && e !== NotSupportedError) {
           throw e;
         }
         address = null;
+      } finally {
+        dispatch(connectWalletFinished(type));
       }
 
       const walletIsLocked = wallet.isLocked(address);

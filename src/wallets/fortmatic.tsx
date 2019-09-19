@@ -8,7 +8,6 @@ export default class Fortmatic extends BaseWallet {
   public static TYPE = "FORTMATIC";
   public provider?: any;
   public fortmatic: any;
-  public address?: string;
 
   public constructor(apiKey: string) {
     super();
@@ -88,7 +87,7 @@ export default class Fortmatic extends BaseWallet {
       if (!this.provider) {
         return reject(BaseWallet.NotSupportedError);
       }
-      this.provider.sendAsync([{ method, params }], (err: Error | null, res: any) => {
+      this.provider.sendAsync([{ id: 1, method, params }], (err: Error | null, res: any) => {
         if (err) {
           reject(err);
         } else {
