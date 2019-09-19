@@ -43,6 +43,7 @@ const mapStateToProps = (state: { WalletReducer: WalletState }) => {
 
 const batchCount = 3;
 class LedgerConnector extends React.PureComponent<Props, State> {
+  private loadAddressesRequestingCount: number = 0;
   public constructor(props: Props) {
     super(props);
     this.state = {
@@ -126,7 +127,7 @@ class LedgerConnector extends React.PureComponent<Props, State> {
       <>
         <div className="HydroSDK-fieldGroup">
           <div className="HydroSDK-label">{walletTranslations.selectPath}</div>
-          <Select options={pathOptions} selected={pathType} onSelect={this.selectPath} />
+          <Select options={pathOptions} disabled={loading} selected={pathType} onSelect={this.selectPath} />
         </div>
         {pathType === Ledger.CUSTOMIZAION_PATH && this.renderCustomizedPath()}
         <div className="HydroSDK-fieldGroup">
@@ -151,8 +152,8 @@ class LedgerConnector extends React.PureComponent<Props, State> {
           <Select
             options={addressOptions}
             selected={!loading && currentAddress}
-            noCaret={addressOptions.length === 0}
-            disabled={addressOptions.length === 0}
+            noCaret={loading || addressOptions.length === 0}
+            disabled={loading || addressOptions.length === 0}
             footer={this.renderFooter()}
             blank={
               loading || addressOptions.length === 0 ? (
@@ -314,8 +315,12 @@ class LedgerConnector extends React.PureComponent<Props, State> {
     }
     const { realPath, index } = this.state;
     this.setState({ loading: true });
+    this.loadAddressesRequestingCount += 1;
     const addresses = await wallet.getAddressesWithPath(realPath, index, batchCount);
-    this.setState({ addresses, loading: false });
+    this.loadAddressesRequestingCount -= 1;
+    if (this.loadAddressesRequestingCount === 0) {
+      this.setState({ addresses, loading: false });
+    }
   }
 
   public selectAccount(address: string, path: string) {
