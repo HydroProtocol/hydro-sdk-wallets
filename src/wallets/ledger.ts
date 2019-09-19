@@ -13,8 +13,8 @@ export default class Ledger extends BaseWallet {
   private eth: any;
   public ethAppVersion: string = "";
   public static PATH_TYPE = {
-    LEDGER_LIVE: "m/44'/60'/0'/0",
-    LEGACY: "m/44'/60'/0'"
+    LEDGER_LIVE: "m/44'/60'/x'/0/0",
+    LEGACY: "m/44'/60'/0'/x"
   };
   public static currentBasePath: string;
   public static currentIndex: number;
@@ -48,7 +48,7 @@ export default class Ledger extends BaseWallet {
   }
 
   public currentPath(): string {
-    return Ledger.currentBasePath + "/" + Ledger.currentIndex.toString();
+    return Ledger.currentBasePath.replace("x", Ledger.currentIndex.toString());
   }
 
   public type(): string {
@@ -134,7 +134,7 @@ export default class Ledger extends BaseWallet {
       await this.awaitLock.acquireAsync();
       const addresses: { [key: string]: string } = {};
       for (let i = from; i < from + count; i++) {
-        const path = basePath + "/" + i.toString();
+        const path = basePath.replace("x", i.toString());
         const address = await this.eth.getAddress(path, false, false);
         addresses[path] = address.address.toLowerCase();
       }
