@@ -17,23 +17,25 @@ export default class Dcent extends BaseWallet {
   public constructor(dcent: any) {
     super();
     this.dcent = dcent;
-    this.reconnect();
   }
 
-  public reconnect() {
-    this.disconnect();
+  public async reconnect() {
+    await this.disconnect();
     // hack await disconnect
-    setTimeout(() => {
-      this.connect();
-    }, 100);
+    await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        this.connect();
+        resolve();
+      }, 100);
+    });
   }
 
   public async connect() {
-    this.dcent.dcentPopupWindow();
+    await this.dcent.dcentPopupWindow();
   }
 
   public async disconnect() {
-    this.dcent.popupWindowClose();
+    await this.dcent.popupWindowClose();
   }
 
   public type(): string {
@@ -64,14 +66,6 @@ export default class Dcent extends BaseWallet {
     try {
       await this.awaitLock.acquireAsync();
       const networkID = await this.loadNetworkId();
-      // const tx = new EthereumTx(txParams);
-
-      // // Set the EIP155 bits
-      // tx.raw[6] = Buffer.from([networkID]); // v
-      // tx.raw[7] = Buffer.from([]); // r
-      // tx.raw[8] = Buffer.from([]); // s
-
-      // Pass hex-rlp to ledger for signing
       const res = await this.dcent.getEthereumSignedTransaction(
         this.dcent.coinType.ETHEREUM,
         txParams.nonce,
@@ -103,25 +97,17 @@ export default class Dcent extends BaseWallet {
   }
 
   public async getAddresses(): Promise<string[]> {
-    if (!this.isSupported()) {
-      throw BaseWallet.NotSupportedError;
-    }
-
     if (this.address) {
       return [this.address];
     }
 
-    // @ts-ignore
-    if (this.awaitLock._acquired) {
-      return [];
-    }
     try {
       await this.awaitLock.acquireAsync();
       const res = await this.dcent.getAddress(this.dcent.coinType.ETHEREUM, this.PATH);
       const address = res.body.parameter.address;
       this.address = address;
       if (address) {
-        return [address.toLowerCase()];
+        return [address];
       } else {
         return [];
       }

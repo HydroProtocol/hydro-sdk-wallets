@@ -254,8 +254,15 @@ export const loadCoinbaseWallet = (appName?: string, appLogoUrl?: string) => {
 
 export const loadDcentWallet = (dcent: any) => {
   return async (dispatch: any) => {
-    const wallet = new Dcent(dcent);
-    dispatch(watchWallet(wallet));
+    try {
+      dispatch(connectWallet(Dcent.TYPE));
+      const wallet = new Dcent(dcent);
+      await wallet.reconnect();
+      dispatch(watchWallet(wallet));
+    } catch (e) {
+      dispatch(connectWalletFinished(Dcent.TYPE));
+      throw e;
+    }
   };
 };
 
@@ -404,6 +411,7 @@ export const watchWallet = (wallet: BaseWallet) => {
       } catch (e) {
         if (type === Ledger.TYPE || type === Dcent.TYPE || type === Fortmatic.TYPE || type === CoinbaseWallet.TYPE) {
           clearTimer(accountID);
+          throw e;
         } else if (e !== NeedUnlockWalletError && e !== NotSupportedError) {
           throw e;
         }
