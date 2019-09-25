@@ -1,6 +1,8 @@
 import { BaseWallet, getNetworkID, sendRawTransaction, getTransactionCount } from ".";
 import { txParams } from "./baseWallet";
 import AwaitLock from "await-lock";
+import BigNumber from "bignumber.js";
+import * as ethUtil from "ethereumjs-util";
 declare global {
   interface Window {
     dcent: any;
@@ -53,7 +55,7 @@ export default class Dcent extends BaseWallet {
   public async signPersonalMessage(message: string): Promise<string> {
     try {
       await this.awaitLock.acquireAsync();
-      const res = await this.dcent.getEthereumSignedMessage(message, this.PATH);
+      const res = await this.dcent.getEthereumSignedMessage(ethUtil.toBuffer(message), this.PATH);
       return res.body.parameter.sign;
     } catch (e) {
       throw e;
@@ -66,13 +68,18 @@ export default class Dcent extends BaseWallet {
     try {
       await this.awaitLock.acquireAsync();
       const networkID = await this.loadNetworkId();
+      const nonce = typeof txParams.nonce === "number" ? new BigNumber(txParams.nonce).toString() : txParams.nonce;
+      const gasPrice =
+        typeof txParams.gasPrice === "number" ? new BigNumber(txParams.gasPrice).toString() : txParams.gasPrice;
+      const gasLimit =
+        typeof txParams.gasLimit === "number" ? new BigNumber(txParams.gasLimit).toString() : txParams.gasLimit;
       const res = await this.dcent.getEthereumSignedTransaction(
         this.dcent.coinType.ETHEREUM,
-        txParams.nonce,
-        txParams.gasPrice,
-        txParams.gasLimit,
+        nonce,
+        gasPrice,
+        gasLimit,
         txParams.to,
-        txParams.value,
+        new BigNumber(txParams.value as number).toString(),
         txParams.data,
         this.PATH,
         networkID
