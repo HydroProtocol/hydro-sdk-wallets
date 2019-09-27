@@ -411,15 +411,17 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private getWalletsOptions(): Option[] {
-    let { dispatch, menuOptions, dcent, fortmaticApiKey } = this.props;
+    let { dispatch, menuOptions, dcent, fortmaticApiKey, accounts } = this.props;
     if (!menuOptions) {
+      const wallet = accounts.getIn([ExtensionWallet.TYPE, "wallet"]);
+      const extensionWalletLabel = wallet ? wallet.name() : ExtensionWallet.LABEL;
       menuOptions = [
         {
           value: ExtensionWallet.TYPE,
           component: (
             <div className="HydroSDK-optionItem">
               <Svg name="metamask" />
-              {ExtensionWallet.LABEL}
+              {extensionWalletLabel}
             </div>
           ),
           onSelect: (option: Option) => {
