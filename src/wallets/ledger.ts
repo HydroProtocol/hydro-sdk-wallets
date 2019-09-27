@@ -14,7 +14,7 @@ export default class Ledger extends BaseWallet {
   public ethAppVersion: string = "";
   public static PATH_TYPE = {
     LEDGER_LIVE: "m/44'/60'/x'/0/0",
-    LEGACY: "m/44'/60'/0'/x"
+    LEDGER_LEGACY: "m/44'/60'/0'/x"
   };
   public static currentBasePath: string;
   public static currentIndex: number;
@@ -24,8 +24,8 @@ export default class Ledger extends BaseWallet {
 
   public constructor() {
     super();
-    const selectedBasePath = window.localStorage.getItem("Ledger:selectedBasePath") || Ledger.PATH_TYPE.LEGACY;
-    const selectedIndex = Number(window.localStorage.getItem("Ledger:selectedIndex")) || 0;
+    const selectedBasePath = window.localStorage.getItem("Ledger:lastSelectedBasePath") || Ledger.PATH_TYPE.LEDGER_LIVE;
+    const selectedIndex = Number(window.localStorage.getItem("Ledger:lastSelectedIndex")) || 0;
     Ledger.setPath(selectedBasePath, selectedIndex);
   }
 
@@ -42,9 +42,9 @@ export default class Ledger extends BaseWallet {
 
   public static setPath(basePath: string, index: number) {
     Ledger.currentBasePath = basePath;
-    window.localStorage.setItem("Ledger:selectedBasePath", basePath);
+    window.localStorage.setItem("Ledger:lastSelectedBasePath", basePath);
     Ledger.currentIndex = index;
-    window.localStorage.setItem("Ledger:selectedIndex", String(index));
+    window.localStorage.setItem("Ledger:lastSelectedIndex", String(index));
   }
 
   public currentPath(): string {

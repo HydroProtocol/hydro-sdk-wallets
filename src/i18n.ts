@@ -41,7 +41,7 @@ export default {
   noAvailableAddress: "No available address",
   pleaseSelectAddress: "Please select an address",
   selectPath: "Select Path",
-  inputPath: "Input a path",
+  inputPath: "Load Path",
   installMetamask: "Install MetaMask",
   installMetamaskDesc:
     'MetaMask browser extension currently runs on Google Chrome, Firefox, Opera, and Brave browsers. For Safari users, please try other wallet options. Click <a target="_blank" rel="noopener noreferrer" href="https://support.ddex.io/hc/en-us/articles/115004408534">here</a> for MetaMask support.',
@@ -74,5 +74,7 @@ export default {
       title: "",
       desc: ""
     }
-  }
+  },
+  loadAccounts: "Load Accounts",
+  goToPage: "Go to page"
 };

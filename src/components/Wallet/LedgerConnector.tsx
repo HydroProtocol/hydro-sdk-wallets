@@ -186,7 +186,7 @@ class LedgerConnector extends React.PureComponent<Props, State> {
             className="HydroSDK-button HydroSDK-featureButton"
             disabled={loading}
             onClick={() => this.loadAddresses()}>
-            {loading ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} Load Accounts
+            {loading ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {walletTranslations.loadAccounts}
           </button>
         </div>
       </div>
@@ -214,8 +214,8 @@ class LedgerConnector extends React.PureComponent<Props, State> {
         component: <div className="HydroSDK-pathItem">Ledger Live</div>
       },
       {
-        value: Ledger.PATH_TYPE.LEGACY,
-        component: <div className="HydroSDK-pathItem">Legacy (MEW / MyCrypto)</div>
+        value: Ledger.PATH_TYPE.LEDGER_LEGACY,
+        component: <div className="HydroSDK-pathItem">Ledger Legacy</div>
       },
       {
         value: Ledger.CUSTOMIZAION_PATH,
@@ -258,6 +258,7 @@ class LedgerConnector extends React.PureComponent<Props, State> {
 
   private renderFooter() {
     const { currentPage, gotoPageInputValue } = this.state;
+    const { walletTranslations } = this.props;
     return (
       <>
         <ReactPaginate
@@ -275,7 +276,7 @@ class LedgerConnector extends React.PureComponent<Props, State> {
           activeClassName={"active"}
         />
         <div className="HydroSDK-paginationGotoPage">
-          Go to page
+          {walletTranslations.goToPage}
           <form onSubmit={this.gotoPageSubmit}>
             <input
               className="HydroSDK-input"
