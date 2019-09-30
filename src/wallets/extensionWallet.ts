@@ -9,6 +9,7 @@ declare global {
 export default class ExtensionWallet extends BaseWallet {
   public static LABEL = "Extension Wallet";
   public static TYPE = "EXTENSION";
+  public ethereum: any;
 
   public type(): string {
     return ExtensionWallet.TYPE;
@@ -23,13 +24,12 @@ export default class ExtensionWallet extends BaseWallet {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      window.web3.version.getNetwork((err: Error, networkId: number) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(Number(networkId));
-        }
-      });
+      const res = await this.sendCustomRequest("net_version");
+      if (res.error) {
+        reject(res.error);
+      } else {
+        resolve(Number(res.result));
+      }
     });
   }
 
@@ -42,13 +42,13 @@ export default class ExtensionWallet extends BaseWallet {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      window.web3.personal.sign(window.web3.toHex(message), window.web3.eth.accounts[0], (err: Error, res: string) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res);
-        }
-      });
+      const address = await this.getAddresses();
+      const res = await this.sendCustomRequest("personal_sign", [message, address[0]]);
+      if (res.error) {
+        reject(res.error);
+      } else {
+        resolve(res.result);
+      }
     });
   }
 
@@ -60,7 +60,21 @@ export default class ExtensionWallet extends BaseWallet {
       if (txParams.gasLimit) {
         txParams.gas = txParams.gasLimit;
       }
-      window.web3.eth.sendTransaction(txParams, (err: Error, res: string) => {
+      const res = await this.sendCustomRequest("eth_sendTransaction", [txParams]);
+      if (res.error) {
+        reject(res.error);
+      } else {
+        resolve(res.result);
+      }
+    });
+  }
+
+  public sendCustomRequest(method: string, params?: any): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      if (!this.isSupported()) {
+        reject(BaseWallet.NotSupportedError);
+      }
+      this.ethereum.sendAsync({ method, params }, (err: Error, res: any) => {
         if (err) {
           reject(err);
         } else {
@@ -70,44 +84,24 @@ export default class ExtensionWallet extends BaseWallet {
     });
   }
 
-  public sendCustomRequest(method: string, params?: any): Promise<any> {
-    return new Promise(async (resolve, reject) => {
-      if (!this.isSupported()) {
-        reject(BaseWallet.NotSupportedError);
-      }
-      window.web3.currentProvider.sendAsync(
-        { method, params, from: window.web3.eth.accounts[0] },
-        (err: Error, res: any) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(res);
-          }
-        }
-      );
-    });
-  }
-
   public getAddresses(): Promise<string[]> {
     return new Promise(async (resolve, reject) => {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      window.web3.eth.getAccounts((err: Error, accounts: string[]) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(accounts);
-        }
-      });
+
+      const res = await this.sendCustomRequest("eth_accounts");
+      resolve(res.result);
     });
   }
 
-  public static async enableBrowserExtensionWallet(): Promise<void> {
-    if (!window.ethereum) {
-      return;
+  public async enable(): Promise<void> {
+    if (window.ethereum) {
+      this.ethereum = window.ethereum;
+      await this.ethereum.enable();
+    } else if (window.web3) {
+      this.ethereum = window.web3.currentProvider;
     }
-    await window.ethereum.enable();
   }
 
   public isLocked(address: string | null): boolean {
@@ -115,22 +109,23 @@ export default class ExtensionWallet extends BaseWallet {
   }
 
   public isSupported(): boolean {
-    return !!window.web3;
+    return !!this.ethereum;
   }
 
   public name(): string {
     if (!this.isSupported()) {
       return "";
     }
-    const cp = window.web3.currentProvider;
-    if (cp.isMetaMask) {
+    if (this.ethereum.isMetaMask) {
       return "MetaMask";
-    } else if (cp.isCipher) {
+    } else if (this.ethereum.isCipher) {
       return "Cipher";
-    } else if (cp.isTrust) {
+    } else if (this.ethereum.isTrust) {
       return "Trust";
-    } else if (cp.isToshi) {
+    } else if (this.ethereum.isToshi) {
       return "Coinbase";
+    } else if (this.ethereum.isImtoken) {
+      return "imToken";
     } else {
       return "Extension Wallet";
     }

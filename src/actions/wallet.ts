@@ -8,7 +8,6 @@ import {
   NotSupportedError,
   WalletConnectWallet,
   Ledger,
-  ImToken,
   Dcent,
   CoinbaseWallet,
   getNetworkID,
@@ -223,7 +222,7 @@ export const loadWallet = (type: string, action?: any) => {
     const LocalWallet = getState().WalletReducer.get("LocalWallet") || HydroWallet;
     switch (type) {
       case ExtensionWallet.TYPE:
-        return dispatch(loadExtensitonWallet());
+        return dispatch(loadExtensionWallet());
       case LocalWallet.TYPE:
         return dispatch(loadLocalWallets());
       case WalletConnectWallet.TYPE:
@@ -280,23 +279,19 @@ export const loadFortmaticWallet = (apiKey: string) => {
   };
 };
 
-export const loadExtensitonWallet = () => {
+export const loadExtensionWallet = () => {
   return async (dispatch: any) => {
     let wallet;
-    if (typeof window !== "undefined" && window.ethereum) {
-      if (window.ethereum.isImToken) {
-        await ImToken.enableImToken();
-        wallet = new ImToken();
-      } else {
-        await ExtensionWallet.enableBrowserExtensionWallet();
-        wallet = new ExtensionWallet();
-      }
+    if (typeof window !== "undefined" && (window.ethereum || window.web3)) {
+      wallet = new ExtensionWallet();
+      await wallet.enable();
     }
+
     if (wallet && wallet.isSupported()) {
       dispatch(supportExtensionWallet());
       dispatch(watchWallet(wallet));
     } else {
-      window.setTimeout(() => dispatch(loadExtensitonWallet()), 1000);
+      window.setTimeout(() => dispatch(loadExtensionWallet()), 1000);
     }
   };
 };

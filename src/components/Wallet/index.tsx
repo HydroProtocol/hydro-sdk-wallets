@@ -117,12 +117,7 @@ class Wallet extends React.PureComponent<Props, State> {
     } else {
       LocalWallet.setNodeUrl(globalNodeUrl);
     }
-
-    if (document.readyState === "complete" || document.readyState === "interactive") {
-      this.loadExtensitonWallet();
-    } else {
-      window.addEventListener("load", this.loadExtensitonWallet.bind(this));
-    }
+    this.loadWallets();
   }
 
   public componentDidUpdate(prevProps: Props) {
@@ -141,7 +136,7 @@ class Wallet extends React.PureComponent<Props, State> {
     destoryTimer();
   }
 
-  private loadExtensitonWallet() {
+  private loadWallets() {
     const { dispatch, walletTypes, loadWalletActions } = this.props;
     const types = walletTypes ? walletTypes : defaultWalletTypes;
     types.map(type => {
@@ -202,40 +197,50 @@ class Wallet extends React.PureComponent<Props, State> {
 
   private renderFeatureButton() {
     const { selectedWalletType, walletTranslations, accounts, connecting } = this.props;
-    if (
-      selectedWalletType !== Dcent.TYPE &&
-      selectedWalletType !== CoinbaseWallet.TYPE &&
-      selectedWalletType !== Fortmatic.TYPE
-    ) {
-      return null;
-    }
-
     const account = accounts.get(selectedWalletType);
     const address = account ? account.get("address") : null;
 
-    if (!address) {
-      const isConnecting = connecting.get(selectedWalletType, false);
+    if (selectedWalletType === ExtensionWallet.TYPE && window.ethereum && !address) {
       return (
         <button
           className="HydroSDK-button HydroSDK-featureButton HydroSDK-submitButton"
-          onClick={() => this.connectBridge()}
-          disabled={isConnecting}>
-          {isConnecting ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {walletTranslations.connect}
-        </button>
-      );
-    } else {
-      const wallet = account.get("wallet");
-      return (
-        <button
-          className="HydroSDK-button HydroSDK-featureButton HydroSDK-submitButton"
-          onClick={() => {
-            wallet.clearSession();
-            window.location.reload();
-          }}>
-          {walletTranslations.disconnect}
+          onClick={() => window.ethereum.enable()}>
+          {walletTranslations.connect}
         </button>
       );
     }
+
+    if (
+      selectedWalletType === Dcent.TYPE ||
+      selectedWalletType === CoinbaseWallet.TYPE ||
+      selectedWalletType === Fortmatic.TYPE
+    ) {
+      if (!address) {
+        const isConnecting = connecting.get(selectedWalletType, false);
+        return (
+          <button
+            className="HydroSDK-button HydroSDK-featureButton HydroSDK-submitButton"
+            onClick={() => this.connectBridge()}
+            disabled={isConnecting}>
+            {isConnecting ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {walletTranslations.connect}
+          </button>
+        );
+      } else {
+        const wallet = account.get("wallet");
+        return (
+          <button
+            className="HydroSDK-button HydroSDK-featureButton HydroSDK-submitButton"
+            onClick={() => {
+              wallet.clearSession();
+              window.location.reload();
+            }}>
+            {walletTranslations.disconnect}
+          </button>
+        );
+      }
+    }
+
+    return null;
   }
 
   private connectBridge() {
@@ -425,7 +430,6 @@ class Wallet extends React.PureComponent<Props, State> {
             </div>
           ),
           onSelect: (option: Option) => {
-            ExtensionWallet.enableBrowserExtensionWallet();
             dispatch(setWalletStep(WALLET_STEPS.SELECT));
             dispatch(selectWalletType(option.value));
           }

@@ -1,6 +1,5 @@
 import HydroWallet from "./hydroWallet";
 import ExtensionWallet from "./extensionWallet";
-import ImToken from "./imtoken";
 import CoinbaseWallet from "./coinbaseWallet";
 import BaseWallet from "./baseWallet";
 import WalletConnectWallet from "./WalletConnectWallet";
@@ -22,7 +21,6 @@ export {
   NotSupportedError,
   WalletConnectWallet,
   Ledger,
-  ImToken,
   Dcent,
   Fortmatic,
   CoinbaseWallet
