@@ -402,7 +402,7 @@ export const watchWallet = (wallet: BaseWallet) => {
       let address;
       try {
         const addresses: string[] = await wallet.getAddresses();
-        address = addresses.length > 0 ? addresses[0] : null;
+        address = addresses.length > 0 ? addresses[0].toLowerCase() : null;
       } catch (e) {
         if (type === Ledger.TYPE || type === Dcent.TYPE || type === Fortmatic.TYPE || type === CoinbaseWallet.TYPE) {
           clearTimer(accountID);
