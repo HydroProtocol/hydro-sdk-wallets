@@ -83,13 +83,13 @@ export default class Fortmatic extends BaseWallet {
     if (!params) {
       params = [];
     }
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async resolve => {
       if (!this.provider) {
-        return reject(BaseWallet.NotSupportedError);
+        return resolve({ error: BaseWallet.NotSupportedError });
       }
-      this.provider.sendAsync([{ id: 1, method, params }], (err: Error | null, res: any) => {
-        if (err) {
-          reject(err);
+      this.provider.sendAsync([{ id: 1, method, params }], (error: Error | null, res: any) => {
+        if (error) {
+          resolve({ error });
         } else {
           resolve(res[0]);
         }

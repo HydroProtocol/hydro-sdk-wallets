@@ -3,9 +3,9 @@ export interface txParams {
   to: string;
   data?: string;
   value?: number | string | BigNumber;
-  gasPrice?: number | BigNumber;
-  gasLimit?: number;
-  gas?: number;
+  gasPrice?: number | string | BigNumber;
+  gasLimit?: number | string | BigNumber;
+  gas?: number | string | BigNumber;
   nonce?: number;
 }
 

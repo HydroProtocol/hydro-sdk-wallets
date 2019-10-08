@@ -77,17 +77,20 @@ export default class CoinbaseWallet extends BaseWallet {
     if (!params) {
       params = [];
     }
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async resolve => {
       if (!this.ethereum) {
-        return reject(BaseWallet.NotSupportedError);
+        return resolve({ error: BaseWallet.NotSupportedError });
       }
-      this.ethereum.sendAsync([{ jsonrpc: "2.0", id: payloadId(), method, params }], (err: Error | null, res: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(res[0]);
+      this.ethereum.sendAsync(
+        [{ jsonrpc: "2.0", id: payloadId(), method, params }],
+        (error: Error | null, res: any) => {
+          if (error) {
+            resolve({ error });
+          } else {
+            resolve(res[0]);
+          }
         }
-      });
+      );
     });
   }
 

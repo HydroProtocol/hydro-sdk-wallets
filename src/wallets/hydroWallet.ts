@@ -142,7 +142,7 @@ export default class HydroWallet extends BaseWallet {
 
   public async sendCustomRequest(method: string, params: any): Promise<any> {
     if (!this._provider) {
-      return Promise.reject(BaseWallet.NeedUnlockWalletError);
+      return Promise.resolve({ error: BaseWallet.NeedUnlockWalletError });
     } else {
       const tx = await this._provider.send(method, params);
       return tx;

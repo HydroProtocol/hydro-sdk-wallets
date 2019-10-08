@@ -58,7 +58,10 @@ export default class ExtensionWallet extends BaseWallet {
         reject(BaseWallet.NotSupportedError);
       }
       if (txParams.gasLimit) {
-        txParams.gas = txParams.gasLimit;
+        txParams.gas = txParams.gasLimit.toString();
+      }
+      if (txParams.gasPrice) {
+        txParams.gasPrice = txParams.gasPrice.toString();
       }
       const res = await this.sendCustomRequest("eth_sendTransaction", [txParams]);
       if (res.error) {
@@ -70,13 +73,13 @@ export default class ExtensionWallet extends BaseWallet {
   }
 
   public sendCustomRequest(method: string, params?: any): Promise<any> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async resolve => {
       if (!this.isSupported()) {
-        reject(BaseWallet.NotSupportedError);
+        resolve({ error: BaseWallet.NotSupportedError });
       }
-      this.ethereum.sendAsync({ method, params }, (err: Error, res: any) => {
-        if (err) {
-          reject(err);
+      this.ethereum.sendAsync({ method, params }, (error: Error, res: any) => {
+        if (error) {
+          resolve({ error });
         } else {
           resolve(res);
         }

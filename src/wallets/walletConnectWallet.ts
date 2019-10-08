@@ -104,9 +104,9 @@ export default class WalletConnectWallet extends BaseWallet {
   }
 
   public sendCustomRequest(method: string, params: any): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       if (!this.connector.connected) {
-        reject(this.NeedUnlockWalletError);
+        resolve({ error: this.NeedUnlockWalletError });
         return;
       }
       this.connector
@@ -115,7 +115,7 @@ export default class WalletConnectWallet extends BaseWallet {
           params: params
         })
         .then((txHash: string) => resolve(txHash))
-        .catch((error: Error) => reject(error));
+        .catch((error: Error) => resolve({ error }));
     });
   }
 
