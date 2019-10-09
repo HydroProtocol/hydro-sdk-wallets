@@ -122,15 +122,15 @@ export default class ExtensionWallet extends BaseWallet {
       return "";
     }
     if (this.ethereum.isMetaMask) {
-      return "MetaMask";
+      return "MetaMask Wallet";
     } else if (this.ethereum.isCipher) {
-      return "Cipher";
+      return "Coinbase Wallet";
     } else if (this.ethereum.isTrust) {
-      return "Trust";
+      return "Trust Wallet";
     } else if (this.ethereum.isToshi) {
-      return "Coinbase";
+      return "Coinbase Wallet";
     } else if (this.ethereum.isImtoken) {
-      return "imToken";
+      return "imToken Wallet";
     } else {
       return "Extension Wallet";
     }
