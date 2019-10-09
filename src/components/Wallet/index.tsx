@@ -176,12 +176,17 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private renderDesc() {
-    const { selectedWalletType, walletTranslations } = this.props;
+    const { selectedWalletType, walletTranslations, selectedAccount } = this.props;
     let title = "",
       desc = "";
     if (selectedWalletType) {
+      let statusKey = "notConnect";
+      const wallet = selectedAccount ? selectedAccount.get("wallet") : null;
+      if (wallet && wallet.type() === selectedWalletType) {
+        statusKey = "connected";
+      }
       const key = selectedWalletType.toLowerCase();
-      const walletDesc = walletTranslations.walletDesc[key];
+      const walletDesc = walletTranslations.walletDesc[statusKey][key];
       if (walletDesc) {
         title = walletDesc.title;
         desc = walletDesc.desc;
@@ -199,8 +204,11 @@ class Wallet extends React.PureComponent<Props, State> {
     const { selectedWalletType, walletTranslations, accounts, connecting } = this.props;
     const account = accounts.get(selectedWalletType);
     const address = account ? account.get("address") : null;
+    if (address) {
+      return null;
+    }
 
-    if (selectedWalletType === ExtensionWallet.TYPE && window.ethereum && !address) {
+    if (selectedWalletType === ExtensionWallet.TYPE && window.ethereum) {
       return (
         <button
           className="HydroSDK-button HydroSDK-featureButton HydroSDK-submitButton"
@@ -208,36 +216,20 @@ class Wallet extends React.PureComponent<Props, State> {
           {walletTranslations.connect}
         </button>
       );
-    }
-
-    if (
+    } else if (
       selectedWalletType === Dcent.TYPE ||
       selectedWalletType === CoinbaseWallet.TYPE ||
       selectedWalletType === Fortmatic.TYPE
     ) {
-      if (!address) {
-        const isConnecting = connecting.get(selectedWalletType, false);
-        return (
-          <button
-            className="HydroSDK-button HydroSDK-featureButton HydroSDK-submitButton"
-            onClick={() => this.connectBridge()}
-            disabled={isConnecting}>
-            {isConnecting ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {walletTranslations.connect}
-          </button>
-        );
-      } else {
-        const wallet = account.get("wallet");
-        return (
-          <button
-            className="HydroSDK-button HydroSDK-featureButton HydroSDK-submitButton"
-            onClick={() => {
-              wallet.clearSession();
-              window.location.reload();
-            }}>
-            {walletTranslations.disconnect}
-          </button>
-        );
-      }
+      const isConnecting = connecting.get(selectedWalletType, false);
+      return (
+        <button
+          className="HydroSDK-button HydroSDK-featureButton HydroSDK-submitButton"
+          onClick={() => this.connectBridge()}
+          disabled={isConnecting}>
+          {isConnecting ? <i className="HydroSDK-fa fa fa-spinner fa-spin" /> : null} {walletTranslations.connect}
+        </button>
+      );
     }
 
     return null;

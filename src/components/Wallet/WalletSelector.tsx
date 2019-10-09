@@ -1,6 +1,6 @@
 import * as React from "react";
 import Select, { Option } from "./Select";
-import { truncateAddress } from "../../wallets";
+import { truncateAddress, needConnectWalletTypes } from "../../wallets";
 import { AccountState, WalletState } from "../../reducers/wallet";
 import { connect } from "react-redux";
 import { selectAccount } from "../../actions/wallet";
@@ -79,7 +79,7 @@ class WalletSelector extends React.PureComponent<Props, State> {
   }
 
   private getOptions(): Option[] {
-    const { walletType, dispatch, unit, decimals } = this.props;
+    const { walletType, dispatch, unit, decimals, walletTranslations } = this.props;
 
     const options: Option[] = [];
 
@@ -105,6 +105,16 @@ class WalletSelector extends React.PureComponent<Props, State> {
           ),
           onSelect: (option: Option) => {
             dispatch(selectAccount(option.value, wallet.type()));
+          }
+        });
+      }
+      if (needConnectWalletTypes.includes(walletType)) {
+        options.push({
+          value: "disconnect",
+          text: walletTranslations.disconnect,
+          onSelect: (option: Option) => {
+            wallet.clearSession();
+            window.location.reload();
           }
         });
       }

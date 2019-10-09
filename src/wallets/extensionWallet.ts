@@ -33,15 +33,16 @@ export default class ExtensionWallet extends BaseWallet {
     });
   }
 
-  public signMessage(message: string | Uint8Array): Promise<string> | null {
+  public signMessage(message: string): Promise<string> | null {
     return this.signPersonalMessage(message);
   }
 
-  public signPersonalMessage(message: string | Uint8Array): Promise<string> {
+  public signPersonalMessage(message: string): Promise<string> {
     return new Promise(async (resolve, reject) => {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
+
       const address = await this.getAddresses();
       const res = await this.sendCustomRequest("personal_sign", [message, address[0]]);
       if (res.error) {
@@ -58,10 +59,11 @@ export default class ExtensionWallet extends BaseWallet {
         reject(BaseWallet.NotSupportedError);
       }
       if (txParams.gasLimit) {
-        txParams.gas = txParams.gasLimit.toString();
+        txParams.gas = "0x" + txParams.gasLimit.toString(16);
+        txParams.gasLimit = "0x" + txParams.gasLimit.toString(16);
       }
       if (txParams.gasPrice) {
-        txParams.gasPrice = txParams.gasPrice.toString();
+        txParams.gasPrice = "0x" + txParams.gasPrice.toString(16);
       }
       const res = await this.sendCustomRequest("eth_sendTransaction", [txParams]);
       if (res.error) {

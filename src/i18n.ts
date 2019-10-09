@@ -50,29 +50,35 @@ export default {
   connect: "Connect",
   disconnect: "Disconnect",
   walletDesc: {
-    extension: {
-      title: "",
-      desc: ""
+    notConnect: {
+      walletconnect: {
+        title: "",
+        desc: `Please use a mobile wallet that supports wallet connect to scan the qrcode. Supported apps include DDEX, Trust Wallet. If you have none of them installed, you can download the <a target="_blank" rel="noopener noreferrer" href="https://apps.apple.com/us/app/ddex-2-0-crypto-dex/id1455868174">DDEX 2.0 IOS</a > or <a target="_blank" rel="noopener noreferrer" href="https://play.google.com/store/apps/details?id=io.ddex.dwallet">DDEX 2.0 Android</a >.`
+      },
+      coinbase_wallet: {
+        title: "",
+        desc: `After clicking the Connect button, the qrcode window will pop up. Then scan it with Coinbase Wallet. If you have issues, please see the wallet link official <a target="_blank" rel="noopener noreferrer" href="https://github.com/walletlink/walletlink/wiki/Browser-Troubleshooting">trouble shooting</a > for more info.`
+      },
+      fortmatic: {
+        title: "",
+        desc:
+          'Fortmatic is an SMS powered wallet. Click "Connect" below to create a new Fortmatic wallet or access your existing one.'
+      }
     },
-    hydro_wallet: {
-      title: "",
-      desc: ""
-    },
-    ledger: {
-      title: "",
-      desc: ""
-    },
-    walletconnect: {
-      title: "",
-      desc: `Please use a mobile wallet that supports wallet connect to scan the qrcode. Supported apps include DDEX, Trust Wallet. If you have none of them installed, you can download the <a target="_blank" rel="noopener noreferrer" href="https://apps.apple.com/us/app/ddex-2-0-crypto-dex/id1455868174">DDEX 2.0 IOS</a > or <a target="_blank" rel="noopener noreferrer" href="https://play.google.com/store/apps/details?id=io.ddex.dwallet">DDEX 2.0 Android</a >.`
-    },
-    coinbase_wallet: {
-      title: "",
-      desc: `After clicking the Connect button, the qrcode window will pop up. Then scan it with Coinbase Wallet. If you have issues, please see the wallet link official <a target="_blank" rel="noopener noreferrer" href="https://github.com/walletlink/walletlink/wiki/Browser-Troubleshooting">trouble shooting</a > for more info.`
-    },
-    dcent: {
-      title: "",
-      desc: ""
+    connected: {
+      walletconnect: {
+        title: "",
+        desc: `Please use a mobile wallet that supports wallet connect to scan the qrcode. Supported apps include DDEX, Trust Wallet. If you have none of them installed, you can download the <a target="_blank" rel="noopener noreferrer" href="https://apps.apple.com/us/app/ddex-2-0-crypto-dex/id1455868174">DDEX 2.0 IOS</a > or <a target="_blank" rel="noopener noreferrer" href="https://play.google.com/store/apps/details?id=io.ddex.dwallet">DDEX 2.0 Android</a >.`
+      },
+      coinbase_wallet: {
+        title: "",
+        desc: `After clicking the Connect button, the qrcode window will pop up. Then scan it with Coinbase Wallet. If you have issues, please see the wallet link official <a target="_blank" rel="noopener noreferrer" href="https://github.com/walletlink/walletlink/wiki/Browser-Troubleshooting">trouble shooting</a > for more info.`
+      },
+      fortmatic: {
+        title: "",
+        desc:
+          'To add funds to your Fortmatic wallet, copy the public wallet address shown above and transfer funds from a different address.<br/>You can also fully manage your Fortmatic wallet through their website interface. Go to <a target="_blank" rel="noopener noreferrer" href="https://fortmatic.com">https://fortmatic.com</a> and click the "Account" button.'
+      }
     }
   },
   loadAccounts: "Load Accounts",

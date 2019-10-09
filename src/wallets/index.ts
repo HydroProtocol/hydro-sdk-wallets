@@ -204,3 +204,5 @@ export const getContract = (contractAddress: string, abi: any): Contract => {
 };
 
 export const defaultWalletTypes = [ExtensionWallet.TYPE, HydroWallet.TYPE, WalletConnectWallet.TYPE, Ledger.TYPE];
+
+export const needConnectWalletTypes = [Dcent.TYPE, CoinbaseWallet.TYPE, Fortmatic.TYPE, WalletConnectWallet.TYPE];
