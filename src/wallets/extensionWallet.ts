@@ -7,7 +7,7 @@ declare global {
 }
 
 export default class ExtensionWallet extends BaseWallet {
-  public static LABEL = "Extension Wallet";
+  public static LABEL = "Metamask Wallet";
   public static TYPE = "EXTENSION";
   public ethereum: any;
 
@@ -130,9 +130,9 @@ export default class ExtensionWallet extends BaseWallet {
     } else if (this.ethereum.isToshi) {
       return "Coinbase Wallet";
     } else if (this.ethereum.isImtoken) {
-      return "imToken Wallet";
+      return "ImToken Wallet";
     } else {
-      return "Extension Wallet";
+      return "Wallet";
     }
   }
 }
