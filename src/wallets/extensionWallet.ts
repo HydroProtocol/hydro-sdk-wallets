@@ -42,7 +42,9 @@ export default class ExtensionWallet extends BaseWallet {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-
+      if (message.slice(0, 2) !== "0x") {
+        message = "0x" + Buffer.from(message).toString("hex");
+      }
       const address = await this.getAddresses();
       const res = await this.sendCustomRequest("personal_sign", [message, address[0]]);
       if (res.error) {
