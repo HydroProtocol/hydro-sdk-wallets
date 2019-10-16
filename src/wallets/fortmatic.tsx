@@ -6,7 +6,6 @@ import { globalNodeUrl } from ".";
 export default class Fortmatic extends BaseWallet {
   public static LABEL = "Fortmatic";
   public static TYPE = "FORTMATIC";
-  public provider?: any;
   public fortmatic: any;
 
   public constructor(apiKey: string) {
@@ -32,62 +31,15 @@ export default class Fortmatic extends BaseWallet {
     return await this.fortmatic.user.logout();
   }
 
-  public loadNetworkId(): Promise<number | undefined> {
-    return new Promise(async (resolve, reject) => {
-      if (!this.isSupported()) {
-        reject(BaseWallet.NotSupportedError);
-      }
-      const res = await this.sendCustomRequest("net_version");
-      if (res.error) {
-        reject(res.error);
-      } else {
-        resolve(Number(res.result));
-      }
-    });
-  }
-
-  public signMessage(message: string | Uint8Array): Promise<string> | null {
-    return this.signPersonalMessage(message);
-  }
-
-  public signPersonalMessage(message: string | Uint8Array): Promise<string> {
-    return new Promise(async (resolve, reject) => {
-      if (!this.isSupported()) {
-        reject(BaseWallet.NotSupportedError);
-      }
-      const address = await this.getAddresses();
-      const res = await this.sendCustomRequest("personal_sign", [message, address[0]]);
-      if (res.error) {
-        reject(res.error);
-      } else {
-        resolve(res.result);
-      }
-    });
-  }
-
-  public sendTransaction(txParams: txParams): Promise<string | undefined> {
-    return new Promise(async (resolve, reject) => {
-      if (!this.isSupported()) {
-        reject(BaseWallet.NotSupportedError);
-      }
-      const res = await this.sendCustomRequest("eth_sendTransaction", [txParams]);
-      if (res.error) {
-        reject(res.error);
-      } else {
-        resolve(res.result);
-      }
-    });
-  }
-
   public sendCustomRequest(method: string, params?: any): Promise<any> {
     if (!params) {
       params = [];
     }
     return new Promise(async resolve => {
-      if (!this.provider) {
+      if (!this.ethereum) {
         return resolve({ error: BaseWallet.NotSupportedError });
       }
-      this.provider.sendAsync([{ id: 1, method, params }], (error: Error | null, res: any) => {
+      this.ethereum.sendAsync([{ id: 1, method, params }], (error: Error | null, res: any) => {
         if (error) {
           resolve({ error });
         } else {
@@ -97,29 +49,12 @@ export default class Fortmatic extends BaseWallet {
     });
   }
 
-  public getAddresses(): Promise<string[]> {
-    return new Promise((resolve, reject) => {
-      if (!this.isSupported()) {
-        reject(BaseWallet.NotSupportedError);
-      }
-      resolve([this.provider.account]);
-    });
-  }
-
   public async enable(): Promise<void> {
     if (!this.fortmatic) {
       return;
     }
-    this.provider = this.fortmatic.getProvider();
-    await this.provider.enable();
-  }
-
-  public isLocked(address: string | null): boolean {
-    return !address;
-  }
-
-  public isSupported(): boolean {
-    return !!this.provider && this.provider.isLoggedIn;
+    this.ethereum = this.fortmatic.getethereum();
+    await this.ethereum.enable();
   }
 
   public name(): string {

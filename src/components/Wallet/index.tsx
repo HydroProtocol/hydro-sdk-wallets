@@ -18,7 +18,8 @@ import {
   globalNodeUrl,
   Dcent,
   CoinbaseWallet,
-  Fortmatic
+  Fortmatic,
+  Trezor
 } from "../../wallets";
 import { WalletState, AccountState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
@@ -36,7 +37,9 @@ import {
   destoryTimer,
   loadCoinbaseWallet,
   loadDcentWallet,
-  loadFortmaticWallet
+  loadFortmaticWallet,
+  loadExtensionWallet,
+  loadTrezor
 } from "../../actions/wallet";
 import Svg from "../Svg";
 import LedgerConnector from "./LedgerConnector";
@@ -110,12 +113,9 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   public componentDidMount() {
-    const { nodeUrl, LocalWallet } = this.props;
+    const { nodeUrl } = this.props;
     if (nodeUrl) {
       setGlobalNodeUrl(nodeUrl);
-      LocalWallet.setNodeUrl(nodeUrl);
-    } else {
-      LocalWallet.setNodeUrl(globalNodeUrl);
     }
     this.loadWallets();
   }
@@ -208,18 +208,12 @@ class Wallet extends React.PureComponent<Props, State> {
       return null;
     }
 
-    if (selectedWalletType === ExtensionWallet.TYPE && window.ethereum) {
-      return (
-        <button
-          className="HydroSDK-button HydroSDK-featureButton HydroSDK-submitButton"
-          onClick={() => window.ethereum.enable()}>
-          {walletTranslations.connect}
-        </button>
-      );
-    } else if (
+    if (
       selectedWalletType === Dcent.TYPE ||
       selectedWalletType === CoinbaseWallet.TYPE ||
-      selectedWalletType === Fortmatic.TYPE
+      selectedWalletType === Fortmatic.TYPE ||
+      selectedWalletType === ExtensionWallet.TYPE ||
+      selectedWalletType === Trezor.TYPE
     ) {
       const isConnecting = connecting.get(selectedWalletType, false);
       return (
@@ -244,6 +238,10 @@ class Wallet extends React.PureComponent<Props, State> {
       dispatch(loadDcentWallet(dcent));
     } else if (selectedWalletType === Fortmatic.TYPE && fortmaticApiKey) {
       dispatch(loadFortmaticWallet(fortmaticApiKey));
+    } else if (selectedWalletType === ExtensionWallet.TYPE && window.ethereum) {
+      dispatch(loadExtensionWallet());
+    } else if (selectedWalletType === Trezor.TYPE) {
+      dispatch(loadTrezor());
     }
   }
 
@@ -408,7 +406,7 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private getWalletsOptions(): Option[] {
-    let { dispatch, menuOptions, dcent, fortmaticApiKey, accounts } = this.props;
+    let { menuOptions, dcent, fortmaticApiKey, accounts } = this.props;
     if (!menuOptions) {
       const wallet = accounts.getIn([ExtensionWallet.TYPE, "wallet"]);
       const extensionWalletLabel = wallet ? wallet.name() : ExtensionWallet.LABEL;
@@ -421,10 +419,7 @@ class Wallet extends React.PureComponent<Props, State> {
               {extensionWalletLabel}
             </div>
           ),
-          onSelect: (option: Option) => {
-            dispatch(setWalletStep(WALLET_STEPS.SELECT));
-            dispatch(selectWalletType(option.value));
-          }
+          onSelect: (option: Option) => this.onSelect(option)
         },
         {
           value: Ledger.TYPE,
@@ -434,10 +429,17 @@ class Wallet extends React.PureComponent<Props, State> {
               {Ledger.LABEL}
             </div>
           ),
-          onSelect: (option: Option) => {
-            dispatch(setWalletStep(WALLET_STEPS.SELECT));
-            dispatch(selectWalletType(option.value));
-          }
+          onSelect: (option: Option) => this.onSelect(option)
+        },
+        {
+          value: Trezor.TYPE,
+          component: (
+            <div className="HydroSDK-optionItem">
+              <Svg name="ledger" />
+              {Trezor.LABEL}
+            </div>
+          ),
+          onSelect: (option: Option) => this.onSelect(option)
         },
         {
           value: WalletConnectWallet.TYPE,
@@ -447,10 +449,7 @@ class Wallet extends React.PureComponent<Props, State> {
               {WalletConnectWallet.LABEL}
             </div>
           ),
-          onSelect: (option: Option) => {
-            dispatch(setWalletStep(WALLET_STEPS.SELECT));
-            dispatch(selectWalletType(option.value));
-          }
+          onSelect: (option: Option) => this.onSelect(option)
         },
         {
           value: CoinbaseWallet.TYPE,
@@ -460,10 +459,7 @@ class Wallet extends React.PureComponent<Props, State> {
               {CoinbaseWallet.LABEL}
             </div>
           ),
-          onSelect: (option: Option) => {
-            dispatch(setWalletStep(WALLET_STEPS.SELECT));
-            dispatch(selectWalletType(option.value));
-          }
+          onSelect: (option: Option) => this.onSelect(option)
         }
       ];
       if (dcent) {
@@ -475,10 +471,7 @@ class Wallet extends React.PureComponent<Props, State> {
               {Dcent.LABEL}
             </div>
           ),
-          onSelect: (option: Option) => {
-            dispatch(setWalletStep(WALLET_STEPS.SELECT));
-            dispatch(selectWalletType(option.value));
-          }
+          onSelect: (option: Option) => this.onSelect(option)
         });
       }
       if (fortmaticApiKey) {
@@ -490,14 +483,16 @@ class Wallet extends React.PureComponent<Props, State> {
               {Fortmatic.LABEL}
             </div>
           ),
-          onSelect: (option: Option) => {
-            dispatch(setWalletStep(WALLET_STEPS.SELECT));
-            dispatch(selectWalletType(option.value));
-          }
+          onSelect: (option: Option) => this.onSelect(option)
         });
       }
     }
     return menuOptions.concat(this.localWalletOptions());
+  }
+
+  private onSelect(option: Option) {
+    this.props.dispatch(setWalletStep(WALLET_STEPS.SELECT));
+    this.props.dispatch(selectWalletType(option.value));
   }
 
   private localWalletOptions() {

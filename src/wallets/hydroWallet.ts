@@ -3,6 +3,7 @@ import { JsonRpcProvider } from "ethers/providers";
 import BaseWallet, { txParams } from "./baseWallet";
 import { BigNumber } from "ethers/utils";
 import * as ethUtil from "ethereumjs-util";
+import { globalNodeUrl } from ".";
 
 export default class HydroWallet extends BaseWallet {
   private static TIMEOUT = 15 * 60 * 1000; // 15 minutes
@@ -12,7 +13,6 @@ export default class HydroWallet extends BaseWallet {
   public static TYPE = "Hydro_Wallet";
   public static LABEL = "Browser Wallet";
 
-  private static nodeUrl: string;
   public _address: string | null = null;
   public _wallet: Wallet | null = null;
   private _timer?: number;
@@ -70,12 +70,6 @@ export default class HydroWallet extends BaseWallet {
     const wallets = HydroWallet.getWalletData().filter(json => HydroWallet.parseWalletAddress(json) !== this._address);
     HydroWallet.setWalletData(wallets);
     return true;
-  }
-
-  public static setNodeUrl(nodeUrl: string) {
-    if (nodeUrl) {
-      this.nodeUrl = nodeUrl;
-    }
   }
 
   public type(): string {
@@ -191,7 +185,7 @@ export default class HydroWallet extends BaseWallet {
     if (this._provider) {
       return this._provider;
     }
-    this._provider = new JsonRpcProvider(HydroWallet.nodeUrl);
+    this._provider = new JsonRpcProvider(globalNodeUrl);
     return this._provider;
   }
 

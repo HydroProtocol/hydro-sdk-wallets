@@ -6,6 +6,7 @@ import WalletConnectWallet from "./WalletConnectWallet";
 import Ledger from "./ledger";
 import Dcent from "./dcent";
 import Fortmatic from "./fortmatic";
+import Trezor from "./trezor";
 import request from "request";
 import { BigNumber } from "ethers/utils";
 import { Contract } from "ethers";
@@ -23,7 +24,8 @@ export {
   Ledger,
   Dcent,
   Fortmatic,
-  CoinbaseWallet
+  CoinbaseWallet,
+  Trezor
 };
 
 export const payloadId = (): number => {
@@ -203,6 +205,6 @@ export const getContract = (contractAddress: string, abi: any): Contract => {
   return new Contract(contractAddress, abi, provider);
 };
 
-export const defaultWalletTypes = [ExtensionWallet.TYPE, HydroWallet.TYPE, WalletConnectWallet.TYPE, Ledger.TYPE];
+export const defaultWalletTypes = [ExtensionWallet.TYPE, HydroWallet.TYPE, WalletConnectWallet.TYPE];
 
 export const needConnectWalletTypes = [Dcent.TYPE, CoinbaseWallet.TYPE, Fortmatic.TYPE, WalletConnectWallet.TYPE];

@@ -1,7 +1,7 @@
 import { BaseWallet, getNetworkID, sendRawTransaction, getTransactionCount } from ".";
 import { txParams } from "./baseWallet";
 import AwaitLock from "await-lock";
-import BigNumber from "bignumber.js";
+import { BigNumber } from "ethers/utils";
 import * as ethUtil from "ethereumjs-util";
 declare global {
   interface Window {

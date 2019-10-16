@@ -11,7 +11,8 @@ import {
   Dcent,
   CoinbaseWallet,
   getNetworkID,
-  Fortmatic
+  Fortmatic,
+  Trezor
 } from "../wallets";
 import { AccountState } from "../reducers/wallet";
 export const WALLET_STEPS = {
@@ -359,7 +360,21 @@ export const loadLedger = () => {
     try {
       dispatch(connectWallet(Ledger.TYPE));
       const wallet = new Ledger();
-      await wallet.initTransport();
+      await wallet.enable();
+      dispatch(watchWallet(wallet));
+    } catch (e) {
+      dispatch(connectWalletFinished(Ledger.TYPE));
+      throw e;
+    }
+  };
+};
+
+export const loadTrezor = () => {
+  return async (dispatch: any) => {
+    try {
+      dispatch(connectWallet(Trezor.TYPE));
+      const wallet = new Trezor();
+      await wallet.enable();
       dispatch(watchWallet(wallet));
     } catch (e) {
       dispatch(connectWalletFinished(Ledger.TYPE));

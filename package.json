@@ -34,6 +34,7 @@
     "immutable": "^3.8.2",
     "qr-image": "^3.2.0",
     "react-paginate": "^6.3.0",
+    "trezor-connect": "^7.0.5",
     "walletlink": "^1.0.0"
   },
   "devDependencies": {

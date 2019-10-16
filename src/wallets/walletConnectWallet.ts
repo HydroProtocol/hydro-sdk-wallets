@@ -2,18 +2,10 @@ import { BigNumber } from "ethers/utils";
 import WalletConnect from "@walletconnect/browser";
 import { BaseWallet } from ".";
 import { convertUtf8ToHex } from "@walletconnect/utils";
+import { txParams } from "./baseWallet";
 
 export interface WalletConnectWalletOptions {
   bridge?: string;
-}
-
-export interface txParams {
-  from?: string;
-  to: string;
-  data?: string;
-  value?: number | string | BigNumber;
-  gasPrice?: number | BigNumber;
-  gasLimit?: number;
 }
 
 export default class WalletConnectWallet extends BaseWallet {
