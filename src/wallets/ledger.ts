@@ -16,20 +16,23 @@ export default class Ledger extends BaseWallet {
     LEDGER_LIVE: "m/44'/60'/x'/0/0",
     LEDGER_LEGACY: "m/44'/60'/0'/x"
   };
-  public static currentBasePath: string;
-  public static currentIndex: number;
+  public static currentPathRule: string = "";
+  public static currentPath: string = "";
   public connected: boolean = false;
+  public PER_PAGE = 3;
   public static CUSTOMIZAION_PATH = "Customization";
   public static PREFIX_ETHEREUM_PATH = "m/44'/60'/";
+  public addresses: { [key: string]: string } = {};
 
   public constructor() {
     super();
-    const selectedBasePath = window.localStorage.getItem("Ledger:lastSelectedBasePath") || Ledger.PATH_TYPE.LEDGER_LIVE;
-    const selectedIndex = Number(window.localStorage.getItem("Ledger:lastSelectedIndex")) || 0;
-    Ledger.setPath(selectedBasePath, selectedIndex);
+    const lastSelectedPathRule =
+      window.localStorage.getItem("Ledger:lastSelectedPathRule") || Ledger.PATH_TYPE.LEDGER_LIVE;
+    const lastSelectedPath = window.localStorage.getItem("Ledger:lastSelectedPath") || "m/44'/60'/0'/0/0";
+    Ledger.setPath(lastSelectedPathRule, lastSelectedPath);
   }
 
-  public async initTransport() {
+  public async enable() {
     const transport = await U2fTransport.create();
     this.eth = new LedgerEth(transport);
     const config = await this.eth.getAppConfiguration();
@@ -40,15 +43,11 @@ export default class Ledger extends BaseWallet {
     return Object.values(Ledger.PATH_TYPE).indexOf(basePath) > -1 ? basePath : Ledger.CUSTOMIZAION_PATH;
   }
 
-  public static setPath(basePath: string, index: number) {
-    Ledger.currentBasePath = basePath;
-    window.localStorage.setItem("Ledger:lastSelectedBasePath", basePath);
-    Ledger.currentIndex = index;
-    window.localStorage.setItem("Ledger:lastSelectedIndex", String(index));
-  }
-
-  public currentPath(): string {
-    return Ledger.currentBasePath.replace("x", Ledger.currentIndex.toString());
+  public static setPath(pathRule: string, path: string) {
+    Ledger.currentPathRule = pathRule;
+    Ledger.currentPath = path;
+    window.localStorage.setItem("Ledger:lastSelectedPathRule", pathRule);
+    window.localStorage.setItem("Ledger:lastSelectedPath", path);
   }
 
   public type(): string {
@@ -71,7 +70,7 @@ export default class Ledger extends BaseWallet {
       } else {
         message = Buffer.from(message).toString("hex");
       }
-      const result = await this.eth.signPersonalMessage(this.currentPath(), message);
+      const result = await this.eth.signPersonalMessage(Ledger.currentPath, message);
       const v = parseInt(result.v, 10) - 27;
       let vHex = v.toString(16);
       if (vHex.length < 2) {
@@ -98,7 +97,7 @@ export default class Ledger extends BaseWallet {
       tx.raw[8] = Buffer.from([]); // s
 
       // Pass hex-rlp to ledger for signing
-      const result = await this.eth.signTransaction(this.currentPath(), tx.serialize().toString("hex"));
+      const result = await this.eth.signTransaction(Ledger.currentPath, tx.serialize().toString("hex"));
 
       // Store signature in transaction
       tx.v = Buffer.from(result.v, "hex");
@@ -129,19 +128,20 @@ export default class Ledger extends BaseWallet {
     return sendRawTransaction(rawData);
   }
 
-  public async getAddressesWithPath(basePath: string, from: number, count: number): Promise<{ [key: string]: string }> {
+  public async getAddressesWithPath(pathRule: string, from: number, count: number) {
     try {
       await this.awaitLock.acquireAsync();
       const addresses: { [key: string]: string } = {};
       for (let i = from; i < from + count; i++) {
         let path;
-        if (basePath.includes("x")) {
-          path = basePath.replace("x", i.toString());
+        if (pathRule.includes("x")) {
+          path = pathRule.replace("x", i.toString());
         } else {
-          path = basePath + "/" + i.toString();
+          path = pathRule + "/" + i.toString();
         }
         const address = await this.eth.getAddress(path, false, false);
         addresses[path] = address.address.toLowerCase();
+        this.addresses[path] = addresses[path];
       }
       this.connected = true;
       this.awaitLock.release();
@@ -154,8 +154,26 @@ export default class Ledger extends BaseWallet {
   }
 
   public async getAddresses(): Promise<string[]> {
-    const address = await this.getAddressesWithPath(Ledger.currentBasePath, Ledger.currentIndex, 1);
-    return Object.values(address);
+    if (this.addresses[Ledger.currentPath]) {
+      return [this.addresses[Ledger.currentPath]];
+    } else {
+      const res = await this.getAddressesWithPath(Ledger.currentPathRule, this.getCurrentPathIndex(), 1);
+      return Object.values(res);
+    }
+  }
+
+  public getCurrentPathIndex() {
+    const parts = Ledger.currentPath.split("/");
+    let partIndex = parts.length - 1;
+    if (Ledger.currentPathRule.includes("x")) {
+      const ruleParts = Ledger.currentPathRule.split("/");
+      ruleParts.forEach((part, index) => {
+        if (part.includes("x")) {
+          partIndex = index;
+        }
+      });
+    }
+    return Number(parts[partIndex].replace("'", ""));
   }
 
   public isSupported(): boolean {

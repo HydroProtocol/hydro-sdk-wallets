@@ -48,8 +48,8 @@ class LedgerConnector extends React.PureComponent<Props, State> {
     super(props);
     this.state = {
       loading: false,
-      pathType: Ledger.getPathType(Ledger.currentBasePath),
-      realPath: Ledger.currentBasePath,
+      pathType: Ledger.currentPathRule,
+      realPath: Ledger.currentPath,
       index: 0,
       currentPage: 0,
       addresses: {},
@@ -77,10 +77,11 @@ class LedgerConnector extends React.PureComponent<Props, State> {
     if (
       wallet &&
       wallet.connected &&
+      this.loadAddressesRequestingCount === 0 &&
       (Object.values(addresses).length === 0 ||
         wallet !== prevProps.wallet ||
         index !== prevState.index ||
-        (pathType !== Ledger.CUSTOMIZAION_PATH && realPath !== prevState.realPath))
+        (pathType !== Ledger.CUSTOMIZAION_PATH && (pathType !== prevState.pathType || realPath !== prevState.realPath)))
     ) {
       this.loadAddresses();
     }
@@ -127,9 +128,14 @@ class LedgerConnector extends React.PureComponent<Props, State> {
       <>
         <div className="HydroSDK-fieldGroup">
           <div className="HydroSDK-label">{walletTranslations.selectPath}</div>
-          <Select options={pathOptions} disabled={loading} selected={pathType} onSelect={this.selectPath} />
+          <Select
+            options={pathOptions}
+            disabled={loading}
+            selected={Ledger.getPathType(pathType)}
+            onSelect={this.selectPath}
+          />
         </div>
-        {pathType === Ledger.CUSTOMIZAION_PATH && this.renderCustomizedPath()}
+        {Ledger.getPathType(pathType) === Ledger.CUSTOMIZAION_PATH && this.renderCustomizedPath()}
         <div className="HydroSDK-fieldGroup">
           <div className="HydroSDK-label">
             {walletTranslations.selectAddress}{" "}
@@ -169,7 +175,7 @@ class LedgerConnector extends React.PureComponent<Props, State> {
   }
 
   private renderCustomizedPath() {
-    const { realPath, loading } = this.state;
+    const { loading, pathType } = this.state;
     const { walletTranslations } = this.props;
     return (
       <div className="HydroSDK-fieldGroup">
@@ -179,7 +185,11 @@ class LedgerConnector extends React.PureComponent<Props, State> {
           <input
             className="HydroSDK-input"
             placeholder={"0'/0"}
-            value={realPath.replace(Ledger.PREFIX_ETHEREUM_PATH, "")}
+            defaultValue={
+              Ledger.getPathType(pathType) === Ledger.CUSTOMIZAION_PATH && pathType !== Ledger.CUSTOMIZAION_PATH
+                ? pathType.replace(Ledger.PREFIX_ETHEREUM_PATH, "")
+                : ""
+            }
             onChange={this.handleChangeCustomizedPath}
           />
           <button
@@ -201,9 +211,6 @@ class LedgerConnector extends React.PureComponent<Props, State> {
 
   private selectPath = (selectedOption: Option) => {
     const pathType = selectedOption.value;
-    if (pathType !== Ledger.CUSTOMIZAION_PATH) {
-      this.setState({ realPath: pathType });
-    }
     this.setState({ pathType });
   };
 
@@ -237,6 +244,7 @@ class LedgerConnector extends React.PureComponent<Props, State> {
             <span>
               <i className="HydroSDK-fa fa fa-check" />
               {truncateAddress(address)}
+              <span className="HydroSDK-label">({path})</span>
             </span>
             <span>
               {balance ? (
@@ -314,10 +322,14 @@ class LedgerConnector extends React.PureComponent<Props, State> {
     if (!wallet) {
       return;
     }
-    const { realPath, index } = this.state;
+    const { pathType, index, realPath } = this.state;
     this.setState({ loading: true });
     this.loadAddressesRequestingCount += 1;
-    const addresses = await wallet.getAddressesWithPath(realPath, index, batchCount);
+    const addresses = await wallet.getAddressesWithPath(
+      pathType === Ledger.CUSTOMIZAION_PATH ? realPath : pathType,
+      index,
+      batchCount
+    );
     this.loadAddressesRequestingCount -= 1;
     if (this.loadAddressesRequestingCount === 0) {
       this.setState({ addresses, loading: false });
@@ -325,11 +337,9 @@ class LedgerConnector extends React.PureComponent<Props, State> {
   }
 
   public selectAccount(address: string, path: string) {
-    const parts = path.split("/");
-    const pathType = parts.slice(0, parts.length - 1).join("/");
-    const index = parseInt(parts[parts.length - 1], 10);
+    const { pathType, realPath } = this.state;
     this.props.dispatch(selectAccount(Ledger.TYPE, Ledger.TYPE));
-    Ledger.setPath(pathType, index);
+    Ledger.setPath(Ledger.getPathType(pathType) === Ledger.CUSTOMIZAION_PATH ? realPath : pathType, path);
     this.setState({ currentAddress: address });
   }
 
@@ -337,12 +347,13 @@ class LedgerConnector extends React.PureComponent<Props, State> {
     const { dispatch } = this.props;
     dispatch(selectAccount(Ledger.TYPE, Ledger.TYPE));
     await dispatch(loadLedger());
-    const pathType = Ledger.getPathType(Ledger.currentBasePath);
+    const pathType = Ledger.currentPathRule;
     this.setState({
       pathType,
-      realPath: Ledger.currentBasePath
+      realPath: Ledger.currentPath
     });
   }
+
   private loadBalances() {
     const { addresses } = this.state;
     Object.keys(addresses).map(async (path: string) => {
