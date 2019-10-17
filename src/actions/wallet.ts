@@ -359,7 +359,7 @@ export const loadLedger = () => {
     try {
       dispatch(connectWallet(Ledger.TYPE));
       const wallet = new Ledger();
-      await wallet.initTransport();
+      await wallet.enable();
       dispatch(watchWallet(wallet));
     } catch (e) {
       dispatch(connectWalletFinished(Ledger.TYPE));

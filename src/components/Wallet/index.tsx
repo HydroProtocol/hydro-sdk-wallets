@@ -162,10 +162,10 @@ class Wallet extends React.PureComponent<Props, State> {
               <Select options={this.getWalletsOptions()} selected={selectedWalletType} />
             </div>
             {this.renderStepContent()}
-            {this.renderDesc()}
             {this.renderUnlockForm()}
             {this.renderDeleteForm()}
             {this.renderFeatureButton()}
+            {this.renderDesc()}
             <button className="HydroSDK-button HydroSDK-closeButton" onClick={() => dispatch(hideWalletModal())}>
               {walletTranslations.close}
             </button>
