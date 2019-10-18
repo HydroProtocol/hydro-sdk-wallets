@@ -20,6 +20,7 @@ There is a default ui in this package. You can also implement another ui as you 
 - [Wallet Link (Coinbase Wallet)](https://www.walletlink.org)
 - [D'CENT Wallet](https://dcentwallet.com/)
 - [Fortmatic](https://fortmatic.com)
+- [Trezor](https://trezor.io)
 
 ## Basic Usage Guide
 
@@ -121,6 +122,8 @@ export default connect(state => {
 | appLogoUrl        | String       |                               | WalletLink prop.                                                                                  |
 | fortmaticApiKey   | String       |                               | Fortmatic option, if provided, will show Fortmatic option in dropdown menu.                       |
 | copyCallback      | Function     | alert("Copied to clipboard!") | copy address callback.                                                                            |
+| email             | String       |                               | TrezorConnect manifest param                                                                      |
+| host              | String       |                               | TrezorConnect manifest param                                                                      |
 
 ### Selectors
 
