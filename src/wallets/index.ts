@@ -2,6 +2,7 @@ import HydroWallet from "./hydroWallet";
 import ExtensionWallet from "./extensionWallet";
 import CoinbaseWallet from "./coinbaseWallet";
 import BaseWallet from "./baseWallet";
+import HardwareWallet from "./HardwareWallet";
 import WalletConnectWallet from "./WalletConnectWallet";
 import Ledger from "./ledger";
 import Dcent from "./dcent";
@@ -16,6 +17,7 @@ const { NeedUnlockWalletError, NotSupportedError } = BaseWallet;
 export let globalNodeUrl = "https://ropsten.infura.io";
 export {
   BaseWallet,
+  HardwareWallet,
   HydroWallet,
   ExtensionWallet,
   NeedUnlockWalletError,

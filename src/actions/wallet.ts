@@ -374,7 +374,6 @@ export const loadTrezor = () => {
     try {
       dispatch(connectWallet(Trezor.TYPE));
       const wallet = new Trezor();
-      await wallet.enable();
       dispatch(watchWallet(wallet));
     } catch (e) {
       dispatch(connectWalletFinished(Ledger.TYPE));
@@ -419,7 +418,13 @@ export const watchWallet = (wallet: BaseWallet) => {
         const addresses: string[] = await wallet.getAddresses();
         address = addresses.length > 0 ? addresses[0].toLowerCase() : null;
       } catch (e) {
-        if (type === Ledger.TYPE || type === Dcent.TYPE || type === Fortmatic.TYPE || type === CoinbaseWallet.TYPE) {
+        if (
+          type === Ledger.TYPE ||
+          type === Dcent.TYPE ||
+          type === Fortmatic.TYPE ||
+          type === CoinbaseWallet.TYPE ||
+          type === Trezor.TYPE
+        ) {
           clearTimer(accountID);
           throw e;
         } else if (e !== NeedUnlockWalletError && e !== NotSupportedError) {

@@ -1,29 +1,31 @@
-import BaseWallet, { txParams } from "./baseWallet";
-//@ts-ignore
-import TrezorConnect from "trezor-connect";
-import { getNetworkID, getTransactionCount, sendRawTransaction } from ".";
+import { txParams } from "./baseWallet";
+import { getTransactionCount, sendRawTransaction, HardwareWallet } from ".";
 import EthereumTx from "ethereumjs-tx";
+import { HDNode } from "ethers/utils";
 
-export default class Trezor extends BaseWallet {
-  public static LABEL = "Trezor Wallet";
+export default class Trezor extends HardwareWallet {
+  public static LABEL = "Trezor";
   public static TYPE = "TREZOR";
-  public static PATH_RULE = "m/44'/60'/x'/0/0";
-  public currentBasePath: string = "";
-  public currentIndex: number = 0;
-  public connected: boolean = false;
-  public addrsses: { [key: string]: string } = {};
-  public perPage = 3;
+  public PATH_TYPE = {
+    LIVE: "m/44'/60'/0'/0"
+  };
+  public PATH_TYPE_NAME = {
+    LIVE: "Standard"
+  };
+  public cacheAddressCount = 3 * this.PER_PAGE;
+  public currentPathRule: string = this.PATH_TYPE.LIVE;
+  public currentPath: string = "m/44'/60'/0'/0/0";
+  public masterNodes: { [key: string]: HDNode.HDNode } = {};
+  private TrezorConnector: any;
 
-  constructor() {
+  public constructor() {
     super();
-    //@ts-ignore
-    TrezorConnect.manifest({
-      email: "developer@xyz.com",
-      appUrl: "http://your.application.com"
-    });
-    const selectedBasePath = window.localStorage.getItem("Trezor:lastSelectedBasePath") || Trezor.PATH_RULE;
-    const selectedIndex = Number(window.localStorage.getItem("Trezor:lastSelectedIndex")) || 0;
-    this.setPath(selectedBasePath, selectedIndex);
+    const lastSelectedPathRule = window.localStorage.getItem("Trezor:lastSelectedPathRule");
+    const lastSelectedPath = window.localStorage.getItem("Trezor:lastSelectedPath");
+    if (lastSelectedPathRule && lastSelectedPath) {
+      this.setPath(lastSelectedPathRule, lastSelectedPath);
+    }
+    this.TrezorConnector = require("trezor-connect").default;
   }
 
   public type(): string {
@@ -34,21 +36,6 @@ export default class Trezor extends BaseWallet {
     return Trezor.TYPE;
   }
 
-  public setPath(basePath: string, index: number) {
-    this.currentBasePath = basePath;
-    this.currentIndex = index;
-    window.localStorage.setItem("Ledger:lastSelectedBasePath", basePath);
-    window.localStorage.setItem("Ledger:lastSelectedIndex", String(index));
-  }
-
-  public currentPath(): string {
-    return this.currentBasePath.replace("x", this.currentIndex.toString());
-  }
-
-  public signMessage(message: string): Promise<string> | null {
-    return this.signPersonalMessage(message);
-  }
-
   public async signPersonalMessage(message: string): Promise<string> {
     try {
       if (message.slice(0, 2) === "0x") {
@@ -57,7 +44,7 @@ export default class Trezor extends BaseWallet {
         message = Buffer.from(message).toString("hex");
       }
 
-      const res = await TrezorConnect.ethereumSignMessage({ path: this.currentPath(), message, hex: true });
+      const res = await this.TrezorConnector.ethereumSignMessage({ path: this.currentPath, message, hex: true });
       if (res.success) {
         return "0x" + res.payload.signature;
       } else {
@@ -81,19 +68,17 @@ export default class Trezor extends BaseWallet {
         txParams.nonce = nonce;
       }
       txParams = this.formatTxParams(txParams);
-      delete txParams.gas;
       const tx = new EthereumTx(txParams);
       tx.raw[6] = Buffer.from([networkID]); // v
       tx.raw[7] = Buffer.from([]); // r
       tx.raw[8] = Buffer.from([]); // s
 
-      const res = await TrezorConnect.ethereumSignTransaction({ path: this.currentPath(), transaction: txParams });
+      const res = await this.TrezorConnector.ethereumSignTransaction({ path: this.currentPath, transaction: txParams });
       tx.v = Buffer.from(res.payload.v.substr(2), "hex");
       tx.r = Buffer.from(res.payload.r.substr(2), "hex");
       tx.s = Buffer.from(res.payload.s.substr(2), "hex");
 
       return `0x${tx.serialize().toString("hex")}`;
-      // return `0x${res.payload.r.replace("0x", "")}${res.payload.s.replace("0x", "")}${res.payload.v.replace("0x", "")}`;
     } catch (e) {
       throw e;
     }
@@ -104,74 +89,49 @@ export default class Trezor extends BaseWallet {
     return sendRawTransaction(rawData);
   }
 
-  public async getAddressesWithPath(basePath: string, from: number, count: number): Promise<any> {
+  public async getAddressesWithPath(pathRule: string, from: number, count: number): Promise<{ [key: string]: string }> {
     try {
-      const bundle = [];
+      let addresses: { [key: string]: string } = {};
       for (let i = from; i < from + count; i++) {
-        const path = this.getPath(basePath, i);
-        bundle.push({ path, showOnTrezor: false });
+        const address = await this.deriveAddress(pathRule, i);
+        addresses = { ...addresses, ...address };
       }
-      const res = await TrezorConnect.ethereumGetAddress({ bundle });
-      if (res.success) {
-        this.connected = true;
-        return res.payload.map((payload: any) => {
-          let { serializedPath, address } = payload;
-          address = address.toLowerCase();
-          this.addrsses[serializedPath] = address;
-          return address;
-        });
-      } else {
-        throw new Error(res.payload.error);
-      }
+      return addresses;
     } catch (e) {
-      this.connected = false;
       throw e;
     }
   }
 
   public async getAddresses(): Promise<string[]> {
-    const path = this.getPath(this.currentBasePath, this.currentIndex);
-    if (this.addrsses[path]) {
-      return [this.addrsses[path]];
+    if (this.addresses[this.currentPath]) {
+      return [this.addresses[this.currentPath]];
     } else {
-      const addresses = await this.getAddressesWithPath(
-        this.currentBasePath,
-        this.getPage(this.currentIndex),
-        this.perPage
-      );
-      return [addresses[this.getPageIndex(this.currentIndex)]];
+      return Object.values(await this.deriveAddress(this.currentPathRule, this.getCurrentPathIndex()));
     }
   }
 
-  public getPageIndex(index: number): number {
-    return index % this.perPage;
+  public async deriveAddress(pathRule: string, index: number): Promise<{ [key: string]: string }> {
+    if (!this.masterNodes[pathRule]) {
+      const res = await this.TrezorConnector.getPublicKey({ path: pathRule });
+      if (res.success) {
+        this.connected = true;
+        this.masterNodes[pathRule] = HDNode.fromExtendedKey(res.payload.xpub);
+      } else {
+        this.connected = false;
+        throw new Error(res.payload.error);
+      }
+    }
+
+    return {
+      [this.getPath(pathRule, index)]: this.masterNodes[pathRule].derivePath(index.toString()).address.toLowerCase()
+    };
   }
 
-  public getPage(index: number): number {
-    return Math.floor(index / this.perPage);
-  }
-
-  public getPath(basePath: string, index: number): string {
-    return basePath.replace("x", index.toString());
-  }
-
-  public isSupported(): boolean {
-    return !this.connected;
-  }
-
-  public isLocked(): boolean {
-    return !this.connected;
-  }
-
-  public async loadNetworkId(): Promise<number> {
-    return getNetworkID();
-  }
-
-  public async sendCustomRequest(method: string, params: any): Promise<any> {
-    return null;
+  public getStartPageIndex(index: number) {
+    return Math.max(Math.floor(index / this.cacheAddressCount) - this.PER_PAGE, 0);
   }
 
   public name(): string {
-    return "Trezor Wallet";
+    return "Trezor";
   }
 }

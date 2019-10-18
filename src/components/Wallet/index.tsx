@@ -15,7 +15,6 @@ import {
   setGlobalNodeUrl,
   Ledger,
   HydroWallet,
-  globalNodeUrl,
   Dcent,
   CoinbaseWallet,
   Fortmatic,
@@ -39,13 +38,14 @@ import {
   loadDcentWallet,
   loadFortmaticWallet,
   loadExtensionWallet,
+  loadLedger,
   loadTrezor
 } from "../../actions/wallet";
 import Svg from "../Svg";
-import LedgerConnector from "./LedgerConnector";
 import { Map } from "immutable";
 import NotSupport from "./NotSupport";
 import defaultTranslations from "../../i18n";
+import HardwareWalletConnector from "./HardwareWalletConnector";
 
 interface State {
   password: string;
@@ -79,6 +79,8 @@ interface Props {
   appName?: string;
   appLogoUrl?: string;
   connecting: Map<string, boolean>;
+  email?: string;
+  host?: string;
 }
 
 class Wallet extends React.PureComponent<Props, State> {
@@ -113,7 +115,15 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   public componentDidMount() {
-    const { nodeUrl } = this.props;
+    const { nodeUrl, email, host } = this.props;
+    if (typeof window !== "undefined") {
+      const TrezorConnect = require("trezor-connect").default;
+      TrezorConnect.manifest({
+        email: email || "developer@xyz.com",
+        appUrl: host || "http://your.application.com"
+      });
+    }
+
     if (nodeUrl) {
       setGlobalNodeUrl(nodeUrl);
     }
@@ -204,7 +214,8 @@ class Wallet extends React.PureComponent<Props, State> {
     const { selectedWalletType, walletTranslations, accounts, connecting } = this.props;
     const account = accounts.get(selectedWalletType);
     const address = account ? account.get("address") : null;
-    if (address) {
+    const isLocked = account ? account.get("isLocked") : true;
+    if (address && !isLocked) {
       return null;
     }
 
@@ -213,6 +224,7 @@ class Wallet extends React.PureComponent<Props, State> {
       selectedWalletType === CoinbaseWallet.TYPE ||
       selectedWalletType === Fortmatic.TYPE ||
       selectedWalletType === ExtensionWallet.TYPE ||
+      selectedWalletType === Ledger.TYPE ||
       selectedWalletType === Trezor.TYPE
     ) {
       const isConnecting = connecting.get(selectedWalletType, false);
@@ -240,6 +252,8 @@ class Wallet extends React.PureComponent<Props, State> {
       dispatch(loadFortmaticWallet(fortmaticApiKey));
     } else if (selectedWalletType === ExtensionWallet.TYPE && window.ethereum) {
       dispatch(loadExtensionWallet());
+    } else if (selectedWalletType === Ledger.TYPE) {
+      dispatch(loadLedger());
     } else if (selectedWalletType === Trezor.TYPE) {
       dispatch(loadTrezor());
     }
@@ -261,7 +275,9 @@ class Wallet extends React.PureComponent<Props, State> {
           const account = accounts.get(WalletConnectWallet.TYPE)!;
           if (account.get("isLocked")) return this.renderQrImage();
         } else if (selectedWalletType === Ledger.TYPE) {
-          return <LedgerConnector copyCallback={copyCallback} />;
+          return <HardwareWalletConnector copyCallback={copyCallback} walletClass={Ledger} />;
+        } else if (selectedWalletType === Trezor.TYPE) {
+          return <HardwareWalletConnector copyCallback={copyCallback} walletClass={Trezor} />;
         } else if (selectedWalletType === ExtensionWallet.TYPE && !extensionWalletSupported) {
           return (
             <NotSupport
@@ -435,7 +451,7 @@ class Wallet extends React.PureComponent<Props, State> {
           value: Trezor.TYPE,
           component: (
             <div className="HydroSDK-optionItem">
-              <Svg name="ledger" />
+              <Svg name="trezor" />
               {Trezor.LABEL}
             </div>
           ),

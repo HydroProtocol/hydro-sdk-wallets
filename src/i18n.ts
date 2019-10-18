@@ -36,7 +36,6 @@ export default {
   deleteWallet: "Delete Wallet",
   selectAddress: "Select Address",
   toggleButtonText: "Please Click to Select A Wallet",
-  connectLedger: "Connect Ledger",
   currentWalletTypeNotSupported: "Current wallet type is not supported",
   noAvailableAddress: "No available address",
   pleaseSelectAddress: "Please select an address",
@@ -45,8 +44,18 @@ export default {
   installMetamask: "Install MetaMask",
   installMetamaskDesc:
     'MetaMask browser extension currently runs on Google Chrome, Firefox, Opera, and Brave browsers. For Safari users, please try other wallet options. Click <a target="_blank" rel="noopener noreferrer" href="https://support.ddex.io/hc/en-us/articles/115004408534">here</a> for MetaMask support.',
-  connectLedgerDesc:
-    'Ensure “Browser Support” and “Contract Data” is enabled within your device settings. <br/>Having issues still? Try reconnecting your Ledger or view Ledger Support.<a target="_blank" rel="noopener noreferrer" href="https://support.ddex.io/hc/en-us/articles/360001576533">Ledger Support</a>',
+  connectHardwareWallet: {
+    ledger: {
+      title: "Connect Ledger",
+      desc:
+        'Ensure “Browser Support” and “Contract Data” is enabled within your device settings. <br/>Having issues still? Try reconnecting your Ledger or view Ledger Support.<a target="_blank" rel="noopener noreferrer" href="https://support.ddex.io/hc/en-us/articles/360001576533">Ledger Support</a>'
+    },
+    trezor: {
+      title: "Connect Trezor",
+      desc:
+        'Having issues? Try reconnecting your Trezor or view Trezor Support.<a target="_blank" rel="noopener noreferrer" href="https://trezor.io/support/">Trezor Support</a>'
+    }
+  },
   connect: "Connect",
   disconnect: "Disconnect",
   walletDesc: {

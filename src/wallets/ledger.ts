@@ -1,4 +1,4 @@
-import { BaseWallet, getNetworkID, sendRawTransaction, getTransactionCount } from ".";
+import { HardwareWallet, sendRawTransaction, getTransactionCount } from ".";
 import AwaitLock from "await-lock";
 import { txParams } from "./baseWallet";
 import EthereumTx from "ethereumjs-tx";
@@ -6,30 +6,24 @@ import EthereumTx from "ethereumjs-tx";
 const U2fTransport = require("@ledgerhq/hw-transport-u2f").default;
 const LedgerEth = require("@ledgerhq/hw-app-eth").default;
 
-export default class Ledger extends BaseWallet {
+export default class Ledger extends HardwareWallet {
   public static LABEL = "Ledger";
   public static TYPE = "LEDGER";
+  public PATH_TYPE_NAME = {
+    LIVE: "Ledger Live",
+    LEGACY: "Ledger Legacy"
+  };
   private awaitLock = new AwaitLock();
   private eth: any;
   public ethAppVersion: string = "";
-  public static PATH_TYPE = {
-    LEDGER_LIVE: "m/44'/60'/x'/0/0",
-    LEDGER_LEGACY: "m/44'/60'/0'/x"
-  };
-  public static currentPathRule: string = "";
-  public static currentPath: string = "";
-  public connected: boolean = false;
-  public PER_PAGE = 3;
-  public static CUSTOMIZAION_PATH = "Customization";
-  public static PREFIX_ETHEREUM_PATH = "m/44'/60'/";
-  public addresses: { [key: string]: string } = {};
 
   public constructor() {
     super();
-    const lastSelectedPathRule =
-      window.localStorage.getItem("Ledger:lastSelectedPathRule") || Ledger.PATH_TYPE.LEDGER_LIVE;
-    const lastSelectedPath = window.localStorage.getItem("Ledger:lastSelectedPath") || "m/44'/60'/0'/0/0";
-    Ledger.setPath(lastSelectedPathRule, lastSelectedPath);
+    const lastSelectedPathRule = window.localStorage.getItem("Ledger:lastSelectedPathRule");
+    const lastSelectedPath = window.localStorage.getItem("Ledger:lastSelectedPath");
+    if (lastSelectedPathRule && lastSelectedPath) {
+      this.setPath(lastSelectedPathRule, lastSelectedPath);
+    }
   }
 
   public async enable() {
@@ -37,17 +31,6 @@ export default class Ledger extends BaseWallet {
     this.eth = new LedgerEth(transport);
     const config = await this.eth.getAppConfiguration();
     this.ethAppVersion = config.version;
-  }
-
-  public static getPathType(basePath: string) {
-    return Object.values(Ledger.PATH_TYPE).indexOf(basePath) > -1 ? basePath : Ledger.CUSTOMIZAION_PATH;
-  }
-
-  public static setPath(pathRule: string, path: string) {
-    Ledger.currentPathRule = pathRule;
-    Ledger.currentPath = path;
-    window.localStorage.setItem("Ledger:lastSelectedPathRule", pathRule);
-    window.localStorage.setItem("Ledger:lastSelectedPath", path);
   }
 
   public type(): string {
@@ -58,10 +41,6 @@ export default class Ledger extends BaseWallet {
     return Ledger.TYPE;
   }
 
-  public signMessage(message: string): Promise<string> | null {
-    return this.signPersonalMessage(message);
-  }
-
   public async signPersonalMessage(message: string): Promise<string> {
     try {
       await this.awaitLock.acquireAsync();
@@ -70,7 +49,7 @@ export default class Ledger extends BaseWallet {
       } else {
         message = Buffer.from(message).toString("hex");
       }
-      const result = await this.eth.signPersonalMessage(Ledger.currentPath, message);
+      const result = await this.eth.signPersonalMessage(this.currentPath, message);
       const v = parseInt(result.v, 10) - 27;
       let vHex = v.toString(16);
       if (vHex.length < 2) {
@@ -97,7 +76,7 @@ export default class Ledger extends BaseWallet {
       tx.raw[8] = Buffer.from([]); // s
 
       // Pass hex-rlp to ledger for signing
-      const result = await this.eth.signTransaction(Ledger.currentPath, tx.serialize().toString("hex"));
+      const result = await this.eth.signTransaction(this.currentPath, tx.serialize().toString("hex"));
 
       // Store signature in transaction
       tx.v = Buffer.from(result.v, "hex");
@@ -133,15 +112,15 @@ export default class Ledger extends BaseWallet {
       await this.awaitLock.acquireAsync();
       const addresses: { [key: string]: string } = {};
       for (let i = from; i < from + count; i++) {
-        let path;
-        if (pathRule.includes("x")) {
-          path = pathRule.replace("x", i.toString());
+        const path = this.getPath(pathRule, i);
+
+        if (this.addresses[path]) {
+          addresses[path] = this.addresses[path];
         } else {
-          path = pathRule + "/" + i.toString();
+          const address = await this.eth.getAddress(path, false, false);
+          addresses[path] = address.address.toLowerCase();
+          this.addresses[path] = addresses[path];
         }
-        const address = await this.eth.getAddress(path, false, false);
-        addresses[path] = address.address.toLowerCase();
-        this.addresses[path] = addresses[path];
       }
       this.connected = true;
       this.awaitLock.release();
@@ -154,42 +133,12 @@ export default class Ledger extends BaseWallet {
   }
 
   public async getAddresses(): Promise<string[]> {
-    if (this.addresses[Ledger.currentPath]) {
-      return [this.addresses[Ledger.currentPath]];
+    if (this.addresses[this.currentPath]) {
+      return [this.addresses[this.currentPath]];
     } else {
-      const res = await this.getAddressesWithPath(Ledger.currentPathRule, this.getCurrentPathIndex(), 1);
+      const res = await this.getAddressesWithPath(this.currentPathRule, this.getCurrentPathIndex(), 1);
       return Object.values(res);
     }
-  }
-
-  public getCurrentPathIndex() {
-    const parts = Ledger.currentPath.split("/");
-    let partIndex = parts.length - 1;
-    if (Ledger.currentPathRule.includes("x")) {
-      const ruleParts = Ledger.currentPathRule.split("/");
-      ruleParts.forEach((part, index) => {
-        if (part.includes("x")) {
-          partIndex = index;
-        }
-      });
-    }
-    return Number(parts[partIndex].replace("'", ""));
-  }
-
-  public isSupported(): boolean {
-    return !this.connected;
-  }
-
-  public isLocked(): boolean {
-    return !this.connected;
-  }
-
-  public async loadNetworkId(): Promise<number> {
-    return getNetworkID();
-  }
-
-  public async sendCustomRequest(method: string, params: any): Promise<any> {
-    return null;
   }
 
   public name(): string {
