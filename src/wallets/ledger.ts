@@ -68,6 +68,13 @@ export default class Ledger extends HardwareWallet {
       await this.awaitLock.acquireAsync();
 
       const networkID = await this.loadNetworkId();
+
+      if (!txParams.nonce) {
+        const currentAddress = await this.getAddresses();
+        const nonce = await getTransactionCount(currentAddress[0], "pending");
+        txParams.nonce = nonce;
+      }
+      txParams = this.formatTxParams(txParams);
       const tx = new EthereumTx(txParams);
 
       // Set the EIP155 bits
@@ -98,11 +105,6 @@ export default class Ledger extends HardwareWallet {
   }
 
   public async sendTransaction(txParams: txParams): Promise<string> {
-    if (!txParams.nonce) {
-      const currentAddress = await this.getAddresses();
-      const nonce = await getTransactionCount(currentAddress[0], "pending");
-      txParams.nonce = nonce;
-    }
     const rawData = await this.signTransaction(txParams);
     return sendRawTransaction(rawData);
   }

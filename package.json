@@ -1,6 +1,6 @@
 {
   "name": "@gongddex/hydro-sdk-wallet",
-  "version": "0.0.122",
+  "version": "0.0.126",
   "main": "./build/index.js",
   "files": [
     "build",
@@ -30,7 +30,7 @@
     "ethereumjs-tx": "^1.3.7",
     "ethereumjs-util": "5.2.0",
     "ethers": "^4.0.27",
-    "fortmatic": "^0.8.2",
+    "fortmatic": "^1.0.0-beta.1",
     "immutable": "^3.8.2",
     "qr-image": "^3.2.0",
     "react-paginate": "^6.3.0",
