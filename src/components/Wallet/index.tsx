@@ -272,8 +272,8 @@ class Wallet extends React.PureComponent<Props, State> {
       case WALLET_STEPS.SELECT:
       case WALLET_STEPS.DELETE:
         if (selectedWalletType === WalletConnectWallet.TYPE) {
-          const account = accounts.get(WalletConnectWallet.TYPE)!;
-          if (account.get("isLocked")) return this.renderQrImage();
+          const account = accounts.get(WalletConnectWallet.TYPE);
+          if (account && account.get("isLocked")) return this.renderQrImage();
         } else if (selectedWalletType === Ledger.TYPE) {
           return <HardwareWalletConnector copyCallback={copyCallback} walletClass={Ledger} />;
         } else if (selectedWalletType === Trezor.TYPE) {
