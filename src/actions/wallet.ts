@@ -147,10 +147,9 @@ export const loadNetwork = (accountID: string, networkId: number | undefined) =>
 
 export const selectAccount = (accountID: string, type: string) => {
   return async (dispatch: any, getState: any) => {
-    if (type === HydroWallet.TYPE || type === ExtensionWallet.TYPE) {
-      window.localStorage.setItem("HydroWallet:lastSelectedWalletType", type);
-      window.localStorage.setItem("HydroWallet:lastSelectedAccountID", accountID);
-    }
+    window.localStorage.setItem("HydroWallet:lastSelectedWalletType", type);
+    window.localStorage.setItem("HydroWallet:lastSelectedAccountID", accountID);
+
     await dispatch({
       type: "HYDRO_WALLET_SELECT_ACCOUNT",
       payload: { accountID }
@@ -301,13 +300,9 @@ export const loadWalletConnectWallet = () => {
   return async (dispatch: any) => {
     let wallet = new WalletConnectWallet({ bridge: "" });
 
-    if (wallet.connector.connected) {
-      await wallet.connector.killSession();
-      wallet = new WalletConnectWallet({ bridge: "" });
+    if (!wallet.connector.connected) {
+      await wallet.connector.createSession();
     }
-
-    await wallet.connector.createSession();
-
     dispatch(watchWallet(wallet));
     const accountID = wallet.id();
 

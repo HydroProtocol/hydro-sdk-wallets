@@ -156,6 +156,10 @@ export default class WalletConnectWallet extends BaseWallet {
     return isSupported;
   }
 
+  public async clearSession() {
+    await this.connector.killSession();
+  }
+
   public name(): string {
     return "WalletConnect";
   }
