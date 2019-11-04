@@ -18,7 +18,8 @@ import {
   Dcent,
   CoinbaseWallet,
   Fortmatic,
-  Trezor
+  Trezor,
+  Torus
 } from "../../wallets";
 import { WalletState, AccountState } from "../../reducers/wallet";
 import { getSelectedAccount } from "../../selector/wallet";
@@ -39,7 +40,8 @@ import {
   loadFortmaticWallet,
   loadExtensionWallet,
   loadLedger,
-  loadTrezor
+  loadTrezor,
+  loadTorus
 } from "../../actions/wallet";
 import Svg from "../Svg";
 import { Map } from "immutable";
@@ -225,7 +227,8 @@ class Wallet extends React.PureComponent<Props, State> {
       selectedWalletType === Fortmatic.TYPE ||
       selectedWalletType === ExtensionWallet.TYPE ||
       selectedWalletType === Ledger.TYPE ||
-      selectedWalletType === Trezor.TYPE
+      selectedWalletType === Trezor.TYPE ||
+      selectedWalletType === Torus.TYPE
     ) {
       const isConnecting = connecting.get(selectedWalletType, false);
       return (
@@ -256,6 +259,8 @@ class Wallet extends React.PureComponent<Props, State> {
       dispatch(loadLedger());
     } else if (selectedWalletType === Trezor.TYPE) {
       dispatch(loadTrezor());
+    } else if (selectedWalletType === Torus.TYPE) {
+      dispatch(loadTorus());
     }
   }
 
@@ -289,7 +294,8 @@ class Wallet extends React.PureComponent<Props, State> {
         } else if (
           selectedWalletType === Dcent.TYPE ||
           selectedWalletType === CoinbaseWallet.TYPE ||
-          selectedWalletType === Fortmatic.TYPE
+          selectedWalletType === Fortmatic.TYPE ||
+          selectedWalletType === Torus.TYPE
         ) {
           const selectedAccount = accounts.get(selectedWalletType);
           const selectedAddress = selectedAccount ? selectedAccount.get("address") : null;
@@ -473,6 +479,16 @@ class Wallet extends React.PureComponent<Props, State> {
             <div className="HydroSDK-optionItem">
               <Svg name="coinbase" />
               {CoinbaseWallet.LABEL}
+            </div>
+          ),
+          onSelect: (option: Option) => this.onSelect(option)
+        },
+        {
+          value: Torus.TYPE,
+          component: (
+            <div className="HydroSDK-optionItem">
+              <Svg name="torus" />
+              {Torus.LABEL}
             </div>
           ),
           onSelect: (option: Option) => this.onSelect(option)

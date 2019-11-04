@@ -171,8 +171,7 @@ export default class Select extends React.PureComponent<Props, State> {
   public setRef = (ref: any) => {
     if (ref) {
       this.ps = new PerfectScrollbar(ref, {
-        suppressScrollX: true,
-        maxScrollbarLength: 20
+        suppressScrollX: true
       });
     }
   };

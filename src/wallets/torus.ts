@@ -1,22 +1,30 @@
 import BaseWallet, { txParams } from "./baseWallet";
-declare global {
-  interface Window {
-    web3: any;
-    ethereum?: any;
-  }
-}
+import TorusInstance from "@toruslabs/torus-embed";
+import { globalNodeUrl } from ".";
+import { getNetworkID } from ".";
 
-export default class ExtensionWallet extends BaseWallet {
-  public static LABEL = "Metamask Wallet";
-  public static TYPE = "EXTENSION";
-  public ethereum: any;
+export default class Torus extends BaseWallet {
+  public static LABEL = "Torus";
+  public static TYPE = "Torus";
+  public provider?: any;
+  public address?: string;
+  public torus: TorusInstance;
+
+  public constructor() {
+    super();
+    this.torus = new TorusInstance({});
+  }
 
   public type(): string {
-    return ExtensionWallet.TYPE;
+    return Torus.TYPE;
   }
 
   public id(): string {
-    return ExtensionWallet.TYPE;
+    return Torus.TYPE;
+  }
+
+  public async clearSession() {
+    return await this.torus.logout();
   }
 
   public loadNetworkId(): Promise<number | undefined> {
@@ -33,17 +41,14 @@ export default class ExtensionWallet extends BaseWallet {
     });
   }
 
-  public signMessage(message: string): Promise<string> | null {
+  public signMessage(message: string | Uint8Array): Promise<string> | null {
     return this.signPersonalMessage(message);
   }
 
-  public signPersonalMessage(message: string): Promise<string> {
+  public signPersonalMessage(message: string | Uint8Array): Promise<string> {
     return new Promise(async (resolve, reject) => {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
-      }
-      if (message.slice(0, 2) !== "0x") {
-        message = "0x" + Buffer.from(message).toString("hex");
       }
       const address = await this.getAddresses();
       const res = await this.sendCustomRequest("personal_sign", [message, address[0]]);
@@ -60,13 +65,7 @@ export default class ExtensionWallet extends BaseWallet {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-      if (txParams.gasLimit) {
-        txParams.gas = "0x" + txParams.gasLimit.toString(16);
-        txParams.gasLimit = "0x" + txParams.gasLimit.toString(16);
-      }
-      if (txParams.gasPrice) {
-        txParams.gasPrice = "0x" + txParams.gasPrice.toString(16);
-      }
+      txParams = this.formatTxParams(txParams);
       const res = await this.sendCustomRequest("eth_sendTransaction", [txParams]);
       if (res.error) {
         reject(res.error);
@@ -77,15 +76,18 @@ export default class ExtensionWallet extends BaseWallet {
   }
 
   public sendCustomRequest(method: string, params?: any): Promise<any> {
+    if (!params) {
+      params = [];
+    }
     return new Promise(async resolve => {
-      if (!this.isSupported()) {
-        resolve({ error: BaseWallet.NotSupportedError });
+      if (!this.provider) {
+        return resolve({ error: BaseWallet.NotSupportedError });
       }
-      this.ethereum.sendAsync({ method, params }, (error: Error, res: any) => {
+      this.provider.sendAsync([{ id: 1, method, params }], (error: Error | null, res: any) => {
         if (error) {
           resolve({ error });
         } else {
-          resolve(res);
+          resolve(res[0]);
         }
       });
     });
@@ -96,23 +98,53 @@ export default class ExtensionWallet extends BaseWallet {
       if (!this.isSupported()) {
         reject(BaseWallet.NotSupportedError);
       }
-
+      if (this.address) {
+        resolve([this.address]);
+      }
       const res = await this.sendCustomRequest("eth_accounts");
       if (res.error) {
         reject(res.error);
       } else {
+        this.address = res.result[0];
         resolve(res.result);
       }
     });
   }
 
   public async enable(): Promise<void> {
-    if (window.ethereum) {
-      this.ethereum = window.ethereum;
-      await this.ethereum.enable();
-    } else if (window.web3) {
-      this.ethereum = window.web3.currentProvider;
+    if (!this.torus) {
+      return;
     }
+    const networkId = await getNetworkID();
+    let network;
+    if (networkId === 3) {
+      network = {
+        host: "ropsten",
+        chainId: 3,
+        networkName: "Ropsten Test Network"
+      };
+    } else if (networkId === 42) {
+      network = {
+        host: "kovan",
+        chainId: 42,
+        networkName: "Kovan Test Network"
+      };
+    } else {
+      network = {
+        host: "mainnet",
+        chainId: 1,
+        networkName: "Main Ethereum Network"
+      };
+    }
+    await this.torus.init({
+      buildEnv: "production", // default: production
+      enableLogging: false, // default: false
+      network,
+      showTorusButton: false // default: true
+    });
+    // @ts-ignore
+    await this.torus.login(); // await torus.ethereum.enable()
+    this.provider = this.torus.provider;
   }
 
   public isLocked(address: string | null): boolean {
@@ -120,25 +152,11 @@ export default class ExtensionWallet extends BaseWallet {
   }
 
   public isSupported(): boolean {
-    return !!this.ethereum;
+    // @ts-ignore
+    return !!this.provider && this.torus.isLoggedIn;
   }
 
   public name(): string {
-    if (!this.isSupported()) {
-      return "";
-    }
-    if (this.ethereum.isMetaMask) {
-      return "MetaMask Wallet";
-    } else if (this.ethereum.isCipher) {
-      return "Coinbase Wallet";
-    } else if (this.ethereum.isTrust) {
-      return "Trust Wallet";
-    } else if (this.ethereum.isToshi) {
-      return "Coinbase Wallet";
-    } else if (this.ethereum.isImtoken) {
-      return "ImToken Wallet";
-    } else {
-      return "Wallet";
-    }
+    return "Torus";
   }
 }
