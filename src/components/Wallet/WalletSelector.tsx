@@ -112,8 +112,8 @@ class WalletSelector extends React.PureComponent<Props, State> {
         options.push({
           value: "disconnect",
           text: walletTranslations.disconnect,
-          onSelect: (option: Option) => {
-            wallet.clearSession();
+          onSelect: async (option: Option) => {
+            await wallet.clearSession();
             window.location.reload();
           }
         });

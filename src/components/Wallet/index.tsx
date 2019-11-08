@@ -329,7 +329,7 @@ class Wallet extends React.PureComponent<Props, State> {
         <div
           className="HydroSDK-qr-image-bg"
           dangerouslySetInnerHTML={{
-            __html: qrImage.imageSync(connector.uri, { type: "svg" }).toString()
+            __html: qrImage.imageSync(connector.uri, { type: "svg", ec_level: "L" }).toString()
           }}
         />
       </div>
