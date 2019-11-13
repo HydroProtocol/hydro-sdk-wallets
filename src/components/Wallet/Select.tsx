@@ -116,7 +116,9 @@ export default class Select extends React.PureComponent<Props, State> {
             if (option.onSelect) {
               option.onSelect(option, e);
             }
-            this.setState({ unfolded: false });
+            if (onSelect || option.onSelect) {
+              this.setState({ unfolded: false });
+            }
           }}>
           {this.renderOption(option)}
         </div>

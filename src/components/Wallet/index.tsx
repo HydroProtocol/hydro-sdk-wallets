@@ -428,7 +428,7 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private getWalletsOptions(): Option[] {
-    let { menuOptions, dcent, fortmaticApiKey, accounts } = this.props;
+    let { menuOptions, dcent, fortmaticApiKey, accounts, walletTranslations } = this.props;
     if (!menuOptions) {
       const wallet = accounts.getIn([ExtensionWallet.TYPE, "wallet"]);
       const extensionWalletLabel = wallet ? wallet.name() : ExtensionWallet.LABEL;
@@ -436,12 +436,36 @@ class Wallet extends React.PureComponent<Props, State> {
         {
           value: ExtensionWallet.TYPE,
           component: (
-            <div className="HydroSDK-optionItem">
+            <div className="HydroSDK-optionItem HydroSDK-noGroup">
               <Svg name="metamask" />
               {extensionWalletLabel}
             </div>
           ),
           onSelect: (option: Option) => this.onSelect(option)
+        }
+      ];
+      if (fortmaticApiKey) {
+        menuOptions = menuOptions.concat([
+          {
+            value: Fortmatic.TYPE,
+            component: (
+              <div className="HydroSDK-optionItem HydroSDK-noGroup">
+                <Svg name="fortmatic" />
+                {walletTranslations.usePhoneOrEmail}
+                <span className="HydroSDK-text-secondary">
+                  {" "}
+                  ({walletTranslations.poweredBy} {Fortmatic.LABEL})
+                </span>
+              </div>
+            ),
+            onSelect: (option: Option) => this.onSelect(option)
+          }
+        ]);
+      }
+      menuOptions = menuOptions.concat([
+        {
+          value: "hardwareWallets",
+          component: <div className="HydroSDK-optionItem HydroSDK-optionType">{walletTranslations.hardwareWallets}</div>
         },
         {
           value: Ledger.TYPE,
@@ -462,6 +486,24 @@ class Wallet extends React.PureComponent<Props, State> {
             </div>
           ),
           onSelect: (option: Option) => this.onSelect(option)
+        }
+      ]);
+      if (dcent) {
+        menuOptions.push({
+          value: Dcent.TYPE,
+          component: (
+            <div className="HydroSDK-optionItem">
+              <Svg name="dcent" />
+              {Dcent.LABEL}
+            </div>
+          ),
+          onSelect: (option: Option) => this.onSelect(option)
+        });
+      }
+      menuOptions = menuOptions.concat([
+        {
+          value: "mobileWallets",
+          component: <div className="HydroSDK-optionItem HydroSDK-optionType">{walletTranslations.mobileWallets}</div>
         },
         {
           value: WalletConnectWallet.TYPE,
@@ -482,6 +524,13 @@ class Wallet extends React.PureComponent<Props, State> {
             </div>
           ),
           onSelect: (option: Option) => this.onSelect(option)
+        }
+      ]);
+
+      menuOptions = menuOptions.concat([
+        {
+          value: "oauth",
+          component: <div className="HydroSDK-optionItem HydroSDK-optionType">{walletTranslations.oauth}</div>
         },
         {
           value: Torus.TYPE,
@@ -493,31 +542,7 @@ class Wallet extends React.PureComponent<Props, State> {
           ),
           onSelect: (option: Option) => this.onSelect(option)
         }
-      ];
-      if (dcent) {
-        menuOptions.push({
-          value: Dcent.TYPE,
-          component: (
-            <div className="HydroSDK-optionItem">
-              <Svg name="dcent" />
-              {Dcent.LABEL}
-            </div>
-          ),
-          onSelect: (option: Option) => this.onSelect(option)
-        });
-      }
-      if (fortmaticApiKey) {
-        menuOptions.push({
-          value: Fortmatic.TYPE,
-          component: (
-            <div className="HydroSDK-optionItem">
-              <Svg name="fortmatic" />
-              {Fortmatic.LABEL}
-            </div>
-          ),
-          onSelect: (option: Option) => this.onSelect(option)
-        });
-      }
+      ]);
     }
     return menuOptions.concat(this.localWalletOptions());
   }
@@ -535,6 +560,10 @@ class Wallet extends React.PureComponent<Props, State> {
     const hydroWalletsCount = LocalWallet.list().length;
     const isEmptyHydroWallet = hydroWalletsCount === 0;
     return [
+      {
+        value: "localWallets",
+        component: <div className="HydroSDK-optionItem HydroSDK-optionType">{walletTranslations.localWallets}</div>
+      },
       {
         value: LocalWallet.TYPE,
         component: (

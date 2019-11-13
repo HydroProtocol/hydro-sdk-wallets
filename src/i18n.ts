@@ -91,5 +91,12 @@ export default {
     }
   },
   loadAccounts: "Load Accounts",
-  goToPage: "Go to page"
+  goToPage: "Go to page",
+  extensionWallets: "Extension Wallets",
+  usePhoneOrEmail: "Use Phone/Email",
+  hardwareWallets: "Hardware Wallets",
+  mobileWallets: "Mobile Wallets",
+  oauth: "Google or Facebook OAuth",
+  localWallets: "Local Wallets",
+  poweredBy: "Powered by"
 };

@@ -220,6 +220,25 @@ fieldset[disabled] button:hover {
   display: flex;
   align-items: center;
 }
+.HydroSDK-text-secondary {
+  color: #666666;
+}
+.HydroSDK-dropdown .HydroSDK-optionItem {
+  padding: 0 12px;
+}
+.HydroSDK-dropdown .HydroSDK-optionItem.HydroSDK-noGroup {
+  padding: 0;
+}
+.HydroSDK-optionType {
+  color: #333;
+  font-weight: bold;
+  margin: 0 -12px;
+  padding: 0 20px;
+  cursor: default;
+}
+.HydroSDK-optionType:hover {
+  background: #f7f7f7;
+}
 .HydroSDK-optionItem .disabled {
   color: #666666;
 }
