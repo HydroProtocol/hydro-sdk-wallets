@@ -129,6 +129,10 @@ export default class ExtensionWallet extends BaseWallet {
     }
     if (this.ethereum.isMetaMask) {
       return "MetaMask Wallet";
+    } else if (this.ethereum.isBitpie) {
+      return "Bitpie Wallet";
+    } else if (this.ethereum.isHuobi) {
+      return "Huobi Wallet";
     } else if (this.ethereum.isCipher) {
       return "Coinbase Wallet";
     } else if (this.ethereum.isTrust) {

@@ -83,6 +83,7 @@ interface Props {
   connecting: Map<string, boolean>;
   email?: string;
   host?: string;
+  mobileHide?: boolean;
 }
 
 class Wallet extends React.PureComponent<Props, State> {
@@ -428,7 +429,7 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private getWalletsOptions(): Option[] {
-    let { menuOptions, dcent, fortmaticApiKey, accounts, walletTranslations } = this.props;
+    let { menuOptions, dcent, fortmaticApiKey, accounts, walletTranslations, mobileHide } = this.props;
     if (!menuOptions) {
       const wallet = accounts.getIn([ExtensionWallet.TYPE, "wallet"]);
       const extensionWalletLabel = wallet ? wallet.name() : ExtensionWallet.LABEL;
@@ -462,70 +463,76 @@ class Wallet extends React.PureComponent<Props, State> {
           }
         ]);
       }
-      menuOptions = menuOptions.concat([
-        {
-          value: "hardwareWallets",
-          component: <div className="HydroSDK-optionItem HydroSDK-optionType">{walletTranslations.hardwareWallets}</div>
-        },
-        {
-          value: Ledger.TYPE,
-          component: (
-            <div className="HydroSDK-optionItem">
-              <Svg name="ledger" />
-              {Ledger.LABEL}
-            </div>
-          ),
-          onSelect: (option: Option) => this.onSelect(option)
-        },
-        {
-          value: Trezor.TYPE,
-          component: (
-            <div className="HydroSDK-optionItem">
-              <Svg name="trezor" />
-              {Trezor.LABEL}
-            </div>
-          ),
-          onSelect: (option: Option) => this.onSelect(option)
+      if (!mobileHide) {
+        menuOptions = menuOptions.concat([
+          {
+            value: "hardwareWallets",
+            component: (
+              <div className="HydroSDK-optionItem HydroSDK-optionType">{walletTranslations.hardwareWallets}</div>
+            )
+          },
+          {
+            value: Ledger.TYPE,
+            component: (
+              <div className="HydroSDK-optionItem">
+                <Svg name="ledger" />
+                {Ledger.LABEL}
+              </div>
+            ),
+            onSelect: (option: Option) => this.onSelect(option)
+          },
+          {
+            value: Trezor.TYPE,
+            component: (
+              <div className="HydroSDK-optionItem">
+                <Svg name="trezor" />
+                {Trezor.LABEL}
+              </div>
+            ),
+            onSelect: (option: Option) => this.onSelect(option)
+          }
+        ]);
+        if (dcent) {
+          menuOptions.push({
+            value: Dcent.TYPE,
+            component: (
+              <div className="HydroSDK-optionItem">
+                <Svg name="dcent" />
+                {Dcent.LABEL}
+              </div>
+            ),
+            onSelect: (option: Option) => this.onSelect(option)
+          });
         }
-      ]);
-      if (dcent) {
-        menuOptions.push({
-          value: Dcent.TYPE,
-          component: (
-            <div className="HydroSDK-optionItem">
-              <Svg name="dcent" />
-              {Dcent.LABEL}
-            </div>
-          ),
-          onSelect: (option: Option) => this.onSelect(option)
-        });
       }
-      menuOptions = menuOptions.concat([
-        {
-          value: "mobileWallets",
-          component: <div className="HydroSDK-optionItem HydroSDK-optionType">{walletTranslations.mobileWallets}</div>
-        },
-        {
-          value: WalletConnectWallet.TYPE,
-          component: (
-            <div className="HydroSDK-optionItem">
-              <Svg name="WalletConnect" />
-              {WalletConnectWallet.LABEL}
-            </div>
-          ),
-          onSelect: (option: Option) => this.onSelect(option)
-        },
-        {
-          value: CoinbaseWallet.TYPE,
-          component: (
-            <div className="HydroSDK-optionItem">
-              <Svg name="coinbase" />
-              {CoinbaseWallet.LABEL}
-            </div>
-          ),
-          onSelect: (option: Option) => this.onSelect(option)
-        }
-      ]);
+      if (!mobileHide) {
+        menuOptions = menuOptions.concat([
+          {
+            value: "mobileWallets",
+            component: <div className="HydroSDK-optionItem HydroSDK-optionType">{walletTranslations.mobileWallets}</div>
+          },
+          {
+            value: WalletConnectWallet.TYPE,
+            component: (
+              <div className="HydroSDK-optionItem">
+                <Svg name="WalletConnect" />
+                {WalletConnectWallet.LABEL}
+              </div>
+            ),
+            onSelect: (option: Option) => this.onSelect(option)
+          },
+          {
+            value: CoinbaseWallet.TYPE,
+            component: (
+              <div className="HydroSDK-optionItem">
+                <Svg name="coinbase" />
+                {CoinbaseWallet.LABEL}
+              </div>
+            ),
+            onSelect: (option: Option) => this.onSelect(option)
+          }
+        ]);
+      }
 
       menuOptions = menuOptions.concat([
         {
@@ -553,8 +560,8 @@ class Wallet extends React.PureComponent<Props, State> {
   }
 
   private localWalletOptions() {
-    const { dispatch, walletTranslations, LocalWallet, hideLocalWallet } = this.props;
-    if (hideLocalWallet) {
+    const { dispatch, walletTranslations, LocalWallet, hideLocalWallet, mobileHide } = this.props;
+    if (hideLocalWallet || mobileHide) {
       return [];
     }
     const hydroWalletsCount = LocalWallet.list().length;

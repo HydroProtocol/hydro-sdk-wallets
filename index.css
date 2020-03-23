@@ -215,10 +215,14 @@ fieldset[disabled] button:hover {
 }
 .HydroSDK-optionItem svg {
   margin-right: 6px;
+  min-width: 16px;
 }
 .HydroSDK-optionItem {
   display: flex;
   align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .HydroSDK-text-secondary {
   color: #666666;
