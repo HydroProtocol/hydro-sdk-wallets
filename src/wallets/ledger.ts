@@ -3,7 +3,7 @@ import AwaitLock from "await-lock";
 import { txParams } from "./baseWallet";
 import EthereumTx from "ethereumjs-tx";
 
-const U2fTransport = require("@ledgerhq/hw-transport-u2f").default;
+const U2fTransport = require("@ledgerhq/hw-transport-webusb").default;
 const LedgerEth = require("@ledgerhq/hw-app-eth").default;
 
 export default class Ledger extends HardwareWallet {

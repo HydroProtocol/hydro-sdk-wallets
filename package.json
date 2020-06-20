@@ -1,6 +1,6 @@
 {
   "name": "@gongddex/hydro-sdk-wallet",
-  "version": "0.0.154",
+  "version": "0.0.155",
   "main": "./build/index.js",
   "files": [
     "build",
@@ -22,8 +22,8 @@
     "not op_mini all"
   ],
   "dependencies": {
-    "@ledgerhq/hw-app-eth": "4.24.0",
-    "@ledgerhq/hw-transport-u2f": "4.24.0",
+    "@ledgerhq/hw-app-eth": "5.17.0",
+    "@ledgerhq/hw-transport-webusb": "5.17.0",
     "@toruslabs/torus-embed": "0.2.3",
     "@walletconnect/browser": "1.0.0-beta.38",
     "@walletconnect/core": "1.0.0-beta.38",
